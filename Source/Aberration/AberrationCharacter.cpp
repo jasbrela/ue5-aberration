@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AberrationCharacter.h"
-#include "AberrationProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -18,9 +17,6 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AAberrationCharacter::AAberrationCharacter()
 {
-	// Character doesnt have a rifle at start
-	bHasRifle = false;
-	
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 		
@@ -38,7 +34,6 @@ AAberrationCharacter::AAberrationCharacter()
 	Mesh1P->CastShadow = false;
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
-
 }
 
 void AAberrationCharacter::BeginPlay()
@@ -105,14 +100,4 @@ void AAberrationCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
-}
-
-void AAberrationCharacter::SetHasRifle(bool bNewHasRifle)
-{
-	bHasRifle = bNewHasRifle;
-}
-
-bool AAberrationCharacter::GetHasRifle()
-{
-	return bHasRifle;
 }
