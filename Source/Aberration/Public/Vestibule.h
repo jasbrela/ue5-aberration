@@ -6,9 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Vestibule.generated.h"
 
+class AAberrationManager;
 class UBoxComponent;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerChangeCoachDelegate);
 
 UCLASS()
 class ABERRATION_API AVestibule : public AActor
@@ -18,7 +17,6 @@ class ABERRATION_API AVestibule : public AActor
 public:	
 	AVestibule();
 	virtual void Tick(float DeltaTime) override;
-	static FOnPlayerChangeCoachDelegate PlayerChangeCoachDelegate;
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,15 +28,22 @@ private:
 	UPROPERTY(EditInstanceOnly)
 	bool bCanTeleport;
 
+	// Should be only 1 or -1.
+	UPROPERTY(EditInstanceOnly, meta=(ClampMin = "-1.0", ClampMax = "1.0", UIMin = "-1.0", UIMax = "1.0"));
+	int TeleportValue;
+
 	UPROPERTY(EditInstanceOnly)
 	AVestibule* OtherVestibule;
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	FVector GetRelativePosition(FVector Offset);
+	FVector GetRelativePosition(const FVector& Offset) const;
 
-	FVector GetOffset(AActor* Actor);
+	FVector GetOffset(const AActor* Actor) const;
 	
 	FVector Location;
+
+	UPROPERTY(VisibleInstanceOnly)
+	AAberrationManager* AberrationManager;
 };

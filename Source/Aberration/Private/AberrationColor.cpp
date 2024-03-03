@@ -5,17 +5,14 @@
 
 #include "Aberration/DebugMacros.h"
 
-AAberrationColor::AAberrationColor()
-{
-}
+AAberrationColor::AAberrationColor() { }
 
 void AAberrationColor::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void AAberrationColor::Notify()
+void AAberrationColor::Notify(FActiveAberrations Aberrations)
 {
-	LOG("Notified (%i)", Value);
-	Value++;
+	LOG("Aberration notified");
 }

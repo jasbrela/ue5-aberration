@@ -21,7 +21,5 @@ protected:
 	virtual void BeginPlay() override;
 	
 private:
-	virtual void Notify() override;
-
-	int Value = 0;
+	virtual void Notify(FActiveAberrations Aberrations) override;
 };

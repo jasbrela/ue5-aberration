@@ -3,12 +3,23 @@
 
 #include "AberrationBase.h"
 
-#include "Vestibule.h"
+#include "AberrationManager.h"
+#include "Kismet/GameplayStatics.h"
 
-// Sets default values
-AAberrationBase::AAberrationBase()
+AAberrationBase::AAberrationBase() { }
+
+void AAberrationBase::BeginPlay()
 {
-	AVestibule::PlayerChangeCoachDelegate.AddDynamic(this, &AAberrationBase::Notify);
+	Super::BeginPlay();
+	
+	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), AAberrationManager::StaticClass()); Actor != nullptr)
+    {
+	    if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
+		{
+			AberrationManager = Manager;
+			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &AAberrationBase::Notify);
+		}
+    }
 }
 
-void AAberrationBase::Notify() { }
+void AAberrationBase::Notify(FActiveAberrations Aberrations) { }

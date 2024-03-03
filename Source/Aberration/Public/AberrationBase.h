@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Vestibule.h"
+#include "AberrationManager.h"
 #include "GameFramework/Actor.h"
 #include "AberrationBase.generated.h"
 
@@ -15,9 +15,17 @@ class ABERRATION_API AAberrationBase : public AActor
 public:	
 	AAberrationBase();
 
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleInstanceOnly)
+	AAberrationManager* AberrationManager;
+
 private:
-	UFUNCTION()
-	virtual void Notify();
+	// The ID of the aberration must match their ID in Aberrations' DataTable
+	UPROPERTY(VisibleDefaultsOnly)
+	int ID = 0;
 	
-	FOnPlayerChangeCoachDelegate PlayerChangeCoachDelegate;
+	UFUNCTION()
+	virtual void Notify(FActiveAberrations Aberrations);
 };
