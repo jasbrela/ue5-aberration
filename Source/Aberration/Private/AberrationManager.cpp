@@ -23,7 +23,8 @@ void AAberrationManager::BeginPlay()
 	Super::BeginPlay();
 	
 	GenerateSeed();
-	GenerateCoachAberrations();
+	ConvertTable();
+	GenerateNextCoachAberrations();
 }
 
 void AAberrationManager::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
@@ -32,8 +33,20 @@ void AAberrationManager::ChangeCoach(int Change)
 {
 	LOG_SUCCESS("Player changed from coach %i to coach %i", CurrentCoach, CurrentCoach + Change);
 	CurrentCoach += Change;
+	
+	GenerateNextCoachAberrations();
+}
 
-	ManagerUpdateAberrationsDelegate.Broadcast(GetActiveAberrations());
+void AAberrationManager::UpdateUnlockedAberrations()
+{
+	for (const FAberrationData* Data : AberrationsData)
+	{
+		if (Data->UnlockAfterCoach == CurrentCoach)
+		{
+			UnlockedAberrations.AddUnique(Data->ID);
+			AvailableAberrations.AddUnique(Data->ID);
+		}
+	}	
 }
 
 void AAberrationManager::GenerateSeed()
@@ -47,12 +60,26 @@ void AAberrationManager::GenerateSeed()
 	LOG_SUCCESS("Seed set to: %i", Seed);
 }
 
-void AAberrationManager::GenerateCoachAberrations()
+void AAberrationManager::GenerateNextCoachAberrations()
 {
-	/*for (const int i : NumberOfCoaches)
+	UpdateUnlockedAberrations();
+
+	LOG("CoachAberrations: %i", CoachAberrations.Num());
+	
+	if (CurrentCoach >= CoachAberrations.Num())
 	{
-		CoachAberrations[i].Array;
-	}*/
+		CoachAberrations.Add(FActiveAberrations());
+
+		const int RandomAberration = RandomStream.RandRange(0, AvailableAberrations.Num());
+
+		AvailableAberrations.Remove(RandomAberration);
+
+		if (CoachAberrations[CurrentCoach].Array.Num() > 0) CoachAberrations[CurrentCoach].Array.Empty();
+		
+		CoachAberrations[CurrentCoach].Array.AddUnique(RandomAberration);
+	}
+	
+	ManagerUpdateAberrationsDelegate.Broadcast(GetActiveAberrations());
 }
 
 void AAberrationManager::ConvertTable()

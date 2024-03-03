@@ -9,5 +9,6 @@ struct FActiveAberrations
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(VisibleAnywhere)
 	TArray<int> Array;
 };

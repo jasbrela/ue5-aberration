@@ -33,8 +33,13 @@ protected:
 private:
 	FRandomStream RandomStream;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleInstanceOnly)
 	TArray<FActiveAberrations> CoachAberrations;
+
+	TArray<int> AvailableAberrations;
+
+	UPROPERTY(VisibleInstanceOnly)
+	TArray<int> UnlockedAberrations;
 	
 	UPROPERTY(EditAnywhere)
 	int NumberOfCoaches;
@@ -54,8 +59,8 @@ private:
 
 	TArray<FAberrationData*> AberrationsData;
 
-	
-	void GenerateSeed();
-	void GenerateCoachAberrations();
 	void ConvertTable();
+	void GenerateSeed();
+	void UpdateUnlockedAberrations();
+	void GenerateNextCoachAberrations();
 };
