@@ -8,6 +8,8 @@
 
 class UBoxComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerChangeCoachDelegate);
+
 UCLASS()
 class ABERRATION_API AVestibule : public AActor
 {
@@ -16,6 +18,7 @@ class ABERRATION_API AVestibule : public AActor
 public:	
 	AVestibule();
 	virtual void Tick(float DeltaTime) override;
+	static FOnPlayerChangeCoachDelegate PlayerChangeCoachDelegate;
 
 protected:
 	virtual void BeginPlay() override;
