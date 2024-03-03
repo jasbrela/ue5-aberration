@@ -17,9 +17,31 @@ void AAberrationBase::BeginPlay()
 	    if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
 		{
 			AberrationManager = Manager;
+			//LOG("BeginPlay %s", *GetActorLabel());
+	    	
 			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &AAberrationBase::Notify);
 		}
     }
 }
 
-void AAberrationBase::Notify(FActiveAberrations Aberrations) { }
+void AAberrationBase::Notify(FActiveAberrations Aberrations)
+{
+	const bool Contains = Aberrations.Array.Contains(ID);
+	
+	if (bIsActive == Contains) return;
+	
+	bIsActive = Contains;
+
+	if (bIsActive != bReverseBehaviour)
+	{
+		Activate();
+	}
+	else
+	{
+		Deactivate();
+	}
+}
+
+void AAberrationBase::Activate() { }
+
+void AAberrationBase::Deactivate() { }

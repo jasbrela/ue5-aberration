@@ -46,7 +46,8 @@ void AVestibule::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!Cast<AAberrationCharacter>(OtherActor)) return;
-	LOG("Overlapped with %s", *OtherActor->GetName());
+	
+	LOG("Overlapped with %s", *OtherActor->GetActorLabel());
 
 	const FVector OtherLocation = OtherActor->GetActorLocation();
 	const FVector NewLocation = OtherVestibule->GetRelativePosition(GetOffset(OtherActor));

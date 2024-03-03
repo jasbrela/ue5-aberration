@@ -21,11 +21,20 @@ protected:
 	UPROPERTY(VisibleInstanceOnly)
 	AAberrationManager* AberrationManager;
 
+	UFUNCTION()
+	virtual void Activate();
+	
+	UFUNCTION()
+	virtual void Deactivate();
+	
 private:
 	// The ID of the aberration must match their ID in Aberrations' DataTable
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="Aberration")
 	int ID = 0;
 	
 	UFUNCTION()
-	virtual void Notify(FActiveAberrations Aberrations);
+	void Notify(FActiveAberrations Aberrations);
+
+	bool bIsActive = false;
+	bool bReverseBehaviour = false;
 };

@@ -14,7 +14,7 @@ AAberrationManager::AAberrationManager()
 
 FActiveAberrations AAberrationManager::GetActiveAberrations()
 {
-	if (CurrentCoach >= CoachAberrations.Num()) return FActiveAberrations();
+	if (CurrentCoach < 0 || CurrentCoach >= CoachAberrations.Num()) return FActiveAberrations();
 	return CoachAberrations[CurrentCoach];
 }
 
@@ -24,7 +24,8 @@ void AAberrationManager::BeginPlay()
 	
 	GenerateSeed();
 	ConvertTable();
-	GenerateNextCoachAberrations();
+
+	GetWorldTimerManager().SetTimer(BeginPlayDelayTimerHandle, this, &AAberrationManager::GenerateNextCoachAberrations, .2f, false);
 }
 
 void AAberrationManager::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
@@ -70,7 +71,14 @@ void AAberrationManager::GenerateNextCoachAberrations()
 	{
 		CoachAberrations.Add(FActiveAberrations());
 
-		const int RandomAberration = RandomStream.RandRange(0, AvailableAberrations.Num());
+		//const int RandomAberrationIndex = RandomStream.RandRange(0, AvailableAberrations.Num());
+		const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
+
+		if (AvailableAberrations.Num() == 0)
+		{
+			LOG_WARNING("No available aberrations found.");
+			return;
+		}
 
 		AvailableAberrations.Remove(RandomAberration);
 

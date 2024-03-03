@@ -32,6 +32,7 @@ protected:
 
 private:
 	FRandomStream RandomStream;
+	FTimerHandle BeginPlayDelayTimerHandle;
 	
 	UPROPERTY(VisibleInstanceOnly)
 	TArray<FActiveAberrations> CoachAberrations;
