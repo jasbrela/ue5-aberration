@@ -40,6 +40,9 @@ class AAberrationCharacter : public ACharacter
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	TSubclassOf<UCameraShakeBase> CameraShake;
 	
 public:
 	AAberrationCharacter();
