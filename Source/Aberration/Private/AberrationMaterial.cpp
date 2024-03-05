@@ -17,11 +17,11 @@ void AAberrationMaterial::BeginPlay()
 void AAberrationMaterial::Activate()
 {
 	//LOG("Activated");
-	Mesh->SetMaterial(0, ChangedMaterial);
+	Mesh->SetMaterial(MaterialIndex, ChangedMaterial);
 }
 
 void AAberrationMaterial::Deactivate()
 {
 	//LOG("Deactivated");
-	Mesh->SetMaterial(0, DefaultMaterial);
+	Mesh->SetMaterial(MaterialIndex, DefaultMaterial);
 }

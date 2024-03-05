@@ -25,6 +25,9 @@ private:
 	virtual void Deactivate() override;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
+    int MaterialIndex;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Aberration")
 	UMaterialInterface* DefaultMaterial;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
