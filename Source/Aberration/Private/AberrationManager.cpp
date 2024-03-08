@@ -65,7 +65,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 {
 	UpdateUnlockedAberrations();
 
-	LOG("CoachAberrations: %i", CoachAberrations.Num());
+	//LOG("CoachAberrations: %i", CoachAberrations.Num());
 	
 	if (CurrentCoach >= CoachAberrations.Num())
 	{

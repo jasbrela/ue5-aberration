@@ -3,9 +3,10 @@
 
 #include "Terminal.h"
 
-#include "Camera/CameraComponent.h"
+#include "Aberration/AberrationCharacter.h"
+#include "Aberration/AberrationPlayerController.h"
 #include "Components/WidgetComponent.h"
-#include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ATerminal::ATerminal()
 {
@@ -13,29 +14,57 @@ ATerminal::ATerminal()
 
 	TerminalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TerminalMesh"));
 	ScreenWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScreenWidget"));
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FocusCamera"));
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	
 	SetRootComponent(TerminalMesh);
-	SpringArm->SetupAttachment(RootComponent);
-	Camera->SetupAttachment(SpringArm);
 	ScreenWidget->SetupAttachment(RootComponent);
+}
+
+void ATerminal::OnExitRange()
+{
+	ScreenWidget->SetVisibility(false);
+}
+
+void ATerminal::OnEnterRange()
+{
+	ScreenWidget->SetVisibility(true);
 }
 
 void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (ACharacter* BaseCharacter = UGameplayStatics::GetPlayerCharacter(this, 0))
+	{
+		Character = Cast<AAberrationCharacter>(BaseCharacter);
+		
+		if (Character)
+		{
+			AController* BaseController = Character->GetController();
+			Controller = Cast<AAberrationPlayerController>(BaseController);
+		}
+	}
+}
+
+void ATerminal::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
+
+void ATerminal::Interact()
+{
+	//LOG("[%s] Interact", *GetActorLabel());
+
+	bIsFocused = !bIsFocused;
+
+	Controller->SetIgnoreMoveInput(bIsFocused);
+	Controller->SetIgnoreLookInput(bIsFocused);
+	Controller->bShowMouseCursor = bIsFocused;
 	
-}
-
-void ATerminal::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-UCameraComponent* ATerminal::GetFocusedCamera()
-{
-	return Camera;
+	if (bIsFocused)
+	{
+		Controller->SetViewTargetWithBlend(FocusActor, 1);
+	} else
+	{
+		Controller->SetViewTargetWithBlend(Character, 1);
+	}
+	
+	//GetFocusedCamera()->SetActive(bIsFocused);	
 }
 

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class UCheckBox;
 class UCanvasPanel;
 class UImage;
 class UButton;

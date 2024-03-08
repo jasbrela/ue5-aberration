@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AberrationCharacter.h"
+
+#include "DebugMacros.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -8,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "InteractionComponent.h"
+#include "Interactive.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -18,9 +22,10 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AAberrationCharacter::AAberrationCharacter()
 {
-	// Set size for collision capsule
+	PrimaryActorTick.bCanEverTick = true;
+	
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+	
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -37,12 +42,105 @@ AAberrationCharacter::AAberrationCharacter()
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 }
 
+void AAberrationCharacter::InteractionLineTrace()
+{
+	const UWorld* World = GetWorld();
+	
+	if (World == nullptr) return;
+	
+	FVector TraceStart = GetFirstPersonCameraComponent()->GetComponentLocation();
+	FVector TraceEnd = TraceStart + GetFirstPersonCameraComponent()->GetForwardVector() * InteractionRange;
+	
+	//LOG("[%s] Start: %s End: %s", *GetOwner()->GetActorLabel(), *TraceStart.ToString(), *TraceEnd.ToString());
+
+	FHitResult Hit;
+	
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	
+	World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, QueryParams);
+	
+	//DrawDebugLine(World, TraceStart, TraceEnd, FColor::Orange, false);
+
+	AActor* ActorHit = Hit.GetActor();
+	
+	if (Hit.bBlockingHit && IsValid(ActorHit))
+	{
+		if (IInteractive* Interactive = Cast<IInteractive>(ActorHit))
+		{
+			if (CurrentInteractiveActor != Interactive) {
+				
+				if (Interactive->bIsInteractive)
+				{
+					SetInteractiveObject(Interactive);
+					//InteractionWidget->ToggleInteraction(true, CurrentInteractiveActor->Tooltip);
+					CurrentInteractiveActor->OnEnterRange();
+				} else
+				{
+					SetInteractiveObject(nullptr);
+					//InteractionWidget->ToggleInteraction(false);
+				}
+			}
+			else if (!CurrentInteractiveActor->bIsInteractive)
+			{
+				SetInteractiveObject(nullptr);
+				/*CurrentInteractiveActor->OnExitRange();
+				CurrentInteractiveActor = nullptr;*/
+				//InteractionWidget->ToggleInteraction(false);
+			}
+		}
+	} else
+	{
+		SetInteractiveObject(nullptr);
+		/*if (CurrentInteractiveActor != nullptr)
+		{
+			CurrentInteractiveActor->OnExitRange();
+			CurrentInteractiveActor = nullptr;
+			InteractionWidget->ToggleInteraction(false);
+			
+			//UE_LOG(LogTemp, Warning, TEXT("No Interactive"));
+		}*/
+	}
+}
+
+void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
+{
+	if (CurrentInteractiveActor == Interactive) return;
+	//LOG("SetInteractiveObject, %s, %s", (CurrentInteractiveActor == nullptr ? TEXT("nullptr") : TEXT("actor")), (CurrentInteractiveActor == nullptr ? TEXT("nullptr") : TEXT("actor")));
+
+	if (CurrentInteractiveActor != nullptr)
+	{
+		CurrentInteractiveActor->OnExitRange();
+	}
+
+	CurrentInteractiveActor = Interactive;
+
+	if (CurrentInteractiveActor != nullptr)
+	{
+		CurrentInteractiveActor->OnEnterRange();
+	}
+	
+		
+	//FString TooltipText = CurrentInteractiveActor != nullptr ? TEXT("[E] " + Interactive->Tooltip) : TEXT("");
+	//InteractionWidget->ToggleTooltip(CurrentInteractiveActor != nullptr, TooltipText);
+}
+
+void AAberrationCharacter::Interact(const FInputActionValue& Value)
+{
+	if (!Value.Get<bool>()) return;
+
+	LOG("interact");
+
+	if (CurrentInteractiveActor)
+	{
+		CurrentInteractiveActor->Interact();
+	}
+}
+
 void AAberrationCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
-	// Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -57,22 +155,24 @@ void AAberrationCharacter::BeginPlay()
 	}
 }
 
+void AAberrationCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	InteractionLineTrace();
+}
+
 //////////////////////////////////////////////////////////////////////////// Input
 
 void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
-		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAberrationCharacter::Move);
-
-		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAberrationCharacter::Look);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AAberrationCharacter::Interact);
 	}
 	else
 	{
@@ -83,12 +183,10 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void AAberrationCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller)
 	{
-		// add movement 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
 	}
@@ -96,12 +194,10 @@ void AAberrationCharacter::Move(const FInputActionValue& Value)
 
 void AAberrationCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller)
 	{
-		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
