@@ -51,7 +51,10 @@ void AAberrationCharacter::BeginPlay()
 		}
 	}
 
-	UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake);
+	if (CameraShake)
+	{
+		UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
