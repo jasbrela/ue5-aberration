@@ -21,7 +21,30 @@ class ABERRATION_API UTerminalWidget : public UUserWidget
 public:
     UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
+	void ShowReport();
 
+protected:
+	void OnClickOption(int Option);
+	
+	UFUNCTION()
+	void HideReport();
+	
+	UFUNCTION()
+	void OnClickOption1();
+	
+	UFUNCTION()
+	void OnClickOption2();
+	
+	UFUNCTION()
+	void OnClickOption3();
+
+private:
+	TArray<UButton*> ButtonOptions;
+	TArray<bool> ButtonStates;
+	
+	FButtonStyle DefaultStyle;
+	FButtonStyle PressedStyle;
+	
 	UPROPERTY(meta = (BindWidget))
 	UImage* Background;
 
@@ -29,10 +52,10 @@ public:
 	UCanvasPanel* QuestionsCanvas;
 
 	UPROPERTY(EditDefaultsOnly)
-	UTexture* SuccessTexture;
+	UTexture2D* SuccessTexture;
 
 	UPROPERTY(EditDefaultsOnly)
-	UTexture* QuestionTexture;
+	UTexture2D* QuestionTexture;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuestionNumber;
@@ -63,4 +86,7 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton* Confirm;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ConfirmText;
 };
