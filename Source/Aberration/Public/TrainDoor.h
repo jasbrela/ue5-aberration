@@ -46,7 +46,10 @@ private:
 	float ClosedDoorYLocation = 270;
 
 	UPROPERTY(EditAnywhere, Category="Door")
-	float OpenSpeed = 10;
+	float OpenSpeed = 200;
+
+	UPROPERTY(EditAnywhere, Category="Door")
+	float CloseSpeed = 200;
 
 	UPROPERTY(EditInstanceOnly, Category="Door")
 	UStaticMeshComponent* DoorMesh;

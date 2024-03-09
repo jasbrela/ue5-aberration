@@ -4,6 +4,7 @@
 #include "TerminalWidget.h"
 
 #include "Terminal.h"
+#include "Aberration/DebugMacros.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
@@ -28,17 +29,11 @@ void UTerminalWidget::NativeConstruct()
 	ButtonStates.Add(false);
 	ButtonStates.Add(false);
 	ButtonStates.Add(false);
-
-	DefaultStyle = ButtonOptions[0]->GetStyle();
-	
-	PressedStyle = ButtonOptions[0]->GetStyle();
-	PressedStyle.Normal = DefaultStyle.Pressed;
-	PressedStyle.Hovered = DefaultStyle.Pressed;
 }
 
 void UTerminalWidget::ShowReport()
 {
-	bMultipleChoices = false;
+	bMultipleAnswers = false;
 	Question->SetText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
 	Option1Text->SetText(FText::FromString(TEXT("Yes")));
 	Option2Text->SetText(FText::FromString(TEXT("No")));
@@ -62,7 +57,7 @@ void UTerminalWidget::OnClickOption(int Option)
 {
 	const int Index = Option - 1;
 	
-	if (bMultipleChoices)
+	if (bMultipleAnswers)
 	{
 		ButtonStates[Index] = !ButtonStates[Index];
 		
@@ -77,7 +72,7 @@ void UTerminalWidget::OnClickOption(int Option)
 		if (ButtonStates[Index]) // SELECTED
 		{
 			ButtonStates[Index] = false;
-			UpdateButtonStyle(Option);
+			UpdateButtonStyle(Index);
 			ToggleConfirmButton(false);
 		}
 		else
@@ -114,7 +109,7 @@ void UTerminalWidget::NextPage()
 	bCanConfirm = true;
 	
 	// depend on the question
-	bMultipleChoices = true;
+	bMultipleAnswers = true;
 }
 
 void UTerminalWidget::ConfirmReport()

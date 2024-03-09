@@ -31,7 +31,7 @@ private:
 	void ToggleConfirmButton(bool Visible);
 	void ResetOptionsState();
 	void UpdateButtonStyle(int Index);
-	bool bMultipleChoices = false;
+	bool bMultipleAnswers = false;
 	bool bCanConfirm = false;
 	
 	UFUNCTION()
@@ -50,8 +50,10 @@ private:
 	ATerminal* Terminal;
 	TArray<UButton*> ButtonOptions;
 	TArray<bool> ButtonStates;
-	
+
+	UPROPERTY(EditDefaultsOnly)
 	FButtonStyle DefaultStyle;
+	UPROPERTY(EditDefaultsOnly)
 	FButtonStyle PressedStyle;
 	
 	UPROPERTY(meta = (BindWidget))

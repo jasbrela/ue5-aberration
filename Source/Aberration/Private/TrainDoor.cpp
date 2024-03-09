@@ -56,7 +56,7 @@ void ATrainDoor::DoorMovement(float DeltaTime)
 		return;
 	}
 
-	const float YOffsetToAdd = OpenSpeed * DeltaTime * (bIsOpening ? 1 : -1);
+	const float YOffsetToAdd = (bIsOpening ? OpenSpeed : CloseSpeed) * DeltaTime * (bIsOpening ? 1 : -1);
 	
 	const FVector LocationToAdd = FVector(0, YOffsetToAdd, 0);
 	DoorMesh->AddRelativeLocation(LocationToAdd);
