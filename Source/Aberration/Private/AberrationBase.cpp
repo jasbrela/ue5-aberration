@@ -18,7 +18,6 @@ void AAberrationBase::BeginPlay()
 		{
 			AberrationManager = Manager;
 			//LOG("BeginPlay %s", *GetActorLabel());
-	    	
 			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &AAberrationBase::Notify);
 		}
     }

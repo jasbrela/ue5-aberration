@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "AberrationCharacter.generated.h"
 
+class UInteractionWidget;
 class IInteractive;
 class UInteractionComponent;
 class UInputComponent;
@@ -23,7 +24,15 @@ class AAberrationCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
+	AAberrationCharacter();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction;
+	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	void ToggleInteractiveWidget(bool visible);
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -32,14 +41,11 @@ protected:
 	void Interact(const FInputActionValue& Value);
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
-public:
-	AAberrationCharacter();
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
-	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
 private:
+	UPROPERTY(EditDefaultsOnly, Category="Interaction")
+	TSubclassOf<UUserWidget> InteractionClass;
+	UPROPERTY()
+	UInteractionWidget* InteractionWidget;
 	
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* Mesh1P;

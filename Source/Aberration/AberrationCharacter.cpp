@@ -11,7 +11,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "InteractionComponent.h"
+#include "InteractionWidget.h"
 #include "Interactive.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -119,7 +121,10 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 	{
 		CurrentInteractiveActor->OnEnterRange();
 	}
-	
+
+	const bool IsInteractiveValid = CurrentInteractiveActor != nullptr;
+	const FString Tooltip = IsInteractiveValid ? CurrentInteractiveActor->Tooltip : TEXT("");
+	InteractionWidget->ToggleTooltip(IsInteractiveValid, Tooltip);
 		
 	//FString TooltipText = CurrentInteractiveActor != nullptr ? TEXT("[E] " + Interactive->Tooltip) : TEXT("");
 	//InteractionWidget->ToggleTooltip(CurrentInteractiveActor != nullptr, TooltipText);
@@ -128,20 +133,30 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 void AAberrationCharacter::Interact(const FInputActionValue& Value)
 {
 	if (!Value.Get<bool>()) return;
-
-	LOG("interact");
-
+	
 	if (CurrentInteractiveActor)
 	{
 		CurrentInteractiveActor->Interact();
 	}
 }
 
+void AAberrationCharacter::ToggleInteractiveWidget(bool visible)
+{
+	InteractionWidget->SetVisibility(visible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
 void AAberrationCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (const UWorld* World = GetWorld(); InteractionClass && World)
+	{
+		InteractionWidget = CreateWidget<UInteractionWidget>(UGameplayStatics::GetPlayerController(World, 0),
+															 InteractionClass, TEXT("InteractionUI"));
+		InteractionWidget->AddToViewport(0);
+	}
+	
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{

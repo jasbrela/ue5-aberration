@@ -7,12 +7,18 @@
 #include "GameFramework/Actor.h"
 #include "Terminal.generated.h"
 
+struct FActiveAberrations;
+class AAberrationManager;
+class UTerminalWidget;
 class AAberrationPlayerController;
 class AAberrationCharacter;
 class USpringArmComponent;
 class UWidgetComponent;
 class UCameraComponent;
 class UWidget;
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerFillReportDelegate);
 
 UCLASS()
 class ABERRATION_API ATerminal : public AActor, public IInteractive
@@ -26,6 +32,12 @@ public:
 	virtual void Interact() override;
 	virtual void OnExitRange() override;
 	virtual void OnEnterRange() override;
+	
+	FOnPlayerFillReportDelegate PlayerFillReportDelegate;
+
+	UFUNCTION()
+	void UpdateReport(FActiveAberrations Aberrations);
+	void ConfirmReport();
 
 protected:
 	virtual void BeginPlay() override;
@@ -34,7 +46,10 @@ private:
 	bool bIsFocused = false;
 	
 	UPROPERTY(EditInstanceOnly)
-	UWidgetComponent* ScreenWidget;
+	UWidgetComponent* ScreenWidgetComponent;
+
+	UPROPERTY()
+	UTerminalWidget* ScreenWidget;
 
 	UPROPERTY(EditInstanceOnly)
 	AActor* FocusActor;
@@ -48,4 +63,6 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	APlayerController* Controller;
 
+	UPROPERTY(VisibleInstanceOnly)
+	AAberrationManager* AberrationManager;
 };

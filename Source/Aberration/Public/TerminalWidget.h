@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class ATerminal;
 class UCheckBox;
 class UCanvasPanel;
 class UImage;
@@ -22,12 +23,16 @@ public:
     UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
 	void ShowReport();
+	void Inject(ATerminal* TerminalParent);
 
-protected:
+private:
 	void OnClickOption(int Option);
-	
-	UFUNCTION()
-	void HideReport();
+	void ConfirmReport();
+	void ToggleConfirmButton(bool Visible);
+	void ResetOptionsState();
+	void UpdateButtonStyle(int Index);
+	bool bMultipleChoices = false;
+	bool bCanConfirm = false;
 	
 	UFUNCTION()
 	void OnClickOption1();
@@ -38,7 +43,11 @@ protected:
 	UFUNCTION()
 	void OnClickOption3();
 
-private:
+	UFUNCTION()
+	void NextPage();
+
+	UPROPERTY()
+	ATerminal* Terminal;
 	TArray<UButton*> ButtonOptions;
 	TArray<bool> ButtonStates;
 	
@@ -53,40 +62,34 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* SuccessTexture;
-
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* QuestionTexture;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuestionNumber;
-
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Question;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Option1Text;
-	
 	UPROPERTY(meta = (BindWidget))
 	UButton* Option1;
 	
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Option2Text;
-
 	UPROPERTY(meta = (BindWidget))
 	UButton* Option2;
 
 	
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Option3Text;
-
-	UPROPERTY(meta = (BindWidget))
 	UButton* Option3;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Option3Text;
 
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton* Confirm;
-
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ConfirmText;
 };

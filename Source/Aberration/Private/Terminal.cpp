@@ -3,35 +3,44 @@
 
 #include "Terminal.h"
 
+#include "AberrationManager.h"
+#include "TerminalWidget.h"
 #include "Aberration/AberrationCharacter.h"
 #include "Aberration/AberrationPlayerController.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
+
+class AAberrationManager;
 
 ATerminal::ATerminal()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	TerminalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TerminalMesh"));
-	ScreenWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScreenWidget"));
+	ScreenWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScreenWidget"));
+
+	Tooltip = TEXT("Fill Report");
 	
 	SetRootComponent(TerminalMesh);
-	ScreenWidget->SetupAttachment(RootComponent);
+	ScreenWidgetComponent->SetupAttachment(RootComponent);
 }
 
 void ATerminal::OnExitRange()
 {
-	ScreenWidget->SetVisibility(false);
+	ScreenWidgetComponent->SetVisibility(false);
 }
 
 void ATerminal::OnEnterRange()
 {
-	ScreenWidget->SetVisibility(true);
+	ScreenWidgetComponent->SetVisibility(true);
 }
 
 void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	ScreenWidget = Cast<UTerminalWidget>(ScreenWidgetComponent->GetWidget());
+	ScreenWidget->Inject(this);
 
 	if (ACharacter* BaseCharacter = UGameplayStatics::GetPlayerCharacter(this, 0))
 	{
@@ -41,6 +50,15 @@ void ATerminal::BeginPlay()
 		{
 			AController* BaseController = Character->GetController();
 			Controller = Cast<AAberrationPlayerController>(BaseController);
+		}
+	}
+
+	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), AAberrationManager::StaticClass()); Actor != nullptr)
+	{
+		if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
+		{
+			//LOG("BeginPlay %s", *GetActorLabel());
+			Manager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ATerminal::UpdateReport);
 		}
 	}
 }
@@ -64,7 +82,22 @@ void ATerminal::Interact()
 	{
 		Controller->SetViewTargetWithBlend(Character, 1);
 	}
+
+	Character->ToggleInteractiveWidget(!bIsFocused);
 	
-	//GetFocusedCamera()->SetActive(bIsFocused);	
+	//GetFocusedCamera()->SetActive(bIsFocused);
 }
 
+void ATerminal::UpdateReport(FActiveAberrations Aberrations)
+{
+	
+	if (ScreenWidget)
+	{
+		ScreenWidget->ShowReport();
+	}
+}
+
+void ATerminal::ConfirmReport()
+{
+	PlayerFillReportDelegate.Broadcast();
+}

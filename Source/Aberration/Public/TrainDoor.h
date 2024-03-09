@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interactive.h"
 #include "GameFramework/Actor.h"
 #include "TrainDoor.generated.h"
 
 class UBoxComponent;
 
 UCLASS()
-class ABERRATION_API ATrainDoor : public AActor
+class ABERRATION_API ATrainDoor : public AActor, public IInteractive
 {
 	GENERATED_BODY()
 	
@@ -19,7 +20,14 @@ public:
 	void OpenDoor();
 	void CloseDoor();
 
+	virtual void Interact() override;
+	virtual void OnExitRange() override;
+	virtual void OnEnterRange() override;
+
 protected:
+	UFUNCTION()
+	void ReleaseAccess();
+	
 	virtual void BeginPlay() override;
 	
 private:
@@ -30,7 +38,6 @@ private:
 	
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 
 	UPROPERTY(EditAnywhere, Category="Door")
 	float OpenDoorYLocation = 113;
