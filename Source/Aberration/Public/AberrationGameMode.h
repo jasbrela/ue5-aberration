@@ -13,6 +13,7 @@ class AAberrationGameMode : public AGameModeBase
 
 public:
 	AAberrationGameMode();
+	
 };
 
 

@@ -4,7 +4,7 @@
 #include "../Public/InteractionComponent.h"
 
 #include "Interactive.h"
-#include "Aberration/DebugMacros.h"
+#include "DebugMacros.h"
 #include "Camera/CameraComponent.h"
 
 UInteractionComponent::UInteractionComponent()

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+struct FTerminalButtonData;
 class ATerminal;
 class UCheckBox;
 class UCanvasPanel;
@@ -24,6 +25,8 @@ public:
     virtual void NativeConstruct() override;
 	void ShowReport();
 	void Inject(ATerminal* TerminalParent);
+	void ResetCorrectAnswers();
+	void SetCorrectAnswer(int Option, bool IsCorrect);
 
 private:
 	void OnClickOption(int Option);
@@ -31,6 +34,7 @@ private:
 	void ToggleConfirmButton(bool Visible);
 	void ResetOptionsState();
 	void UpdateButtonStyle(int Index);
+	void GenerateQuestion();
 	bool bMultipleAnswers = false;
 	bool bCanConfirm = false;
 	
@@ -48,8 +52,7 @@ private:
 
 	UPROPERTY()
 	ATerminal* Terminal;
-	TArray<UButton*> ButtonOptions;
-	TArray<bool> ButtonStates;
+	TArray<FTerminalButtonData> Buttons;
 
 	UPROPERTY(EditDefaultsOnly)
 	FButtonStyle DefaultStyle;

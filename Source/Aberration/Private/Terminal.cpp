@@ -5,8 +5,8 @@
 
 #include "AberrationManager.h"
 #include "TerminalWidget.h"
-#include "Aberration/AberrationCharacter.h"
-#include "Aberration/AberrationPlayerController.h"
+#include "AberrationCharacter.h"
+#include "AberrationPlayerController.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -57,8 +57,9 @@ void ATerminal::BeginPlay()
 	{
 		if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
 		{
+			AberrationManager = Manager;
 			//LOG("BeginPlay %s", *GetActorLabel());
-			Manager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ATerminal::UpdateReport);
+			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ATerminal::UpdateReport);
 		}
 	}
 }
@@ -90,6 +91,30 @@ void ATerminal::Interact()
 
 void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 {
+	if (AberrationManager->GetCurrentCoach() <= 1)
+	{
+		ConfirmReport();
+		return;
+	}
+	
+	ScreenWidget->ResetCorrectAnswers();
+
+	const FActiveAberrations Last = AberrationManager->GetLastActiveAberrations();
+	
+	if (Last.Array.Num() > 0 && AberrationManager)
+	{
+		for (int i = 0; i < AberrationManager->AberrationsData.Num(); i++)
+		{
+			if (Last.Array.Contains(AberrationManager->AberrationsData[i]->ID))
+			{
+				ActiveAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->AberrationName);
+			}
+		}
+		if (ScreenWidget) ScreenWidget->SetCorrectAnswer(1, true);
+	} else
+	{
+		if (ScreenWidget) ScreenWidget->SetCorrectAnswer(2, true);
+	}
 	
 	if (ScreenWidget)
 	{
@@ -100,4 +125,9 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 void ATerminal::ConfirmReport()
 {
 	PlayerFillReportDelegate.Broadcast();
+}
+
+TArray<FString> ATerminal::GetActiveAberrationsNames()
+{
+	return ActiveAberrationsNames;
 }

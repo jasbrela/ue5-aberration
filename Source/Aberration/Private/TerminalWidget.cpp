@@ -3,8 +3,9 @@
 
 #include "TerminalWidget.h"
 
+#include "FTerminalButtonData.h"
 #include "Terminal.h"
-#include "Aberration/DebugMacros.h"
+#include "DebugMacros.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
@@ -21,14 +22,9 @@ void UTerminalWidget::NativeConstruct()
 	Option3->OnClicked.AddDynamic(this, &UTerminalWidget::OnClickOption3);
 	Confirm->OnClicked.AddDynamic(this, &UTerminalWidget::NextPage);
 
-	// todo: create struct for this
-	ButtonOptions.Add(Option1);
-	ButtonOptions.Add(Option2);
-	ButtonOptions.Add(Option3);
-
-	ButtonStates.Add(false);
-	ButtonStates.Add(false);
-	ButtonStates.Add(false);
+	Buttons.Add(FTerminalButtonData(Option1));
+	Buttons.Add(FTerminalButtonData(Option2));
+	Buttons.Add(FTerminalButtonData(Option3));
 }
 
 void UTerminalWidget::ShowReport()
@@ -49,6 +45,23 @@ void UTerminalWidget::Inject(ATerminal* TerminalParent)
 	Terminal = TerminalParent;
 }
 
+void UTerminalWidget::ResetCorrectAnswers()
+{
+	for (int i = 0; i < Buttons.Num(); i++)
+	{
+		if (Buttons[i].bIsCorrect)
+		{
+			Buttons[i].bIsCorrect = false;
+			UpdateButtonStyle(i);
+		}
+	}
+}
+
+void UTerminalWidget::SetCorrectAnswer(int Option, bool IsCorrect)
+{
+	Buttons[Option-1].bIsCorrect = IsCorrect;
+}
+
 void UTerminalWidget::OnClickOption1() { OnClickOption(1); }
 void UTerminalWidget::OnClickOption2() { OnClickOption(2); }
 void UTerminalWidget::OnClickOption3() { OnClickOption(3); }
@@ -59,19 +72,19 @@ void UTerminalWidget::OnClickOption(int Option)
 	
 	if (bMultipleAnswers)
 	{
-		ButtonStates[Index] = !ButtonStates[Index];
+		Buttons[Index].bIsSelected = !Buttons[Index].bIsSelected;
 		
 		UpdateButtonStyle(Index);
 		
-		const bool AnySelected = ButtonStates.Contains(true);
+		const bool AnySelected = Buttons.ContainsByPredicate([](FTerminalButtonData Button) { return Button.bIsSelected; });
 
 		ToggleConfirmButton(AnySelected);
 	}
 	else
 	{
-		if (ButtonStates[Index]) // SELECTED
+		if (Buttons[Index].bIsSelected)
 		{
-			ButtonStates[Index] = false;
+			Buttons[Index].bIsSelected = false;
 			UpdateButtonStyle(Index);
 			ToggleConfirmButton(false);
 		}
@@ -79,7 +92,7 @@ void UTerminalWidget::OnClickOption(int Option)
 		{
 			ResetOptionsState();
 			
-			ButtonStates[Index] = true;
+			Buttons[Index].bIsSelected = true;
 			UpdateButtonStyle(Index);
 			ToggleConfirmButton(true);
 		}
@@ -95,7 +108,7 @@ void UTerminalWidget::NextPage()
 		return;
 	}
 
-	if (ButtonStates[1])
+	if (Buttons[1].bIsSelected)
 	{
 		ConfirmReport();
 		return;
@@ -119,9 +132,9 @@ void UTerminalWidget::ConfirmReport()
 	QuestionsCanvas->SetVisibility(ESlateVisibility::Hidden);
 	Background->SetBrushFromTexture(SuccessTexture, true);
 
-	for (UButton* Button : ButtonOptions)
+	for (FTerminalButtonData ButtonData : Buttons)
 	{
-		Button->SetStyle(DefaultStyle);
+		ButtonData.Button->SetStyle(DefaultStyle);
 	}
 }
 
@@ -132,11 +145,11 @@ void UTerminalWidget::ToggleConfirmButton(bool Visible)
 
 void UTerminalWidget::ResetOptionsState()
 {
-	for (int i = 0; i < ButtonStates.Num(); i++)
+	for (int i = 0; i < Buttons.Num(); i++)
 	{
-		if (ButtonStates[i])
+		if (Buttons[i].bIsSelected)
 		{
-			ButtonStates[i] = false;
+			Buttons[i].bIsSelected = false;
 			UpdateButtonStyle(i);
 		}
 	}
@@ -144,11 +157,17 @@ void UTerminalWidget::ResetOptionsState()
 
 void UTerminalWidget::UpdateButtonStyle(int Index)
 {
-	if (ButtonStates[Index])
+	if (Buttons[Index].bIsSelected)
 	{
-		ButtonOptions[Index]->SetStyle(PressedStyle);
+		Buttons[Index].Button->SetStyle(PressedStyle);
 	} else
 	{
-		ButtonOptions[Index]->SetStyle(DefaultStyle);
+		Buttons[Index].Button->SetStyle(DefaultStyle);
 	}
+}
+
+void UTerminalWidget::GenerateQuestion()
+{
+	const TArray<FString> Names = Terminal->GetActiveAberrationsNames();
+	const bool CoachContainsAberration = Names.Num() > 0;
 }

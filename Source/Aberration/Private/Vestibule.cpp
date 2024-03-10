@@ -4,8 +4,8 @@
 #include "Vestibule.h"
 
 #include "AberrationManager.h"
-#include "Aberration/AberrationCharacter.h"
-#include "Aberration/DebugMacros.h"
+#include "AberrationCharacter.h"
+#include "DebugMacros.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 

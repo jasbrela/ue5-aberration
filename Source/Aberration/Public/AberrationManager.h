@@ -22,10 +22,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	FActiveAberrations GetActiveAberrations();
+	FActiveAberrations GetLastActiveAberrations();
+	int GetCurrentCoach() const;
 
 	void ChangeCoach(int Change);
 
 	FOnManagerUpdateAberrationsDelegate ManagerUpdateAberrationsDelegate;
+	
+	TArray<FAberrationData*> AberrationsData;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -36,7 +40,7 @@ private:
 	
 	UPROPERTY(VisibleInstanceOnly)
 	TArray<FActiveAberrations> CoachAberrations;
-
+	
 	TArray<int> AvailableAberrations;
 
 	UPROPERTY(VisibleInstanceOnly)
@@ -51,17 +55,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	int Seed;
 	
-	// If checked, game will always run using the "Seed" value.
-	UPROPERTY(EditAnywhere)
-	bool OverrideSeed = false;
-	
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AberrationsDataTable;
-
-	TArray<FAberrationData*> AberrationsData;
-
+	
 	void ConvertTable();
-	void GenerateSeed();
 	void UpdateUnlockedAberrations();
 	void GenerateNextCoachAberrations();
 };

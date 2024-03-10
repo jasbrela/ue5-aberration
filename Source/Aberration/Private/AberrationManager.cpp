@@ -3,8 +3,9 @@
 
 #include "AberrationManager.h"
 
+#include "AberrationGameState.h"
 #include "FActiveAberrations.h"
-#include "Aberration/DebugMacros.h"
+#include "DebugMacros.h"
 
 
 AAberrationManager::AAberrationManager()
@@ -14,17 +15,41 @@ AAberrationManager::AAberrationManager()
 
 FActiveAberrations AAberrationManager::GetActiveAberrations()
 {
-	if (CurrentCoach < 0 || CurrentCoach >= CoachAberrations.Num()) return FActiveAberrations();
+	if (CoachAberrations.Num() == 0 || CurrentCoach < 0 || CurrentCoach >= CoachAberrations.Num()) return FActiveAberrations();
 	return CoachAberrations[CurrentCoach];
+}
+
+FActiveAberrations AAberrationManager::GetLastActiveAberrations()
+{
+	const int LastCoach = CurrentCoach - 1;
+	
+	if (CoachAberrations.Num() == 0 || LastCoach < 0 || LastCoach >= CoachAberrations.Num()) return FActiveAberrations();
+	return CoachAberrations[LastCoach];
+}
+
+int AAberrationManager::GetCurrentCoach() const
+{
+	return CurrentCoach;
 }
 
 void AAberrationManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GenerateSeed();
-	ConvertTable();
 
+	if (UWorld* World = GetWorld())
+	{
+		if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
+		{
+			RandomStream = State->GetRandomStream();
+		}
+	}
+	else
+	{
+		RandomStream = FRandomStream(0);
+	}
+	
+	ConvertTable();
+	
 	GetWorldTimerManager().SetTimer(BeginPlayDelayTimerHandle, this, &AAberrationManager::GenerateNextCoachAberrations, .2f, false);
 }
 
@@ -50,17 +75,6 @@ void AAberrationManager::UpdateUnlockedAberrations()
 	}	
 }
 
-void AAberrationManager::GenerateSeed()
-{
-	if (!OverrideSeed)
-	{
-		Seed = FMath::RandRange(10000, 99999);
-	}
-	
-	RandomStream = FRandomStream(Seed);
-	LOG_SUCCESS("Seed set to: %i", Seed);
-}
-
 void AAberrationManager::GenerateNextCoachAberrations()
 {
 	UpdateUnlockedAberrations();
@@ -72,19 +86,19 @@ void AAberrationManager::GenerateNextCoachAberrations()
 		CoachAberrations.Add(FActiveAberrations());
 
 		//const int RandomAberrationIndex = RandomStream.RandRange(0, AvailableAberrations.Num());
-		const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
-
 		if (AvailableAberrations.Num() == 0)
 		{
 			LOG_WARNING("No available aberrations found.");
-			return;
+		} else
+		{
+			const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
+
+			AvailableAberrations.Remove(RandomAberration);
+
+			if (CoachAberrations[CurrentCoach].Array.Num() > 0) CoachAberrations[CurrentCoach].Array.Empty();
+			
+			CoachAberrations[CurrentCoach].Array.AddUnique(RandomAberration);
 		}
-
-		AvailableAberrations.Remove(RandomAberration);
-
-		if (CoachAberrations[CurrentCoach].Array.Num() > 0) CoachAberrations[CurrentCoach].Array.Empty();
-		
-		CoachAberrations[CurrentCoach].Array.AddUnique(RandomAberration);
 	}
 	
 	ManagerUpdateAberrationsDelegate.Broadcast(GetActiveAberrations());

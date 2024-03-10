@@ -5,8 +5,8 @@
 
 #include "AberrationManager.h"
 #include "Terminal.h"
-#include "Aberration/AberrationCharacter.h"
-#include "Aberration/DebugMacros.h"
+#include "AberrationCharacter.h"
+#include "DebugMacros.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 

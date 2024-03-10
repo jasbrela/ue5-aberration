@@ -38,11 +38,14 @@ public:
 	UFUNCTION()
 	void UpdateReport(FActiveAberrations Aberrations);
 	void ConfirmReport();
+	TArray<FString> GetActiveAberrationsNames();
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	TArray<FString> ActiveAberrationsNames;
+
 	bool bIsFocused = false;
 	
 	UPROPERTY(EditInstanceOnly)
@@ -50,7 +53,7 @@ private:
 
 	UPROPERTY()
 	UTerminalWidget* ScreenWidget;
-
+	
 	UPROPERTY(EditInstanceOnly)
 	AActor* FocusActor;
 
