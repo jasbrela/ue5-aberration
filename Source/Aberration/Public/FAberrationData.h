@@ -33,4 +33,9 @@ public:
 		//LOG("OPERATOR !=");
 		return ID == Other.ID;
 	}
+
+	bool operator==(const int OtherID) const
+	{
+		return ID == OtherID;
+	}
 };

@@ -107,13 +107,13 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 		{
 			if (Last.Array.Contains(AberrationManager->AberrationsData[i]->ID))
 			{
-				ActiveAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->AberrationName);
+				LastAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->AberrationName);
 			}
 		}
-		if (ScreenWidget) ScreenWidget->SetCorrectAnswer(1, true);
+		if (ScreenWidget) ScreenWidget->SetButtonIsCorrect(1, true);
 	} else
 	{
-		if (ScreenWidget) ScreenWidget->SetCorrectAnswer(2, true);
+		if (ScreenWidget) ScreenWidget->SetButtonIsCorrect(2, true);
 	}
 	
 	if (ScreenWidget)
@@ -129,5 +129,17 @@ void ATerminal::ConfirmReport()
 
 TArray<FString> ATerminal::GetActiveAberrationsNames()
 {
-	return ActiveAberrationsNames;
+	return LastAberrationsNames;
+}
+
+TArray<FString> ATerminal::GetOtherThanActiveAberrationsNames() const
+{
+	TArray<FString> Names;
+	
+	for (int i = 0; i < AberrationManager->GetOtherThanActiveAberrations().Num(); i++)
+	{
+		Names.AddUnique(AberrationManager->GetOtherThanActiveAberrations()[i]->AberrationName);
+	}
+	
+	return Names;
 }

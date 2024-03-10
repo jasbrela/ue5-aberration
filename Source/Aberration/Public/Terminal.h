@@ -39,12 +39,13 @@ public:
 	void UpdateReport(FActiveAberrations Aberrations);
 	void ConfirmReport();
 	TArray<FString> GetActiveAberrationsNames();
+	TArray<FString> GetOtherThanActiveAberrationsNames() const;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	TArray<FString> ActiveAberrationsNames;
+	TArray<FString> LastAberrationsNames;
 
 	bool bIsFocused = false;
 	

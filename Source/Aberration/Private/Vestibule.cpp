@@ -6,6 +6,7 @@
 #include "AberrationManager.h"
 #include "AberrationCharacter.h"
 #include "DebugMacros.h"
+#include "TrainDoor.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -58,6 +59,7 @@ void AVestibule::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	}
 	
 	OtherActor->SetActorLocation(FVector(NewLocation.X, NewLocation.Y, OtherLocation.Z));
+	Door->ForceCloseDoor();
 }
 
 FVector AVestibule::GetRelativePosition(const FVector& Offset) const

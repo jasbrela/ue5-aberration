@@ -3,9 +3,13 @@
 
 #include "TerminalWidget.h"
 
+#include "AberrationGameState.h"
 #include "FTerminalButtonData.h"
 #include "Terminal.h"
 #include "DebugMacros.h"
+#include "FActiveAberrations.h"
+#include "FAnswerData.h"
+#include "Helper.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
@@ -22,18 +26,19 @@ void UTerminalWidget::NativeConstruct()
 	Option3->OnClicked.AddDynamic(this, &UTerminalWidget::OnClickOption3);
 	Confirm->OnClicked.AddDynamic(this, &UTerminalWidget::NextPage);
 
-	Buttons.Add(FTerminalButtonData(Option1));
-	Buttons.Add(FTerminalButtonData(Option2));
-	Buttons.Add(FTerminalButtonData(Option3));
+	Buttons.Add(FTerminalButtonData(Option1, Option1Text));
+	Buttons.Add(FTerminalButtonData(Option2, Option2Text));
+	Buttons.Add(FTerminalButtonData(Option3, Option3Text));
 }
 
 void UTerminalWidget::ShowReport()
 {
 	bMultipleAnswers = false;
+	bCanConfirm = false;
 	Question->SetText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
-	Option1Text->SetText(FText::FromString(TEXT("Yes")));
-	Option2Text->SetText(FText::FromString(TEXT("No")));
-	Option3->SetVisibility(ESlateVisibility::Collapsed);
+	Buttons[0].SetText(TEXT("Yes"));
+	Buttons[1].SetText(TEXT("No"));
+	Buttons[2].ToggleVisibility(false);
 	
 	QuestionsCanvas->SetVisibility(ESlateVisibility::Visible);
 	Background->SetBrushFromTexture(QuestionTexture, true);
@@ -57,9 +62,23 @@ void UTerminalWidget::ResetCorrectAnswers()
 	}
 }
 
-void UTerminalWidget::SetCorrectAnswer(int Option, bool IsCorrect)
+void UTerminalWidget::SetButtonIsCorrect(int Option, bool IsCorrect)
 {
 	Buttons[Option-1].bIsCorrect = IsCorrect;
+}
+
+void UTerminalWidget::SetButtonText(int Option, FString Text)
+{
+	Buttons[Option-1].SetText(Text);
+}
+
+void UTerminalWidget::DisplayAnswers()
+{
+	for (int i = 1; i <= 3; i++)
+	{
+		SetButtonText(i, Answers[i].Text);
+		SetButtonIsCorrect(i, Answers[i].bIsCorrect);
+	}
 }
 
 void UTerminalWidget::OnClickOption1() { OnClickOption(1); }
@@ -113,12 +132,19 @@ void UTerminalWidget::NextPage()
 		ConfirmReport();
 		return;
 	}
+
+	if (GetWorld())
+	{
+		GenerateQuestion();
+	} else
+	{
+		// TODO: Display failed screen
+		ConfirmReport();
+		Background->SetBrushFromTexture(FailureTexture, true);
+		return;
+	}
 	
-	Question->SetText(FText::FromString(TEXT("Question")));
-	Option1Text->SetText(FText::FromString(TEXT("A")));
-	Option2Text->SetText(FText::FromString(TEXT("B")));	
-	Option3Text->SetText(FText::FromString(TEXT("C")));
-	Option3->SetVisibility(ESlateVisibility::Visible);
+	Buttons[2].ToggleVisibility(true);
 	bCanConfirm = true;
 	
 	// depend on the question
@@ -138,7 +164,7 @@ void UTerminalWidget::ConfirmReport()
 	}
 }
 
-void UTerminalWidget::ToggleConfirmButton(bool Visible)
+void UTerminalWidget::ToggleConfirmButton(bool Visible) const
 {
 	Confirm->SetVisibility(Visible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
@@ -168,6 +194,54 @@ void UTerminalWidget::UpdateButtonStyle(int Index)
 
 void UTerminalWidget::GenerateQuestion()
 {
-	const TArray<FString> Names = Terminal->GetActiveAberrationsNames();
-	const bool CoachContainsAberration = Names.Num() > 0;
+	if (AAberrationGameState*State = GetWorld()->GetGameState<AAberrationGameState>())
+	{
+		Stream = State->GetRandomStream();
+		const int QuestionType = Stream.RandRange(0, 1);
+		
+		TArray<FString> OtherAberrations = Terminal->GetOtherThanActiveAberrationsNames();
+		TArray<FString> CurrentAberrations = Terminal->GetActiveAberrationsNames();
+		
+		if (QuestionType == 0) // Which were found
+		{
+			Question->SetText(FText::FromString(TEXT("Which aberrations were present in the carriage?")));
+
+			for (int i = 0; i < CurrentAberrations.Num(); i++)
+			{
+				Answers.Add(FAnswerData(CurrentAberrations[i], true));
+			}
+			
+			for (int i = Answers.Num(); i <= 3; i++)
+			{
+				const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
+				OtherAberrations.Remove(RandomAberration);
+
+				Answers.AddUnique(FAnswerData(RandomAberration, false));
+			}
+		}
+		else if (QuestionType == 1) // Which were not found
+		{
+			Question->SetText(FText::FromString(TEXT("Which aberrations were not present in the carriage?")));
+
+			const int AberrationsFromThisCoachQuantity = Stream.RandRange(0, FMath::Min(CurrentAberrations.Num(), 2));
+			CurrentAberrations = ShuffleArray(CurrentAberrations, Stream);
+
+			for (int i = 0; i < 3; i++)
+			{
+				if (i < AberrationsFromThisCoachQuantity)
+				{
+					Answers.Add(FAnswerData(CurrentAberrations[i], false));
+				} else
+				{
+					const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
+					OtherAberrations.Remove(RandomAberration);
+					
+					Answers.Add(FAnswerData(RandomAberration, true));
+				}
+			}
+		}
+		
+		Answers = ShuffleArray(Answers, Stream);
+		DisplayAnswers();
+	}
 }

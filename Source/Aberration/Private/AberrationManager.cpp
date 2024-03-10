@@ -27,6 +27,11 @@ FActiveAberrations AAberrationManager::GetLastActiveAberrations()
 	return CoachAberrations[LastCoach];
 }
 
+TArray<FAberrationData*> AAberrationManager::GetOtherThanActiveAberrations()
+{
+	return OtherThanActiveAberrations;
+}
+
 int AAberrationManager::GetCurrentCoach() const
 {
 	return CurrentCoach;
@@ -94,6 +99,19 @@ void AAberrationManager::GenerateNextCoachAberrations()
 			const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
 
 			AvailableAberrations.Remove(RandomAberration);
+			OtherThanActiveAberrations = AberrationsData;
+			OtherThanActiveAberrations.RemoveAll([RandomAberration](const FAberrationData* Aberration) {
+				//LOG("What?!?!");
+				return Aberration->ID == RandomAberration;
+			});
+
+			/*for (int i = 0; i < OtherThanActiveAberrations.Num(); i++)
+			{
+				if (OtherThanActiveAberrations[i]->ID == RandomAberration)
+				{
+					OtherThanActiveAberrations.Remove(OtherThanActiveAberrations[i]);
+				}
+			}*/
 
 			if (CoachAberrations[CurrentCoach].Array.Num() > 0) CoachAberrations[CurrentCoach].Array.Empty();
 			
@@ -111,8 +129,9 @@ void AAberrationManager::ConvertTable()
 	
 	for (int i = 0; i < Names.Num(); i++)
 	{
-		FAberrationData* Mission = AberrationsDataTable->FindRow<FAberrationData>(Names[i], Context);
-		AberrationsData.Add(Mission);
+		FAberrationData* Aberration = AberrationsDataTable->FindRow<FAberrationData>(Names[i], Context);
+		AberrationsData.Add(Aberration);
+		OtherThanActiveAberrations.Add(Aberration);
 	}
 }
 

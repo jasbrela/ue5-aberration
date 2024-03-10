@@ -19,6 +19,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void OpenDoor();
 	void CloseDoor();
+	void ForceCloseDoor();
 
 	virtual void Interact() override;
 	virtual void OnExitRange() override;
@@ -46,10 +47,7 @@ private:
 	float ClosedDoorYLocation = 270;
 
 	UPROPERTY(EditAnywhere, Category="Door")
-	float OpenSpeed = 200;
-
-	UPROPERTY(EditAnywhere, Category="Door")
-	float CloseSpeed = 200;
+	float Speed = 200;
 
 	UPROPERTY(EditInstanceOnly, Category="Door")
 	UStaticMeshComponent* DoorMesh;

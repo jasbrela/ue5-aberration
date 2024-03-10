@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FActiveAberrations.h"
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+struct FAnswerData;
+struct FActiveAberrations;
 struct FTerminalButtonData;
 class ATerminal;
 class UCheckBox;
@@ -26,17 +29,21 @@ public:
 	void ShowReport();
 	void Inject(ATerminal* TerminalParent);
 	void ResetCorrectAnswers();
-	void SetCorrectAnswer(int Option, bool IsCorrect);
+	void SetButtonIsCorrect(int Option, bool IsCorrect);
+	void SetButtonText(int Option, FString Text);
 
 private:
+	void DisplayAnswers();
 	void OnClickOption(int Option);
 	void ConfirmReport();
-	void ToggleConfirmButton(bool Visible);
+	void ToggleConfirmButton(bool Visible) const;
 	void ResetOptionsState();
 	void UpdateButtonStyle(int Index);
 	void GenerateQuestion();
 	bool bMultipleAnswers = false;
 	bool bCanConfirm = false;
+
+	FRandomStream Stream;
 	
 	UFUNCTION()
 	void OnClickOption1();
@@ -53,6 +60,7 @@ private:
 	UPROPERTY()
 	ATerminal* Terminal;
 	TArray<FTerminalButtonData> Buttons;
+	TArray<FAnswerData> Answers;
 
 	UPROPERTY(EditDefaultsOnly)
 	FButtonStyle DefaultStyle;
@@ -65,6 +73,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* QuestionsCanvas;
 
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* FailureTexture;
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* SuccessTexture;
 	UPROPERTY(EditDefaultsOnly)

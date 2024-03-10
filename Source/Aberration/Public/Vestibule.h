@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Vestibule.generated.h"
 
+class ATrainDoor;
 class AAberrationManager;
 class UBoxComponent;
 
@@ -24,6 +25,9 @@ protected:
 private:
 	UPROPERTY(VisibleDefaultsOnly)
 	UBoxComponent* BoxCollision;
+
+	UPROPERTY(EditInstanceOnly)
+	ATrainDoor* Door;
 
 	UPROPERTY(EditInstanceOnly)
 	bool bCanTeleport;

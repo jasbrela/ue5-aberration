@@ -23,8 +23,8 @@ public:
 
 	FActiveAberrations GetActiveAberrations();
 	FActiveAberrations GetLastActiveAberrations();
+	TArray<FAberrationData*> GetOtherThanActiveAberrations();
 	int GetCurrentCoach() const;
-
 	void ChangeCoach(int Change);
 
 	FOnManagerUpdateAberrationsDelegate ManagerUpdateAberrationsDelegate;
@@ -42,6 +42,7 @@ private:
 	TArray<FActiveAberrations> CoachAberrations;
 	
 	TArray<int> AvailableAberrations;
+	TArray<FAberrationData*> OtherThanActiveAberrations;
 
 	UPROPERTY(VisibleInstanceOnly)
 	TArray<int> UnlockedAberrations;
@@ -51,9 +52,6 @@ private:
 	
 	UPROPERTY(VisibleInstanceOnly)
 	int CurrentCoach = 0;
-
-	UPROPERTY(EditAnywhere)
-	int Seed;
 	
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AberrationsDataTable;

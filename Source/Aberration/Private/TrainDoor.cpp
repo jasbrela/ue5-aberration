@@ -43,7 +43,7 @@ void ATrainDoor::BeginPlay()
 void ATrainDoor::DoorMovement(float DeltaTime)
 {	
 	const float DoorCurrentPosition = DoorMesh->GetRelativeLocation().Y;
-	const float FinalLocation = bIsOpening ? ClosedDoorYLocation : OpenDoorYLocation;
+	const float FinalLocation = bIsOpening ? OpenDoorYLocation : ClosedDoorYLocation;
 
 	//LOG("Current RelativePos: %f | %f", DoorCurrentPosition, FinalLocation);
 
@@ -52,11 +52,11 @@ void ATrainDoor::DoorMovement(float DeltaTime)
 
 	if (NearlyEqual || OffLimits)
 	{
-		this->bIsMoving = false;
+		bIsMoving = false;
 		return;
 	}
 
-	const float YOffsetToAdd = (bIsOpening ? OpenSpeed : CloseSpeed) * DeltaTime * (bIsOpening ? 1 : -1);
+	const float YOffsetToAdd = Speed * DeltaTime * (bIsOpening ? 1 : -1);
 	
 	const FVector LocationToAdd = FVector(0, YOffsetToAdd, 0);
 	DoorMesh->AddRelativeLocation(LocationToAdd);
@@ -96,6 +96,15 @@ void ATrainDoor::CloseDoor()
 	bIsMoving = true;
 	
 	ClosedDoorCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void ATrainDoor::ForceCloseDoor()
+{
+	bIsMoving = false;
+	bIsOpening = false;
+	
+	const FVector Location = DoorMesh->GetRelativeLocation();
+	DoorMesh->SetRelativeLocation(FVector(Location.X, ClosedDoorYLocation, Location.Z));
 }
 
 void ATrainDoor::Interact()
