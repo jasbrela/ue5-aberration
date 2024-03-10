@@ -90,32 +90,27 @@ void AAberrationManager::GenerateNextCoachAberrations()
 	{
 		CoachAberrations.Add(FActiveAberrations());
 
-		//const int RandomAberrationIndex = RandomStream.RandRange(0, AvailableAberrations.Num());
-		if (AvailableAberrations.Num() == 0)
-		{
-			LOG_WARNING("No available aberrations found.");
-		} else
-		{
-			const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
+		const int GenerateAberrations = RandomStream.RandRange(0, 1); // 0 false, 1 true
 
-			AvailableAberrations.Remove(RandomAberration);
-			OtherThanActiveAberrations = AberrationsData;
-			OtherThanActiveAberrations.RemoveAll([RandomAberration](const FAberrationData* Aberration) {
-				//LOG("What?!?!");
-				return Aberration->ID == RandomAberration;
-			});
-
-			/*for (int i = 0; i < OtherThanActiveAberrations.Num(); i++)
+		if (GenerateAberrations == 1)
+		{
+			if (AvailableAberrations.Num() == 0)
 			{
-				if (OtherThanActiveAberrations[i]->ID == RandomAberration)
-				{
-					OtherThanActiveAberrations.Remove(OtherThanActiveAberrations[i]);
-				}
-			}*/
+				LOG_WARNING("No available aberrations found.");
+			} else
+			{
+				const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
 
-			if (CoachAberrations[CurrentCoach].Array.Num() > 0) CoachAberrations[CurrentCoach].Array.Empty();
-			
-			CoachAberrations[CurrentCoach].Array.AddUnique(RandomAberration);
+				AvailableAberrations.Remove(RandomAberration);
+				OtherThanActiveAberrations = AberrationsData;
+				OtherThanActiveAberrations.RemoveAll([RandomAberration](const FAberrationData* Aberration) {
+					return Aberration->ID == RandomAberration;
+				});
+
+				if (CoachAberrations[CurrentCoach].Array.Num() > 0) CoachAberrations[CurrentCoach].Array.Empty();
+				
+				CoachAberrations[CurrentCoach].Array.AddUnique(RandomAberration);
+			}
 		}
 	}
 	
