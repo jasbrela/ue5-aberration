@@ -223,7 +223,7 @@ void UTerminalWidget::GenerateQuestion()
 		
 		if (QuestionType == 0) // Which were found
 		{
-			Question->SetText(FText::FromString(TEXT("Which aberrations were present in the carriage?")));
+			Question->SetText(FText::FromString(TEXT("Which aberrations were present in the coach?")));
 
 			for (int i = 0; i < CurrentAberrations.Num(); i++)
 			{
@@ -240,7 +240,7 @@ void UTerminalWidget::GenerateQuestion()
 		}
 		else if (QuestionType == 1) // Which were not found
 		{
-			Question->SetText(FText::FromString(TEXT("Which aberrations were not present in the carriage?")));
+			Question->SetText(FText::FromString(TEXT("Which aberrations were not present in the coach?")));
 
 			int AberrationsFromThisCoachQuantity = 0;
 			
