@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class AAberrationGameState;
 struct FAnswerData;
 struct FActiveAberrations;
 struct FTerminalButtonData;
@@ -43,7 +44,10 @@ private:
 	bool bMultipleAnswers = false;
 	bool bCanConfirm = false;
 
+	AAberrationGameState* State;
 	FRandomStream Stream;
+	TArray<FTerminalButtonData> Buttons;
+	TArray<FAnswerData> Answers;
 	
 	UFUNCTION()
 	void OnClickOption1();
@@ -59,8 +63,6 @@ private:
 
 	UPROPERTY()
 	ATerminal* Terminal;
-	TArray<FTerminalButtonData> Buttons;
-	TArray<FAnswerData> Answers;
 
 	UPROPERTY(EditDefaultsOnly)
 	FButtonStyle DefaultStyle;

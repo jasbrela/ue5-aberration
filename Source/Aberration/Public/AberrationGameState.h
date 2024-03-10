@@ -15,13 +15,14 @@ class ABERRATION_API AAberrationGameState : public AGameStateBase
 	GENERATED_BODY()
 public:
 	AAberrationGameState();
-
 	
-
 	void GenerateSeed();
 	int GetSeed();
 	FRandomStream GetRandomStream();
 
+	void RegisterScoreEntry(float Percentage);
+
+	TArray<float> Percentages;
 
 private:
 	FRandomStream RandomStream;

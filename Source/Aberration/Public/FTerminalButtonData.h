@@ -22,7 +22,7 @@ public:
 		TextBlock->SetText(FText::FromString(Text));
 	}
 
-	void ToggleVisibility(bool Visible)
+	void ToggleVisibility(bool Visible) const
 	{
 		Button->SetVisibility(Visible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	}

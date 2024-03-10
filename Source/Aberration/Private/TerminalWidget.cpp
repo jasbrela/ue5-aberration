@@ -7,7 +7,6 @@
 #include "FTerminalButtonData.h"
 #include "Terminal.h"
 #include "DebugMacros.h"
-#include "FActiveAberrations.h"
 #include "FAnswerData.h"
 #include "Helper.h"
 #include "Components/Button.h"
@@ -74,10 +73,11 @@ void UTerminalWidget::SetButtonText(int Option, FString Text)
 
 void UTerminalWidget::DisplayAnswers()
 {
-	for (int i = 1; i <= 3; i++)
+	for (int i = 0; i < Buttons.Num(); i++)
 	{
-		SetButtonText(i, Answers[i].Text);
-		SetButtonIsCorrect(i, Answers[i].bIsCorrect);
+		const int Option = i + 1;
+		SetButtonText(Option, Answers[i].Text);
+		SetButtonIsCorrect(Option, Answers[i].bIsCorrect);
 	}
 }
 
@@ -120,8 +120,6 @@ void UTerminalWidget::OnClickOption(int Option)
 
 void UTerminalWidget::NextPage()
 {
-	ResetOptionsState();
-	
 	if (bCanConfirm) {
 		ConfirmReport();
 		return;
@@ -135,6 +133,7 @@ void UTerminalWidget::NextPage()
 
 	if (GetWorld())
 	{
+		ResetOptionsState();
 		GenerateQuestion();
 	} else
 	{
@@ -157,7 +156,19 @@ void UTerminalWidget::ConfirmReport()
 	
 	QuestionsCanvas->SetVisibility(ESlateVisibility::Hidden);
 	Background->SetBrushFromTexture(SuccessTexture, true);
-
+	
+	float Score = 0.f;
+	for (int i = 0; i < Buttons.Num(); i++)
+	{
+		LOG("Selected: %s  Correct: %s",  Buttons[i].bIsSelected ? TEXT("true") : TEXT("false"), Buttons[i].bIsCorrect ? TEXT("true") : TEXT("false"));
+		if (Buttons[i].bIsSelected == Buttons[i].bIsCorrect)
+		{
+			Score += 1.f;
+		}
+	}
+	
+	State->RegisterScoreEntry(Score / Buttons.Num());
+	
 	for (FTerminalButtonData ButtonData : Buttons)
 	{
 		ButtonData.Button->SetStyle(DefaultStyle);
@@ -171,6 +182,7 @@ void UTerminalWidget::ToggleConfirmButton(bool Visible) const
 
 void UTerminalWidget::ResetOptionsState()
 {
+	LOG("ResetOptionsState");
 	for (int i = 0; i < Buttons.Num(); i++)
 	{
 		if (Buttons[i].bIsSelected)
@@ -194,10 +206,17 @@ void UTerminalWidget::UpdateButtonStyle(int Index)
 
 void UTerminalWidget::GenerateQuestion()
 {
-	if (AAberrationGameState*State = GetWorld()->GetGameState<AAberrationGameState>())
+	if (State == nullptr)
+	{
+		State = GetWorld()->GetGameState<AAberrationGameState>();
+	}
+	
+	if (State)
 	{
 		Stream = State->GetRandomStream();
 		const int QuestionType = Stream.RandRange(0, 1);
+
+		//LOG("Generated question of type %i", QuestionType);
 		
 		TArray<FString> OtherAberrations = Terminal->GetOtherThanActiveAberrationsNames();
 		TArray<FString> CurrentAberrations = Terminal->GetActiveAberrationsNames();
@@ -211,7 +230,7 @@ void UTerminalWidget::GenerateQuestion()
 				Answers.Add(FAnswerData(CurrentAberrations[i], true));
 			}
 			
-			for (int i = Answers.Num(); i <= 3; i++)
+			for (int i = Answers.Num(); i <= Buttons.Num(); i++)
 			{
 				const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
 				OtherAberrations.Remove(RandomAberration);
@@ -223,10 +242,15 @@ void UTerminalWidget::GenerateQuestion()
 		{
 			Question->SetText(FText::FromString(TEXT("Which aberrations were not present in the carriage?")));
 
-			const int AberrationsFromThisCoachQuantity = Stream.RandRange(0, FMath::Min(CurrentAberrations.Num(), 2));
-			CurrentAberrations = ShuffleArray(CurrentAberrations, Stream);
+			int AberrationsFromThisCoachQuantity = 0;
+			
+			if (CurrentAberrations.Num() > 0)
+			{
+				AberrationsFromThisCoachQuantity = Stream.RandRange(0, FMath::Min(CurrentAberrations.Num()-1, 2));
+				CurrentAberrations = ShuffleArray(CurrentAberrations, Stream);
+			}
 
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < Buttons.Num(); i++)
 			{
 				if (i < AberrationsFromThisCoachQuantity)
 				{

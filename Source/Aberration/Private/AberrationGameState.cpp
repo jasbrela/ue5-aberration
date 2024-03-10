@@ -35,3 +35,9 @@ FRandomStream AAberrationGameState::GetRandomStream()
 {
 	return RandomStream;
 }
+
+void AAberrationGameState::RegisterScoreEntry(float Percentage)
+{
+	LOG("New score entry registered: %f", Percentage);
+	Percentages.Add(Percentage);
+}
