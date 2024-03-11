@@ -14,6 +14,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 
 UTerminalWidget::UTerminalWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
@@ -26,6 +27,7 @@ void UTerminalWidget::NativeConstruct()
 	Option3->OnClicked.AddDynamic(this, &UTerminalWidget::OnClickOption3);
 	Confirm->OnClicked.AddDynamic(this, &UTerminalWidget::NextPage);
 
+
 	Buttons.Add(FTerminalButtonData(Option1, Option1Text));
 	Buttons.Add(FTerminalButtonData(Option2, Option2Text));
 	Buttons.Add(FTerminalButtonData(Option3, Option3Text));
@@ -33,12 +35,13 @@ void UTerminalWidget::NativeConstruct()
 	Background->SetBrushFromTexture(FailureTexture, true);
 	ToggleConfirmButton(false);
 	State = GetWorld()->GetGameState<AAberrationGameState>();
+	SeedText->SetText(FText::FromString(FString::Printf(TEXT("OS-%i"), State->GetSeed())));
 }
 
 void UTerminalWidget::ShowReport()
 {
-	ResetCorrectAnswers();
-	ResetOptionsSelectedState();
+	ResetButtonIsCorrect();
+	ResetButtonsSelectedState();
 	
 	GenerateYesNoQuestion();
 
@@ -57,7 +60,7 @@ void UTerminalWidget::Inject(AAberrationManager* Manager)
 	AberrationManager = Manager;
 }
 
-void UTerminalWidget::ResetCorrectAnswers()
+void UTerminalWidget::ResetButtonIsCorrect()
 {
 	for (int i = 0; i < Buttons.Num(); i++)
 	{
@@ -112,7 +115,7 @@ void UTerminalWidget::OnClickOption(int Option)
 		}
 		else
 		{
-			ResetOptionsSelectedState();
+			ResetButtonsSelectedState();
 			
 			Buttons[Index].bIsSelected = true;
 			UpdateButtonStyle(Index);
@@ -125,6 +128,7 @@ void UTerminalWidget::NextPage()
 {
 	if (bFinished)
 	{
+		UGameplayStatics::OpenLevel(this, TEXT("Train"));
 		LOG_SUCCESS("Player finished game");
 		return;
 	}
@@ -136,7 +140,7 @@ void UTerminalWidget::NextPage()
 
 	if (GetWorld())
 	{
-		ResetOptionsSelectedState();
+		ResetButtonsSelectedState();
 		GenerateQuestion();
 	} else
 	{
@@ -212,7 +216,7 @@ void UTerminalWidget::ToggleConfirmButton(bool Visible) const
 	Confirm->SetVisibility(Visible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
 
-void UTerminalWidget::ResetOptionsSelectedState()
+void UTerminalWidget::ResetButtonsSelectedState()
 {
 	for (int i = 0; i < Buttons.Num(); i++)
 	{
@@ -242,7 +246,6 @@ void UTerminalWidget::GenerateYesNoQuestion()
 	
 	Question->SetText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
 
-
 	const TArray<FString> CurrentAberrations = Terminal->GetLastActiveAberrationsNames();
 	const bool bIsThereAnyAberration = CurrentAberrations.Num() > 0;
 	
@@ -259,13 +262,14 @@ void UTerminalWidget::GenerateYesNoQuestion()
 
 void UTerminalWidget::GenerateQuestion()
 {
-	ResetOptionsSelectedState();
+	ResetButtonsSelectedState();
 	
 	if (State)
 	{
 		Stream = State->GetRandomStream();
 		const int QuestionType = Stream.RandRange(0, 1);
 
+		Answers.Empty();
 		//LOG("Generated question of type %i", QuestionType);
 		
 		TArray<FString> OtherAberrations = Terminal->GetOtherThanActiveAberrationsNames();
@@ -296,7 +300,7 @@ void UTerminalWidget::GenerateQuestion()
 			
 			if (CurrentAberrations.Num() > 0)
 			{
-				AberrationsFromThisCoachQuantity = Stream.RandRange(0, FMath::Min(CurrentAberrations.Num()-1, 2));
+				AberrationsFromThisCoachQuantity = Stream.RandRange(1, FMath::Min(CurrentAberrations.Num()-1, 2));
 				CurrentAberrations = ShuffleArray(CurrentAberrations, Stream);
 			}
 
@@ -307,9 +311,10 @@ void UTerminalWidget::GenerateQuestion()
 					Answers.Add(FAnswerData(CurrentAberrations[i], false));
 				} else
 				{
-					const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
-					OtherAberrations.Remove(RandomAberration);
-					
+					const int Index = Stream.RandRange(0, OtherAberrations.Num() - 1);
+					const FString RandomAberration = OtherAberrations[Index];
+					OtherAberrations.RemoveAt(Index);
+					//LOG("Added: %s", *RandomAberration);
 					Answers.Add(FAnswerData(RandomAberration, true));
 				}
 			}

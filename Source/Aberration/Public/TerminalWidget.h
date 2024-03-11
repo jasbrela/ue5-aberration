@@ -34,7 +34,7 @@ public:
 	void Inject(AAberrationManager* Manager);
 
 private:
-	void ResetCorrectAnswers();
+	void ResetButtonIsCorrect();
 	void SetButtonIsCorrect(int Option, bool IsCorrect);
 	void SetButtonText(int Option, FString Text);
 	void SetButtonVisibility(int Option, bool Visible);
@@ -42,7 +42,7 @@ private:
 	void OnClickOption(int Option);
 	void ConfirmReport();
 	void ToggleConfirmButton(bool Visible) const;
-	void ResetOptionsSelectedState();
+	void ResetButtonsSelectedState();
 	void UpdateButtonStyle(int Index);
 	void GenerateYesNoQuestion();
 	void GenerateQuestion();
@@ -133,4 +133,7 @@ private:
 	UButton* Confirm;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ConfirmText;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* SeedText;
 };

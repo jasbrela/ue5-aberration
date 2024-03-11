@@ -103,7 +103,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 		CoachAberrations.Add(FActiveAberrations());
 
 		const int GenerateAberrations = RandomStream.RandRange(0, 2); // 0 false, 1 true
-
+		
 		if (GenerateAberrations > 0)
 		{
 			if (AvailableAberrations.Num() == 0)

@@ -17,6 +17,7 @@ public:
 	AAberrationGameState();
 	
 	void SaveSeed(int NewSeed);
+	int GetSeed() const;
 	FRandomStream GetRandomStream() const;
 
 	void RegisterScoreEntry(float Percentage);

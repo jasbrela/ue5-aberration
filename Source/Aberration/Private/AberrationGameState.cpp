@@ -14,6 +14,11 @@ void AAberrationGameState::SaveSeed(int NewSeed)
 	LOG_SUCCESS("Seed saved as %i", Seed);
 }
 
+int AAberrationGameState::GetSeed() const
+{
+	return GetRandomStream().GetCurrentSeed();
+}
+
 FRandomStream AAberrationGameState::GetRandomStream() const
 {
 	return RandomStream;

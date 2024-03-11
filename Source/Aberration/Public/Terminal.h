@@ -45,6 +45,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(VisibleInstanceOnly)
 	TArray<FString> LastAberrationsNames;
 
 	UPROPERTY(EditInstanceOnly)
