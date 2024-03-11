@@ -3,8 +3,8 @@
 
 #include "Aberrations/AberrationScale.h"
 
-AAberrationScale::AAberrationScale() {
-
+AAberrationScale::AAberrationScale()
+{
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(Mesh);
 }

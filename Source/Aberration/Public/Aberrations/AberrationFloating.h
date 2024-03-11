@@ -1,0 +1,38 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Aberrations/AberrationBase.h"
+#include "AberrationFloating.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class ABERRATION_API AAberrationFloating : public AAberrationBase
+{
+	GENERATED_BODY()
+public:
+	AAberrationFloating();
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+private:
+	virtual void Activate() override;
+	virtual void Deactivate() override;
+	float TransformedSin(float Alpha) const;
+	float TransformedCos(float Alpha) const;
+	
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditAnywhere, Category="Aberration")
+	float Amplitude = 1.f;
+
+	UPROPERTY(EditAnywhere, Category="Aberration")
+	float Speed = 1.f;
+	
+	UPROPERTY(VisibleInstanceOnly, Category="Aberration")
+	float RunningTime = 0.f;
+};
