@@ -17,17 +17,17 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
+	
+private:
 	UPROPERTY(VisibleInstanceOnly)
 	AAberrationManager* AberrationManager;
-
+	
 	UFUNCTION()
 	virtual void Activate();
 	
 	UFUNCTION()
 	virtual void Deactivate();
 	
-private:
 	// The ID of the aberration must match their ID in Aberrations' DataTable
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
 	int ID = 0;

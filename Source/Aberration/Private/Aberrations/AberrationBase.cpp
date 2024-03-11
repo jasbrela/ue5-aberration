@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AberrationBase.h"
+#include "Aberrations/AberrationBase.h"
 
 #include "AberrationManager.h"
 #include "Kismet/GameplayStatics.h"
