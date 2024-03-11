@@ -14,7 +14,7 @@ class AAberrationManager;
 
 ATerminal::ATerminal()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = !bDisable;
 
 	TerminalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TerminalMesh"));
 	ScreenWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScreenWidget"));
@@ -39,8 +39,13 @@ void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (bDisable)
+	{
+		bIsInteractive = false;
+		return;
+	}
+	
 	ScreenWidget = Cast<UTerminalWidget>(ScreenWidgetComponent->GetWidget());
-	ScreenWidget->Inject(this);
 
 	if (ACharacter* BaseCharacter = UGameplayStatics::GetPlayerCharacter(this, 0))
 	{
@@ -57,11 +62,14 @@ void ATerminal::BeginPlay()
 	{
 		if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
 		{
+			//LOG("%s   SET MANAGER", *GetActorLabel());
 			AberrationManager = Manager;
-			//LOG("BeginPlay %s", *GetActorLabel());
 			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ATerminal::UpdateReport);
+			ScreenWidget->Inject(AberrationManager);
 		}
 	}
+	
+	ScreenWidget->Inject(this);
 }
 
 void ATerminal::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
@@ -91,15 +99,19 @@ void ATerminal::Interact()
 
 void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 {
+	if (!AberrationManager)
+	{
+		LOG("Aberration Manager is null");
+	}
+	
 	if (AberrationManager->GetCurrentCoach() <= 1)
 	{
 		ConfirmReport();
 		return;
 	}
 	
-	ScreenWidget->ResetCorrectAnswers();
-
 	const FActiveAberrations Last = AberrationManager->GetLastActiveAberrations();
+	LastAberrationsNames.Empty();
 	
 	if (Last.Array.Num() > 0 && AberrationManager)
 	{
@@ -110,10 +122,6 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 				LastAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->AberrationName);
 			}
 		}
-		if (ScreenWidget) ScreenWidget->SetButtonIsCorrect(1, true);
-	} else
-	{
-		if (ScreenWidget) ScreenWidget->SetButtonIsCorrect(2, true);
 	}
 	
 	if (ScreenWidget)
@@ -122,12 +130,18 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	}
 }
 
-void ATerminal::ConfirmReport()
+void ATerminal::ConfirmReport() const
 {
+	if (AberrationManager->WasLastCoach())
+	{
+		Character->DisableInput(Controller);
+		return;
+	}
+
 	PlayerFillReportDelegate.Broadcast();
 }
 
-TArray<FString> ATerminal::GetActiveAberrationsNames()
+TArray<FString> ATerminal::GetLastActiveAberrationsNames()
 {
 	return LastAberrationsNames;
 }

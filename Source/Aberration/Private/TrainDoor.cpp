@@ -52,6 +52,7 @@ void ATrainDoor::DoorMovement(float DeltaTime)
 
 	if (NearlyEqual || OffLimits)
 	{
+		if (!bIsOpening) ForceCloseDoor();
 		bIsMoving = false;
 		return;
 	}

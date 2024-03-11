@@ -4,6 +4,7 @@
 #include "TerminalWidget.h"
 
 #include "AberrationGameState.h"
+#include "AberrationManager.h"
 #include "FTerminalButtonData.h"
 #include "Terminal.h"
 #include "DebugMacros.h"
@@ -28,25 +29,32 @@ void UTerminalWidget::NativeConstruct()
 	Buttons.Add(FTerminalButtonData(Option1, Option1Text));
 	Buttons.Add(FTerminalButtonData(Option2, Option2Text));
 	Buttons.Add(FTerminalButtonData(Option3, Option3Text));
+
+	Background->SetBrushFromTexture(FailureTexture, true);
+	ToggleConfirmButton(false);
+	State = GetWorld()->GetGameState<AAberrationGameState>();
 }
 
 void UTerminalWidget::ShowReport()
 {
-	bMultipleAnswers = false;
-	bCanConfirm = false;
-	Question->SetText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
-	Buttons[0].SetText(TEXT("Yes"));
-	Buttons[1].SetText(TEXT("No"));
-	Buttons[2].ToggleVisibility(false);
+	ResetCorrectAnswers();
+	ResetOptionsSelectedState();
 	
+	GenerateYesNoQuestion();
+
 	QuestionsCanvas->SetVisibility(ESlateVisibility::Visible);
 	Background->SetBrushFromTexture(QuestionTexture, true);
-	Confirm->SetVisibility(ESlateVisibility::Collapsed);
+	Confirm->SetVisibility(ESlateVisibility::Collapsed);	
 }
 
 void UTerminalWidget::Inject(ATerminal* TerminalParent)
 {
 	Terminal = TerminalParent;
+}
+
+void UTerminalWidget::Inject(AAberrationManager* Manager)
+{
+	AberrationManager = Manager;
 }
 
 void UTerminalWidget::ResetCorrectAnswers()
@@ -61,15 +69,9 @@ void UTerminalWidget::ResetCorrectAnswers()
 	}
 }
 
-void UTerminalWidget::SetButtonIsCorrect(int Option, bool IsCorrect)
-{
-	Buttons[Option-1].bIsCorrect = IsCorrect;
-}
-
-void UTerminalWidget::SetButtonText(int Option, FString Text)
-{
-	Buttons[Option-1].SetText(Text);
-}
+void UTerminalWidget::SetButtonIsCorrect(int Option, bool IsCorrect) { Buttons[Option-1].bIsCorrect = IsCorrect; }
+void UTerminalWidget::SetButtonText(int Option, FString Text) { Buttons[Option-1].SetText(Text); }
+void UTerminalWidget::SetButtonVisibility(int Option, bool Visible) { Buttons[Option-1].ToggleVisibility(Visible); }
 
 void UTerminalWidget::DisplayAnswers()
 {
@@ -79,6 +81,7 @@ void UTerminalWidget::DisplayAnswers()
 		SetButtonText(Option, Answers[i].Text);
 		SetButtonIsCorrect(Option, Answers[i].bIsCorrect);
 	}
+	SetButtonVisibility(3, true);
 }
 
 void UTerminalWidget::OnClickOption1() { OnClickOption(1); }
@@ -109,7 +112,7 @@ void UTerminalWidget::OnClickOption(int Option)
 		}
 		else
 		{
-			ResetOptionsState();
+			ResetOptionsSelectedState();
 			
 			Buttons[Index].bIsSelected = true;
 			UpdateButtonStyle(Index);
@@ -120,30 +123,29 @@ void UTerminalWidget::OnClickOption(int Option)
 
 void UTerminalWidget::NextPage()
 {
-	if (bCanConfirm) {
-		ConfirmReport();
+	if (bFinished)
+	{
+		LOG_SUCCESS("Player finished game");
 		return;
 	}
-
-	if (Buttons[1].bIsSelected)
-	{
+	
+	if (bCanConfirm || Buttons[1].bIsSelected) {
 		ConfirmReport();
 		return;
 	}
 
 	if (GetWorld())
 	{
-		ResetOptionsState();
+		ResetOptionsSelectedState();
 		GenerateQuestion();
 	} else
 	{
-		// TODO: Display failed screen
 		ConfirmReport();
+		ToggleConfirmButton(false);
 		Background->SetBrushFromTexture(FailureTexture, true);
 		return;
 	}
-	
-	Buttons[2].ToggleVisibility(true);
+
 	bCanConfirm = true;
 	
 	// depend on the question
@@ -153,23 +155,53 @@ void UTerminalWidget::NextPage()
 void UTerminalWidget::ConfirmReport()
 {
 	Terminal->ConfirmReport();
+
+	ToggleConfirmButton(false);
 	
 	QuestionsCanvas->SetVisibility(ESlateVisibility::Hidden);
-	Background->SetBrushFromTexture(SuccessTexture, true);
-	
-	float Score = 0.f;
-	for (int i = 0; i < Buttons.Num(); i++)
+
+	if (AberrationManager != nullptr && AberrationManager->WasLastCoach())
 	{
-		LOG("Selected: %s  Correct: %s",  Buttons[i].bIsSelected ? TEXT("true") : TEXT("false"), Buttons[i].bIsCorrect ? TEXT("true") : TEXT("false"));
-		if (Buttons[i].bIsSelected == Buttons[i].bIsCorrect)
-		{
-			Score += 1.f;
-		}
+		Background->SetBrushFromTexture(LoadingTexture, true);
+		GetWorld()->GetTimerManager().SetTimer(LoadingTimerHandle, this, &UTerminalWidget::DisplayScore, 2.f, false);
+	}
+	else
+	{
+		Background->SetBrushFromTexture(SuccessTexture, true);
 	}
 	
-	State->RegisterScoreEntry(Score / Buttons.Num());
+	float Score = 0.f;
+
+	if (bMultipleAnswers)
+	{
+		for (int i = 0; i < Buttons.Num(); i++)
+		{
+			//LOG("Selected: %s  Correct: %s",  Buttons[i].bIsSelected ? TEXT("true") : TEXT("false"), Buttons[i].bIsCorrect ? TEXT("true") : TEXT("false"));
+			if (Buttons[i].bIsSelected == Buttons[i].bIsCorrect)
+			{
+				Score += 1.f;
+			}
+		}
+		
+		LOG("Score: %f / %i", Score, Buttons.Num());
+		
+		State->RegisterScoreEntry(Score / Buttons.Num());
+	} else
+	{
+		for (int i = 0; i < Buttons.Num(); i++)
+		{
+			if (Buttons[i].bIsSelected && Buttons[i].bIsCorrect)
+			{
+				Score += 1.f;
+				break;
+			}
+		}
+		LOG("Score: %f / 1", Score);
+		State->RegisterScoreEntry(Score);
+	}
 	
-	for (FTerminalButtonData ButtonData : Buttons)
+	
+	for (const FTerminalButtonData ButtonData : Buttons)
 	{
 		ButtonData.Button->SetStyle(DefaultStyle);
 	}
@@ -180,9 +212,8 @@ void UTerminalWidget::ToggleConfirmButton(bool Visible) const
 	Confirm->SetVisibility(Visible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 }
 
-void UTerminalWidget::ResetOptionsState()
+void UTerminalWidget::ResetOptionsSelectedState()
 {
-	LOG("ResetOptionsState");
 	for (int i = 0; i < Buttons.Num(); i++)
 	{
 		if (Buttons[i].bIsSelected)
@@ -204,12 +235,31 @@ void UTerminalWidget::UpdateButtonStyle(int Index)
 	}
 }
 
+void UTerminalWidget::GenerateYesNoQuestion()
+{
+	bMultipleAnswers = false;
+	bCanConfirm = false;
+	
+	Question->SetText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
+
+
+	const TArray<FString> CurrentAberrations = Terminal->GetLastActiveAberrationsNames();
+	const bool bIsThereAnyAberration = CurrentAberrations.Num() > 0;
+	
+	LOG("Is there any aberration? %s", bIsThereAnyAberration ? TEXT("true") : TEXT("false"));
+	
+	SetButtonIsCorrect(1, bIsThereAnyAberration);
+	SetButtonText(1, TEXT("Yes"));
+
+	SetButtonIsCorrect(2, !bIsThereAnyAberration);
+	SetButtonText(2, TEXT("No"));
+	
+	SetButtonVisibility(3, false);
+}
+
 void UTerminalWidget::GenerateQuestion()
 {
-	if (State == nullptr)
-	{
-		State = GetWorld()->GetGameState<AAberrationGameState>();
-	}
+	ResetOptionsSelectedState();
 	
 	if (State)
 	{
@@ -219,7 +269,7 @@ void UTerminalWidget::GenerateQuestion()
 		//LOG("Generated question of type %i", QuestionType);
 		
 		TArray<FString> OtherAberrations = Terminal->GetOtherThanActiveAberrationsNames();
-		TArray<FString> CurrentAberrations = Terminal->GetActiveAberrationsNames();
+		TArray<FString> CurrentAberrations = Terminal->GetLastActiveAberrationsNames();
 		
 		if (QuestionType == 0) // Which were found
 		{
@@ -265,7 +315,33 @@ void UTerminalWidget::GenerateQuestion()
 			}
 		}
 		
+		bCanConfirm = true;
 		Answers = ShuffleArray(Answers, Stream);
 		DisplayAnswers();
 	}
+}
+
+void UTerminalWidget::DisplayScore()
+{
+	bFinished = true;
+	if (State)
+	{
+		if (State->GetPassed())
+		{
+			Background->SetBrushFromTexture(ResultSuccessTexture, true);
+		} else
+		{
+			Background->SetBrushFromTexture(ResultFailureTexture, true);
+		}
+	}
+
+	ConfirmText->SetText(FText::FromString(TEXT("OK")));
+	ToggleConfirmButton(true);
+	
+	ScorePercentageText->SetText(FText::FromString(FString::Printf(TEXT("%i%%"),  State->GetFinalScorePercentage())));
+	ScorePercentageText->SetVisibility(ESlateVisibility::Visible);
+	OutOfPointsText->SetText(FText::FromString(FString::Printf(TEXT("%.2f out of %i points"),  State->GetFinalScore(), State->GetMaxPoints())));
+	OutOfPointsText->SetVisibility(ESlateVisibility::Visible);
+	IncorrectAnswersText->SetText(FText::FromString(FString::Printf(TEXT("%i incorrect answers"),  State->GetIncorrectAnswers())));
+	IncorrectAnswersText->SetVisibility(ESlateVisibility::Visible);
 }

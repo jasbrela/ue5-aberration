@@ -16,21 +16,22 @@ class ABERRATION_API AAberrationGameState : public AGameStateBase
 public:
 	AAberrationGameState();
 	
-	void GenerateSeed();
-	int GetSeed();
-	FRandomStream GetRandomStream();
+	void SaveSeed(int NewSeed);
+	FRandomStream GetRandomStream() const;
 
 	void RegisterScoreEntry(float Percentage);
+	bool GetPassed();
+	float GetFinalScore();
+	int GetFinalScorePercentage();
+
+	int GetIncorrectAnswers();
+	int GetMaxPoints() const;
 
 	TArray<float> Percentages;
 
 private:
 	FRandomStream RandomStream;
 	
-	UPROPERTY(EditAnywhere)
-	int Seed = -1;
-	
-	// If checked, game will always run using the "Seed" value.
-	UPROPERTY(EditAnywhere)
-	bool OverrideSeed = false;
+	UPROPERTY()
+	int Seed = 0;
 };

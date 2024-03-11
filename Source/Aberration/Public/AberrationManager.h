@@ -26,6 +26,7 @@ public:
 	TArray<FAberrationData*> GetOtherThanActiveAberrations();
 	int GetCurrentCoach() const;
 	void ChangeCoach(int Change);
+	bool WasLastCoach() const;
 
 	FOnManagerUpdateAberrationsDelegate ManagerUpdateAberrationsDelegate;
 	
@@ -35,6 +36,12 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void GenerateSeed();
+	UPROPERTY(EditAnywhere)
+	bool bOverrideSeed = false;
+	UPROPERTY(EditAnywhere)
+	int Seed = 0;
+	
 	FRandomStream RandomStream;
 	FTimerHandle BeginPlayDelayTimerHandle;
 	
@@ -48,7 +55,7 @@ private:
 	TArray<int> UnlockedAberrations;
 	
 	UPROPERTY(EditAnywhere)
-	int NumberOfCoaches;
+	int NumberOfCoaches = 1;
 	
 	UPROPERTY(VisibleInstanceOnly)
 	int CurrentCoach = 0;

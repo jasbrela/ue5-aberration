@@ -5,39 +5,72 @@
 
 #include "DebugMacros.h"
 
-AAberrationGameState::AAberrationGameState()
+AAberrationGameState::AAberrationGameState() { }
+
+void AAberrationGameState::SaveSeed(int NewSeed)
 {
-	GenerateSeed();
+	Seed = NewSeed;
+	RandomStream = FRandomStream(Seed) ;
+	LOG_SUCCESS("Seed saved as %i", Seed);
 }
 
-void AAberrationGameState::GenerateSeed()
-{
-	if (!OverrideSeed)
-	{
-		Seed = FMath::RandRange(10000, 99999);
-	}
-	
-	RandomStream = FRandomStream(Seed);
-	LOG_SUCCESS("Seed set to: %i", Seed);
-}
-
-int AAberrationGameState::GetSeed()
-{
-	if (Seed < 0)
-	{
-		GenerateSeed();
-	}
-	
-	return Seed;
-}
-
-FRandomStream AAberrationGameState::GetRandomStream()
+FRandomStream AAberrationGameState::GetRandomStream() const
 {
 	return RandomStream;
 }
 
-void AAberrationGameState::RegisterScoreEntry(float Percentage)
+void AAberrationGameState::RegisterScoreEntry(const float Percentage)
 {
-	LOG("New score entry registered: %f", Percentage);
-	Percentages.Add(Percentage);
+	Percentages.Push(Percentage);
+	LOG_SUCCESS("New score entry registered: %f", Percentage);
+}
+
+bool AAberrationGameState::GetPassed()
+{
+	return GetFinalScorePercentage() >= 80;
+}
+
+float AAberrationGameState::GetFinalScore()
+{
+	float Sum = 0.f;
+	
+	for (int i = 0; i < Percentages.Num(); i++)
+	{
+		Sum += Percentages[i];
+	}
+	
+	return Sum;
+}
+
+int AAberrationGameState::GetFinalScorePercentage()
+{
+	const float Result = GetFinalScore()/static_cast<float>(Percentages.Num());
+	//LOG("%f / %i = %i", GetFinalScore(), Percentages.Num(), FMath::RoundToInt(Result * 100.f));	
+	return FMath::RoundToInt(Result * 100.f);
+}
+
+int AAberrationGameState::GetIncorrectAnswers()
+{
+	int Incorrect = 0;
+	
+	for (int i = 0; i < Percentages.Num(); i++)
+	{
+		if (Percentages[i] < 0.1)// 0.000
+		{
+			Incorrect += 3;
+		}
+		if (Percentages[i] < 0.4) // 0.3333
+		{
+			Incorrect += 2;
+		} else if (Percentages[i] < 0.7) // 0.67
+		{
+			Incorrect++;
+		}
+	}
+	return Incorrect;
+}
+
+int AAberrationGameState::GetMaxPoints() const
+{
+	return Percentages.Num();
 }

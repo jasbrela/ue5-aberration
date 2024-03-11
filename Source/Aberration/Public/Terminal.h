@@ -37,8 +37,8 @@ public:
 
 	UFUNCTION()
 	void UpdateReport(FActiveAberrations Aberrations);
-	void ConfirmReport();
-	TArray<FString> GetActiveAberrationsNames();
+	void ConfirmReport() const;
+	TArray<FString> GetLastActiveAberrationsNames();
 	TArray<FString> GetOtherThanActiveAberrationsNames() const;
 
 protected:
@@ -47,6 +47,9 @@ protected:
 private:
 	TArray<FString> LastAberrationsNames;
 
+	UPROPERTY(EditInstanceOnly)
+	bool bDisable = false;
+	
 	bool bIsFocused = false;
 	
 	UPROPERTY(EditInstanceOnly)

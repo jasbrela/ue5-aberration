@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class AAberrationManager;
 class AAberrationGameState;
 struct FAnswerData;
 struct FActiveAberrations;
@@ -27,24 +28,29 @@ class ABERRATION_API UTerminalWidget : public UUserWidget
 public:
     UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
+	
 	void ShowReport();
 	void Inject(ATerminal* TerminalParent);
+	void Inject(AAberrationManager* Manager);
+
+private:
 	void ResetCorrectAnswers();
 	void SetButtonIsCorrect(int Option, bool IsCorrect);
 	void SetButtonText(int Option, FString Text);
-
-private:
+	void SetButtonVisibility(int Option, bool Visible);
 	void DisplayAnswers();
 	void OnClickOption(int Option);
 	void ConfirmReport();
 	void ToggleConfirmButton(bool Visible) const;
-	void ResetOptionsState();
+	void ResetOptionsSelectedState();
 	void UpdateButtonStyle(int Index);
+	void GenerateYesNoQuestion();
 	void GenerateQuestion();
+	void DisplayScore();
 	bool bMultipleAnswers = false;
 	bool bCanConfirm = false;
-
-	AAberrationGameState* State;
+	bool bFinished = false;
+	
 	FRandomStream Stream;
 	TArray<FTerminalButtonData> Buttons;
 	TArray<FAnswerData> Answers;
@@ -60,10 +66,18 @@ private:
 
 	UFUNCTION()
 	void NextPage();
+	
+	UPROPERTY()
+	AAberrationGameState* State;
 
 	UPROPERTY()
 	ATerminal* Terminal;
 
+	UPROPERTY()
+	AAberrationManager* AberrationManager;
+
+	FTimerHandle LoadingTimerHandle;
+	
 	UPROPERTY(EditDefaultsOnly)
 	FButtonStyle DefaultStyle;
 	UPROPERTY(EditDefaultsOnly)
@@ -78,9 +92,15 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* FailureTexture;
 	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* QuestionTexture;
+	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* SuccessTexture;
 	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* QuestionTexture;
+	UTexture2D* LoadingTexture;
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* ResultSuccessTexture;
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* ResultFailureTexture;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuestionNumber;
@@ -92,18 +112,22 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Option1;
 	
-	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Option2Text;
 	UPROPERTY(meta = (BindWidget))
 	UButton* Option2;
-
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton* Option3;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Option3Text;
-
+	
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ScorePercentageText;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* OutOfPointsText;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* IncorrectAnswersText;
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton* Confirm;
