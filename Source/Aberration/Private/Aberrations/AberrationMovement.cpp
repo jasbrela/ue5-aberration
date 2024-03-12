@@ -42,14 +42,14 @@ void AAberrationMovement::Activate()
 {
 	Speed *= SpeedMultiplier;
 
-	const FVector Location = Mesh->GetRelativeLocation();
-	Mesh->SetRelativeLocation(FVector(Location.X, Speed > 0 ? StartXPosition : FinalXPosition, Location.Z));
+	//const FVector Location = Mesh->GetRelativeLocation();
+	//Mesh->SetRelativeLocation(FVector(Location.X, Speed > 0 ? StartXPosition : FinalXPosition, Location.Z));
 }
 
 void AAberrationMovement::Deactivate()
 {
 	Speed = DefaultSpeed;
 	
-	const FVector Location = Mesh->GetRelativeLocation();
-	Mesh->SetRelativeLocation(FVector(Location.X, Speed > 0 ? StartXPosition : FinalXPosition, Location.Z));
+	//const FVector Location = Mesh->GetRelativeLocation();
+	//Mesh->SetRelativeLocation(FVector(Location.X, Speed > 0 ? StartXPosition : FinalXPosition, Location.Z));
 }
