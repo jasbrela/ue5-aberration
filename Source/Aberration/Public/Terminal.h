@@ -38,15 +38,15 @@ public:
 	UFUNCTION()
 	void UpdateReport(FActiveAberrations Aberrations);
 	void ConfirmReport() const;
-	TArray<FString> GetLastActiveAberrationsNames();
-	TArray<FString> GetOtherThanActiveAberrationsNames() const;
+	TArray<FString> GetPreviousActiveAberrationsNames();
+	TArray<FString> GetPreviousOtherThanActiveAberrationsNames() const;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(VisibleInstanceOnly)
-	TArray<FString> LastAberrationsNames;
+	TArray<FString> PreviousAberrationsNames;
 
 	UPROPERTY(EditInstanceOnly)
 	bool bDisable = false;

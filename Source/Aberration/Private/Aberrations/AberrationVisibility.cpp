@@ -7,8 +7,6 @@ AAberrationVisibility::AAberrationVisibility()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(Mesh);
-
-	AAberrationVisibility::Deactivate();
 }
 
 void AAberrationVisibility::Activate()

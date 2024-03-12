@@ -22,8 +22,8 @@ void AAberrationFloating::AberrationTick(float DeltaTime)
 	
 	RunningTime += DeltaTime;
 	
-	AddActorWorldOffset(FVector(Cos, 0, Sin));
-	AddActorWorldRotation(FRotator(0, 0, Sin));
+	AddActorWorldOffset(FVector(0, 0, Sin));
+	AddActorWorldRotation(FRotator(Cos, Sin, 0));
 }
 
 void AAberrationFloating::Activate()

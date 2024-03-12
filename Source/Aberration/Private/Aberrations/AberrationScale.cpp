@@ -12,15 +12,34 @@ AAberrationScale::AAberrationScale()
 void AAberrationScale::BeginPlay()
 {
 	Super::BeginPlay();
-	DefaultScale = Mesh->GetComponentScale();
+	
+	if (Override)
+	{
+		DefaultScale = Override->GetActorRelativeScale3D();
+	} else
+	{
+		DefaultScale = Mesh->GetComponentScale();
+	}
 }
 
 void AAberrationScale::Activate()
 {
-	Mesh->SetRelativeScale3D(DefaultScale * ScaleMultiplier);
+	if (Override)
+	{
+		Override->SetActorRelativeScale3D(DefaultScale * ScaleMultiplier);
+	} else
+	{
+		Mesh->SetRelativeScale3D(DefaultScale * ScaleMultiplier);
+	}
 }
 
 void AAberrationScale::Deactivate()
 {
-	Mesh->SetRelativeScale3D(DefaultScale);
+	if (Override)
+	{
+		Override->SetActorRelativeScale3D(DefaultScale);
+	} else
+	{
+		Mesh->SetRelativeScale3D(DefaultScale);
+	}
 }

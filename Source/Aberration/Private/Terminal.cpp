@@ -110,16 +110,16 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 		return;
 	}
 	
-	const FActiveAberrations Last = AberrationManager->GetLastActiveAberrations();
-	LastAberrationsNames.Empty();
+	const FActiveAberrations Previous = AberrationManager->GetPreviousActiveAberrations();
+	PreviousAberrationsNames.Empty();
 	
-	if (Last.Array.Num() > 0 && AberrationManager)
+	if (Previous.Array.Num() > 0 && AberrationManager)
 	{
 		for (int i = 0; i < AberrationManager->AberrationsData.Num(); i++)
 		{
-			if (Last.Array.Contains(AberrationManager->AberrationsData[i]->ID))
+			if (Previous.Array.Contains(AberrationManager->AberrationsData[i]->ID))
 			{
-				LastAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->AberrationName);
+				PreviousAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->AberrationName);
 			}
 		}
 	}
@@ -141,18 +141,19 @@ void ATerminal::ConfirmReport() const
 	PlayerFillReportDelegate.Broadcast();
 }
 
-TArray<FString> ATerminal::GetLastActiveAberrationsNames()
+TArray<FString> ATerminal::GetPreviousActiveAberrationsNames()
 {
-	return LastAberrationsNames;
+	return PreviousAberrationsNames;
 }
 
-TArray<FString> ATerminal::GetOtherThanActiveAberrationsNames() const
+TArray<FString> ATerminal::GetPreviousOtherThanActiveAberrationsNames() const
 {
 	TArray<FString> Names;
 	
-	for (int i = 0; i < AberrationManager->GetOtherThanActiveAberrations().Num(); i++)
+	for (int i = 0; i < AberrationManager->GetPreviousOtherThanActiveAberrations().Num(); i++)
 	{
-		Names.AddUnique(AberrationManager->GetOtherThanActiveAberrations()[i]->AberrationName);
+		//LOG("Other: %s", *AberrationManager->GetPreviousOtherThanActiveAberrations()[i]->AberrationName);
+		Names.AddUnique(AberrationManager->GetPreviousOtherThanActiveAberrations()[i]->AberrationName);
 	}
 	
 	return Names;

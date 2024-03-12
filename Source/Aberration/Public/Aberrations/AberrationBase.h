@@ -40,5 +40,4 @@ private:
 	void Notify(FActiveAberrations Aberrations);
 
 	bool bIsActive = false;
-	bool bReverseBehaviour = false;
 };

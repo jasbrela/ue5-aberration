@@ -25,11 +25,14 @@ private:
 	virtual void Deactivate() override;
 
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
-	int ScaleMultiplier = 1;
+	float ScaleMultiplier = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
 	FVector DefaultScale = FVector::One();
 
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditInstanceOnly)
+	AActor* Override;
 };

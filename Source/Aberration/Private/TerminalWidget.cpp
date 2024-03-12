@@ -248,7 +248,7 @@ void UTerminalWidget::GenerateYesNoQuestion()
 	
 	Question->SetText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
 
-	const TArray<FString> CurrentAberrations = Terminal->GetLastActiveAberrationsNames();
+	const TArray<FString> CurrentAberrations = Terminal->GetPreviousActiveAberrationsNames();
 	const bool bIsThereAnyAberration = CurrentAberrations.Num() > 0;
 	
 	LOG("Is there any aberration? %s", bIsThereAnyAberration ? TEXT("true") : TEXT("false"));
@@ -274,8 +274,8 @@ void UTerminalWidget::GenerateQuestion()
 		Answers.Empty();
 		//LOG("Generated question of type %i", QuestionType);
 		
-		TArray<FString> OtherAberrations = Terminal->GetOtherThanActiveAberrationsNames();
-		TArray<FString> CurrentAberrations = Terminal->GetLastActiveAberrationsNames();
+		TArray<FString> OtherAberrations = Terminal->GetPreviousOtherThanActiveAberrationsNames();
+		TArray<FString> CurrentAberrations = Terminal->GetPreviousActiveAberrationsNames();
 		
 		if (QuestionType == 0) // Which were found
 		{
@@ -310,13 +310,14 @@ void UTerminalWidget::GenerateQuestion()
 			{
 				if (i < AberrationsFromThisCoachQuantity)
 				{
+					LOG("[A] Added: %s", *CurrentAberrations[i]);
 					Answers.Add(FAnswerData(CurrentAberrations[i], false));
 				} else
 				{
 					const int Index = Stream.RandRange(0, OtherAberrations.Num() - 1);
 					const FString RandomAberration = OtherAberrations[Index];
 					OtherAberrations.RemoveAt(Index);
-					//LOG("Added: %s", *RandomAberration);
+					LOG("[B] Added: %s", *RandomAberration);
 					Answers.Add(FAnswerData(RandomAberration, true));
 				}
 			}

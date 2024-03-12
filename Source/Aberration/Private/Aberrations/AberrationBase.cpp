@@ -43,16 +43,15 @@ void AAberrationBase::Notify(FActiveAberrations Aberrations)
 	
 	if (bIsActive == Contains) return;
 	
-	bIsActive = Contains;
-
-	if (bIsActive != bReverseBehaviour)
+	if (Contains)
 	{
 		Activate();
-	}
-	else
+	} else
 	{
 		Deactivate();
 	}
+	
+	bIsActive = Contains;
 }
 
 void AAberrationBase::Activate() { }

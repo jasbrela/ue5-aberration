@@ -22,8 +22,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	FActiveAberrations GetActiveAberrations();
-	FActiveAberrations GetLastActiveAberrations();
-	TArray<FAberrationData*> GetOtherThanActiveAberrations();
+	FActiveAberrations GetPreviousActiveAberrations();
+	TArray<FAberrationData*> GetPreviousOtherThanActiveAberrations();
 	int GetCurrentCoach() const;
 	void ChangeCoach(int Change);
 	bool WasLastCoach() const;
@@ -50,6 +50,7 @@ private:
 	
 	TArray<int> AvailableAberrations;
 	TArray<FAberrationData*> OtherThanActiveAberrations;
+	TArray<FAberrationData*> PreviousOtherThanActiveAberrations;
 
 	UPROPERTY(VisibleInstanceOnly)
 	TArray<int> UnlockedAberrations;

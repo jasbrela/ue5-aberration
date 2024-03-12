@@ -108,6 +108,16 @@ void ATrainDoor::ForceCloseDoor()
 	DoorMesh->SetRelativeLocation(FVector(Location.X, ClosedDoorYLocation, Location.Z));
 }
 
+void ATrainDoor::ForceOpenDoor()
+{
+	bIsMoving = false;
+	bIsOpening = true;
+	bIsInteractive = false;
+	
+	const FVector Location = DoorMesh->GetRelativeLocation();
+	DoorMesh->SetRelativeLocation(FVector(Location.X, OpenDoorYLocation, Location.Z));
+}
+
 void ATrainDoor::Interact()
 {
 	OpenDoor();

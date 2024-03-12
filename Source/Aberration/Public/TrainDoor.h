@@ -20,6 +20,7 @@ public:
 	void OpenDoor();
 	void CloseDoor();
 	void ForceCloseDoor();
+	void ForceOpenDoor();
 
 	virtual void Interact() override;
 	virtual void OnExitRange() override;

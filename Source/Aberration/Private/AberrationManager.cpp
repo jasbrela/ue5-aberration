@@ -19,17 +19,17 @@ FActiveAberrations AAberrationManager::GetActiveAberrations()
 	return CoachAberrations[CurrentCoach];
 }
 
-FActiveAberrations AAberrationManager::GetLastActiveAberrations()
+FActiveAberrations AAberrationManager::GetPreviousActiveAberrations()
 {
-	const int LastCoach = CurrentCoach - 1;
+	const int PreviousCoach = CurrentCoach - 1;
 	
-	if (CoachAberrations.Num() == 0 || LastCoach < 0 || LastCoach >= CoachAberrations.Num()) return FActiveAberrations();
-	return CoachAberrations[LastCoach];
+	if (CoachAberrations.Num() == 0 || PreviousCoach < 0 || PreviousCoach >= CoachAberrations.Num()) return FActiveAberrations();
+	return CoachAberrations[PreviousCoach];
 }
 
-TArray<FAberrationData*> AAberrationManager::GetOtherThanActiveAberrations()
+TArray<FAberrationData*> AAberrationManager::GetPreviousOtherThanActiveAberrations()
 {
-	return OtherThanActiveAberrations;
+	return PreviousOtherThanActiveAberrations;
 }
 
 int AAberrationManager::GetCurrentCoach() const
@@ -56,6 +56,7 @@ void AAberrationManager::GenerateSeed()
 		{
 			const int GeneratedSeed = bOverrideSeed ? Seed : FMath::RandRange(10000, 99999);
 			State->SaveSeed(GeneratedSeed);
+			RandomStream = State->GetRandomStream();
 		}
 	}
 	else
@@ -98,11 +99,13 @@ void AAberrationManager::GenerateNextCoachAberrations()
 
 	//LOG("CoachAberrations: %i", CoachAberrations.Num());
 	
-	if (CurrentCoach >= CoachAberrations.Num())
+	if (CurrentCoach >= CoachAberrations.Num() && CurrentCoach < NumberOfCoaches)
 	{
 		CoachAberrations.Add(FActiveAberrations());
 
 		const int GenerateAberrations = RandomStream.RandRange(0, 2); // 0 false, 1 true
+
+		//LOG("Seed: %i", RandomStream.GetCurrentSeed());
 		
 		if (GenerateAberrations > 0)
 		{
@@ -111,12 +114,20 @@ void AAberrationManager::GenerateNextCoachAberrations()
 				LOG_WARNING("No available aberrations found.");
 			} else
 			{
-				LOG_WARNING("[%i] Aberration generated.", CurrentCoach);
 				const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
 
 				AvailableAberrations.Remove(RandomAberration);
+				
+				PreviousOtherThanActiveAberrations = OtherThanActiveAberrations;
+				
 				OtherThanActiveAberrations = AberrationsData;
+				
 				OtherThanActiveAberrations.RemoveAll([RandomAberration](const FAberrationData* Aberration) {
+					if (Aberration->ID == RandomAberration)
+					{
+						LOG_WARNING("Aberration generated: %s", *Aberration->AberrationName);
+					}
+					
 					return Aberration->ID == RandomAberration;
 				});
 
@@ -128,7 +139,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 		{
 			LOG_WARNING("[%i] No aberration generated.", CurrentCoach);
 		}
-	}
+	} else LOG("Couldnt generate");
 	
 	ManagerUpdateAberrationsDelegate.Broadcast(GetActiveAberrations());
 }
