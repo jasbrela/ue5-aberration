@@ -33,7 +33,7 @@ void UTerminalWidget::NativeConstruct()
 	Buttons.Add(FTerminalButtonData(Option3, Option3Text));
 
 	Background->SetBrushFromTexture(FailureTexture, true);
-	ToggleConfirmButton(false);
+
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 	SeedText->SetText(FText::FromString(FString::Printf(TEXT("OS-%i"), State->GetSeed())));
 }
@@ -226,6 +226,8 @@ void UTerminalWidget::ResetButtonsSelectedState()
 			UpdateButtonStyle(i);
 		}
 	}
+	
+	ToggleConfirmButton(false);
 }
 
 void UTerminalWidget::UpdateButtonStyle(int Index)

@@ -17,7 +17,7 @@ public:
 	AAberrationFloating();
 protected:
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+	virtual void AberrationTick(float DeltaTime) override;
 private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;

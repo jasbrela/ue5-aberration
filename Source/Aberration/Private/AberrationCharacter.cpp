@@ -10,7 +10,6 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "InteractionComponent.h"
 #include "InteractionWidget.h"
 #include "Interactive.h"
 #include "Blueprint/UserWidget.h"

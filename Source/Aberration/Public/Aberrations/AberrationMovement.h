@@ -16,10 +16,11 @@ class ABERRATION_API AAberrationMovement : public AAberrationBase
 public:
 	AAberrationMovement();
 protected:
-	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
+	virtual void AberrationTick(float DeltaTime) override;
 
 	float Speed = 1.f;
 	
@@ -29,10 +30,10 @@ private:
 	float SpeedMultiplier = 1.f;
 	
 	UPROPERTY(EditAnywhere, Category="Aberration")
-	float StartXPosition = 200.f;
+	float StartXPosition = 4000.0f;
 
 	UPROPERTY(EditAnywhere, Category="Aberration")
-	float FinalXPosition = -200.f;
+	float FinalXPosition = -2500.0f;
 
 	
 	UPROPERTY(EditDefaultsOnly)

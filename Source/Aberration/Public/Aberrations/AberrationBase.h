@@ -17,6 +17,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	
 private:
 	UPROPERTY(VisibleInstanceOnly)
@@ -27,6 +28,9 @@ private:
 	
 	UFUNCTION()
 	virtual void Deactivate();
+
+	UFUNCTION()
+	virtual void AberrationTick(float DeltaTime);
 	
 	// The ID of the aberration must match their ID in Aberrations' DataTable
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")

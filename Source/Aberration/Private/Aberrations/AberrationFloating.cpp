@@ -15,9 +15,8 @@ void AAberrationFloating::BeginPlay()
 	SetActorTickEnabled(false);
 }
 
-void AAberrationFloating::Tick(float DeltaTime)
+void AAberrationFloating::AberrationTick(float DeltaTime)
 {
-
 	const float Sin = TransformedSin(RunningTime);
 	const float Cos = TransformedCos(RunningTime);
 	

@@ -6,11 +6,16 @@
 #include "AberrationManager.h"
 #include "Kismet/GameplayStatics.h"
 
-AAberrationBase::AAberrationBase() { }
+AAberrationBase::AAberrationBase()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
 
 void AAberrationBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetActorTickEnabled(true);
 	
 	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), AAberrationManager::StaticClass()); Actor != nullptr)
     {
@@ -21,6 +26,15 @@ void AAberrationBase::BeginPlay()
 			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &AAberrationBase::Notify);
 		}
     }
+}
+
+void AAberrationBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+	//LOG("Tick");
+	
+	AberrationTick(DeltaTime);
 }
 
 void AAberrationBase::Notify(FActiveAberrations Aberrations)
@@ -42,5 +56,5 @@ void AAberrationBase::Notify(FActiveAberrations Aberrations)
 }
 
 void AAberrationBase::Activate() { }
-
 void AAberrationBase::Deactivate() { }
+void AAberrationBase::AberrationTick(float DeltaTime) { }
