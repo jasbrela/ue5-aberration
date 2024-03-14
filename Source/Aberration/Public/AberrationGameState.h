@@ -17,7 +17,6 @@ class ABERRATION_API AAberrationGameState : public AGameStateBase
 public:
 	AAberrationGameState();
 
-	TArray<int> GetExcludedAberrations();
 	void IncreaseCompletedRuns();
 	UAberrationSaveGame* LoadGame();
 	void SaveGame();
@@ -31,7 +30,7 @@ public:
 	void SaveSensY(float Y);
 
 	void RegisterScoreEntry(float Percentage);
-	void ExcludeAberrationEntry(int ID);
+	void ExcludeAberration(int ID, bool bSave = true);
 	
 	bool GetPassed();
 	float GetFinalScore();
@@ -42,6 +41,7 @@ public:
 
 
 private:
+	bool bLoadedGame;
 	FRandomStream RandomStream;
 	TArray<float> Percentages;
 	TArray<int> ExcludedAberrations;

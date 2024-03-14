@@ -27,6 +27,8 @@ public:
 	void Inject(AAberrationGameState* State);
 
 private:
+	bool bCanSave = false;
+	
 	UFUNCTION()
 	void OnClickQuitButton();
 

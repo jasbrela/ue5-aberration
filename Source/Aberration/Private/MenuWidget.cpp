@@ -30,7 +30,6 @@ void UMenuWidget::NativeConstruct()
 
 void UMenuWidget::OnClickQuitButton()
 {
-	AberrationState->SaveGame();
 	FGenericPlatformMisc::RequestExit(false);
 }
 
@@ -38,17 +37,17 @@ void UMenuWidget::OnClickResumeButton()
 {
 	if (AberrationCharacter)
 	{
-		AberrationState->SaveGame();
 		AberrationCharacter->Pause(FInputActionValue(true));
 	}
 }
 
 void UMenuWidget::OnVolumeChanged(float Value)
 {
-	if (AberrationState)
+	if (bCanSave && AberrationState)
 	{
 		AberrationState->SaveVolume(Value);
 	}
+	
 	VolumeSlider->SetValue(Value);
 	VolumeValue->SetText(Convert(Value));
 	UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(Value, 0, 1));
@@ -58,10 +57,11 @@ void UMenuWidget::OnSensXChanged(float Value)
 {
 	if (AberrationCharacter)
 	{
-		if (AberrationState)
+		if (bCanSave && AberrationState)
 		{
 			AberrationState->SaveSensX(Value);
 		}
+		
 		AberrationCharacter->SetSensX(Value);
 		SensXSlider->SetValue(Value);
 		SensXValue->SetText(Convert(Value));
@@ -72,10 +72,11 @@ void UMenuWidget::OnSensYChanged(float Value)
 {
 	if (AberrationCharacter)
 	{
-		if (AberrationState)
+		if (bCanSave && AberrationState)
 		{
 			AberrationState->SaveSensY(Value);
 		}
+		
 		AberrationCharacter->SetSensY(Value);
 		SensYSlider->SetValue(Value);
 		SensYValue->SetText(Convert(Value));
@@ -97,4 +98,6 @@ void UMenuWidget::Inject(AAberrationGameState* State)
 		OnSensYChanged(Save->SensY);
 		OnVolumeChanged(Save->Volume);
 	}
+	
+	bCanSave = true;
 }

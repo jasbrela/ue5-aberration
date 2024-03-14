@@ -59,14 +59,12 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	TArray<FActiveAberrations> CoachAberrations;
 	
+	UPROPERTY(VisibleInstanceOnly)
 	TArray<int> AvailableAberrations;
+	
 	TArray<FAberrationData*> OtherThanActiveAberrations;
 	TArray<FAberrationData*> PreviousOtherThanActiveAberrations;
-
-	UPROPERTY(VisibleInstanceOnly)
 	TArray<int> UnlockedAberrations;
-
-	UPROPERTY(VisibleInstanceOnly)
 	TArray<int> ExcludedAberrations;
 	
 	UPROPERTY(EditAnywhere)

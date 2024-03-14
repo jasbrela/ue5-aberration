@@ -9,11 +9,6 @@
 
 AAberrationGameState::AAberrationGameState() { }
 
-TArray<int> AAberrationGameState::GetExcludedAberrations()
-{
-	return ExcludedAberrations;
-}
-
 void AAberrationGameState::IncreaseCompletedRuns()
 {
 	CompletedRuns++;
@@ -23,44 +18,65 @@ void AAberrationGameState::IncreaseCompletedRuns()
 
 UAberrationSaveGame* AAberrationGameState::LoadGame()
 {
+	if (bLoadedGame)
+	{
+		return LoadedGame;
+	} 
+	
+	LoadedGame = Cast<UAberrationSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("AberrationExpress"), 0));
+
 	if (LoadedGame == nullptr)
 	{
-		LoadedGame = Cast<UAberrationSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("AberrationExpress"), 0));
-
-		if (LoadedGame == nullptr)
-		{
-			LOG_ERROR("Failed to load game");
-			return LoadedGame;
-		}
-		LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
+		LOG_ERROR("Failed to load game");
+		return nullptr;
 	}
+	LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
 
+	ExcludedAberrations.Empty();
+
+	LOG("From Load");
+	for (int i = 0; i < LoadedGame->ExcludedAberrations.Num(); i++)
+	{
+		ExcludeAberration(LoadedGame->ExcludedAberrations[i], false);
+	}
+	
 	CompletedRuns = LoadedGame->CompletedRuns;
+	SensX = LoadedGame->SensX;
+	SensY = LoadedGame->SensY;
+	Volume = LoadedGame->Volume;
 
+	bLoadedGame = true;
 	return LoadedGame;
-
 }
 
-void AAberrationGameState::SaveSeed(int NewSeed)
+void AAberrationGameState::SaveSeed(const int NewSeed)
 {
 	Seed = NewSeed;
 	RandomStream = FRandomStream(Seed) ;
 	LOG_SUCCESS("Seed saved as %i", Seed);
 }
 
-void AAberrationGameState::SaveVolume(float Value)
+void AAberrationGameState::SaveVolume(const float Value)
 {
+	LOG("Volume set to %f", Value);
 	Volume = Value;
+	SaveGame();
 }
 
-void AAberrationGameState::SaveSensX(float X)
+void AAberrationGameState::SaveSensX(const float X)
 {
+	LOG("Sens X set to %f", X);
+
 	SensX = X;
+	SaveGame();
 }
 
-void AAberrationGameState::SaveSensY(float Y)
+void AAberrationGameState::SaveSensY(const float Y)
 {
+	LOG("Sens Y set to %f", Y);
+
 	SensY = Y;
+	SaveGame();
 }
 
 int AAberrationGameState::GetSeed() const
@@ -75,14 +91,20 @@ void AAberrationGameState::SaveGame()
 	Save->Volume = Volume;
 	Save->SensX = SensX;
 	Save->SensY = SensY;
-	Save->ExcludedAberrations = ExcludedAberrations;
+	Save->ExcludedAberrations.Empty();
+
+	for (int i = 0; i < ExcludedAberrations.Num(); i++)
+	{
+		Save->ExcludedAberrations.AddUnique(ExcludedAberrations[i]);
+	}
+	
 	Save->CompletedRuns = CompletedRuns;
 
 	const bool Success = UGameplayStatics::SaveGameToSlot(Save, TEXT("AberrationExpress"), 0);
 	
 	if (Success)
 	{
-		LOG_SUCCESS("Saved. %i", LoadedGame->ExcludedAberrations.Num());
+		LOG_SUCCESS("Saved. %i", ExcludedAberrations.Num());
 	} else
 	{
 		LOG_ERROR("Failed to save game.");
@@ -96,13 +118,23 @@ FRandomStream AAberrationGameState::GetRandomStream() const
 
 void AAberrationGameState::RegisterScoreEntry(const float Percentage)
 {
-	Percentages.Push(Percentage);
-	LOG_SUCCESS("New score entry registered: %f", Percentage);
+	Percentages.Add(Percentage);
+	//LOG_SUCCESS("New score entry registered: %f", Percentage);
 }
 
-void AAberrationGameState::ExcludeAberrationEntry(int ID)
+void AAberrationGameState::ExcludeAberration(const int ID, const bool bSave)
 {
-	ExcludedAberrations.Push(ID);
+	if (ExcludedAberrations.Contains(ID)) return;
+	
+	ExcludedAberrations.AddUnique(ID);
+
+	if (!bSave)
+	{
+		LOG("Excluded: %i", ID);
+	}
+
+	//LOG("Push new aberration: %i (%i), %s", ID, ExcludedAberrations.Num(), bSave ? TEXT("true") : TEXT("false"));
+	if (bSave) SaveGame();
 }
 
 bool AAberrationGameState::GetPassed()

@@ -193,7 +193,7 @@ void UTerminalWidget::ConfirmReport()
 			}
 		}
 		
-		LOG("Score: %f / %i", Score, Buttons.Num());
+		//LOG("Score: %f / %i", Score, Buttons.Num());
 		
 		State->RegisterScoreEntry(Score / Buttons.Num());
 	} else
@@ -206,7 +206,7 @@ void UTerminalWidget::ConfirmReport()
 				break;
 			}
 		}
-		LOG("Score: %f / 1", Score);
+		//LOG("Score: %f / 1", Score);
 		State->RegisterScoreEntry(Score);
 	}
 	
@@ -261,7 +261,7 @@ void UTerminalWidget::GenerateYesNoQuestion()
 	const TArray<FString> CurrentAberrations = Terminal->GetPreviousActiveAberrationsNames();
 	const bool bIsThereAnyAberration = !CurrentAberrations.IsEmpty();
 	
-	LOG("Is there any aberration? %s", bIsThereAnyAberration ? TEXT("true") : TEXT("false"));
+	//LOG("Is there any aberration? %s", bIsThereAnyAberration ? TEXT("true") : TEXT("false"));
 	
 	SetButtonIsCorrect(1, bIsThereAnyAberration);
 	SetButtonText(1, TEXT("Yes"));
