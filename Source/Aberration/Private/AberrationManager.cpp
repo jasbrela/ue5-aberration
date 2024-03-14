@@ -29,6 +29,7 @@ FActiveAberrations AAberrationManager::GetPreviousActiveAberrations()
 
 TArray<FAberrationData*> AAberrationManager::GetPreviousOtherThanActiveAberrations()
 {
+	if (PreviousOtherThanActiveAberrations.Num() == 0) return AberrationsData;
 	return PreviousOtherThanActiveAberrations;
 }
 
@@ -99,7 +100,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 
 	//LOG("CoachAberrations: %i", CoachAberrations.Num());
 	
-	if (CurrentCoach >= CoachAberrations.Num() && CurrentCoach < NumberOfCoaches)
+	if (CurrentCoach >= CoachAberrations.Num() && CurrentCoach <= NumberOfCoaches)
 	{
 		CoachAberrations.Add(FActiveAberrations());
 
@@ -107,7 +108,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 
 		//LOG("Seed: %i", RandomStream.GetCurrentSeed());
 		
-		if (GenerateAberrations > 0)
+		if (GenerateAberrations > 0 || GetPreviousActiveAberrations().Array.Num() == 0)
 		{
 			if (AvailableAberrations.Num() == 0)
 			{

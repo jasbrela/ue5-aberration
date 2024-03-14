@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "InteractionWidget.h"
 #include "Interactive.h"
+#include "MenuWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -52,8 +53,6 @@ void AAberrationCharacter::InteractionLineTrace()
 	FVector TraceStart = GetFirstPersonCameraComponent()->GetComponentLocation();
 	FVector TraceEnd = TraceStart + GetFirstPersonCameraComponent()->GetForwardVector() * InteractionRange;
 	
-	//LOG("[%s] Start: %s End: %s", *GetOwner()->GetActorLabel(), *TraceStart.ToString(), *TraceEnd.ToString());
-
 	FHitResult Hit;
 	
 	FCollisionQueryParams QueryParams;
@@ -74,33 +73,20 @@ void AAberrationCharacter::InteractionLineTrace()
 				if (Interactive->bIsInteractive)
 				{
 					SetInteractiveObject(Interactive);
-					//InteractionWidget->ToggleInteraction(true, CurrentInteractiveActor->Tooltip);
 					CurrentInteractiveActor->OnEnterRange();
 				} else
 				{
 					SetInteractiveObject(nullptr);
-					//InteractionWidget->ToggleInteraction(false);
 				}
 			}
 			else if (!CurrentInteractiveActor->bIsInteractive)
 			{
 				SetInteractiveObject(nullptr);
-				/*CurrentInteractiveActor->OnExitRange();
-				CurrentInteractiveActor = nullptr;*/
-				//InteractionWidget->ToggleInteraction(false);
 			}
 		}
 	} else
 	{
 		SetInteractiveObject(nullptr);
-		/*if (CurrentInteractiveActor != nullptr)
-		{
-			CurrentInteractiveActor->OnExitRange();
-			CurrentInteractiveActor = nullptr;
-			InteractionWidget->ToggleInteraction(false);
-			
-			//UE_LOG(LogTemp, Warning, TEXT("No Interactive"));
-		}*/
 	}
 }
 
@@ -139,25 +125,68 @@ void AAberrationCharacter::Interact(const FInputActionValue& Value)
 	}
 }
 
-void AAberrationCharacter::ToggleInteractiveWidget(bool visible)
+void AAberrationCharacter::ToggleMoveAndLookInput(bool enable)
+{
+	bCanMoveAndLook = enable;
+
+	if (bCanMoveAndLook)
+	{
+		PlayerController->SetInputMode(FInputModeGameOnly());
+	} else
+	{
+		PlayerController->SetInputMode(FInputModeGameAndUI());
+	}
+}
+
+void AAberrationCharacter::ToggleInteractiveWidget(bool visible) const
 {
 	InteractionWidget->SetVisibility(visible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+void AAberrationCharacter::ToggleMenuWidget(bool visible) const
+{
+	MenuWidget->SetVisibility(visible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+}
+
+void AAberrationCharacter::SetSensX(float value)
+{
+	SensX = value;
+}
+
+void AAberrationCharacter::SetSensY(float value)
+{
+	SensY = value;
 }
 
 void AAberrationCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (const UWorld* World = GetWorld(); InteractionClass && World)
+	if (const UWorld* World = GetWorld())
 	{
-		InteractionWidget = CreateWidget<UInteractionWidget>(UGameplayStatics::GetPlayerController(World, 0),
-															 InteractionClass, TEXT("InteractionUI"));
-		InteractionWidget->AddToViewport(0);
+		if (InteractionClass)
+		{
+			InteractionWidget = CreateWidget<UInteractionWidget>(UGameplayStatics::GetPlayerController(World, 0),
+																 InteractionClass, TEXT("InteractionUI"));
+			InteractionWidget->AddToViewport(0);
+		}
+
+		if (MenuClass)
+		{
+			MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetPlayerController(World, 0),
+																 MenuClass, TEXT("MenuUI"));
+
+			ToggleMenuWidget(false);
+			MenuWidget->Inject(this);
+			
+			MenuWidget->AddToViewport(0);
+		}
 	}
 	
-	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		PlayerController = PC;
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
@@ -187,6 +216,7 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAberrationCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAberrationCharacter::Look);
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AAberrationCharacter::Interact);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AAberrationCharacter::Pause);
 	}
 	else
 	{
@@ -195,8 +225,24 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 }
 
 
+void AAberrationCharacter::Pause(const FInputActionValue& Value)
+{
+	if (!Value.Get<bool>()) return;
+	bIsMenuOpen = !bIsMenuOpen;
+
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = bIsMenuOpen;
+	}
+	
+	ToggleMoveAndLookInput(!bIsMenuOpen);
+	ToggleMenuWidget(bIsMenuOpen);
+}
+
 void AAberrationCharacter::Move(const FInputActionValue& Value)
 {
+	if (!bCanMoveAndLook) return;
+	
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller)
@@ -208,11 +254,13 @@ void AAberrationCharacter::Move(const FInputActionValue& Value)
 
 void AAberrationCharacter::Look(const FInputActionValue& Value)
 {
+	if (!bCanMoveAndLook) return;
+
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller)
 	{
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		AddControllerYawInput(LookAxisVector.X * SensX);
+		AddControllerPitchInput(LookAxisVector.Y * SensY);
 	}
 }

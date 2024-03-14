@@ -26,6 +26,9 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* Mesh;
+	
+	FVector DefaultPosition = FVector::Zero();
+	FRotator DefaultRotation = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnywhere, Category="Aberration")
 	float Amplitude = 1.f;

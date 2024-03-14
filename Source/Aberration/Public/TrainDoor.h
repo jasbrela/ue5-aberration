@@ -58,4 +58,10 @@ private:
 
 	UPROPERTY(EditInstanceOnly, Category="Door")
 	UBoxComponent* ClosedDoorCollision;
+
+	UPROPERTY(EditInstanceOnly, Category="Door")
+	UAudioComponent* OpenSFX;
+	
+	UPROPERTY(EditInstanceOnly, Category="Door")
+	UAudioComponent* CloseSFX;
 };

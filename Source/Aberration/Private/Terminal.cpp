@@ -68,8 +68,12 @@ void ATerminal::BeginPlay()
 			ScreenWidget->Inject(AberrationManager);
 		}
 	}
-	
-	ScreenWidget->Inject(this);
+
+	if (ScreenWidget)
+	{
+		ScreenWidget->Inject(ScreenWidgetComponent);
+		ScreenWidget->Inject(this);
+	}
 }
 
 void ATerminal::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
@@ -80,8 +84,8 @@ void ATerminal::Interact()
 
 	bIsFocused = !bIsFocused;
 
-	Controller->SetIgnoreMoveInput(bIsFocused);
-	Controller->SetIgnoreLookInput(bIsFocused);
+	Character->ToggleMoveAndLookInput(!bIsFocused);
+	
 	Controller->bShowMouseCursor = bIsFocused;
 	
 	if (bIsFocused)

@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "AberrationCharacter.generated.h"
 
+class UMenuWidget;
 class UInteractionWidget;
 class IInteractive;
 class UInteractionComponent;
@@ -31,8 +32,13 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	void ToggleInteractiveWidget(bool visible);
-	
+	void ToggleMoveAndLookInput(bool enable);
+	void ToggleInteractiveWidget(bool visible) const;
+	void ToggleMenuWidget(bool visible) const;
+	void SetSensX(float value);
+	void SetSensY(float value);
+	void Pause(const FInputActionValue& Value);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -42,10 +48,23 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
 private:
+	bool bCanMoveAndLook = true;
+	bool bIsMenuOpen = false;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Menu")
+	TSubclassOf<UUserWidget> MenuClass;
+
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
 	TSubclassOf<UUserWidget> InteractionClass;
+	
 	UPROPERTY()
 	UInteractionWidget* InteractionWidget;
+
+	UPROPERTY()
+	UMenuWidget* MenuWidget;
+	
+	UPROPERTY(VisibleInstanceOnly)
+	APlayerController* PlayerController;
 	
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* Mesh1P;
@@ -65,6 +84,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
+
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	TSubclassOf<UCameraShakeBase> CameraShake;
 	
@@ -75,6 +97,10 @@ private:
 	void InteractionLineTrace();
 	void SetInteractiveObject(IInteractive* Interactive);
 
-
+	UPROPERTY(EditDefaultsOnly, Category=Input)
+	float SensX;
+	
+	UPROPERTY(EditDefaultsOnly, Category=Input)
+	float SensY;
 };
 

@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class UWidgetComponent;
 class AAberrationManager;
 class AAberrationGameState;
 struct FAnswerData;
@@ -32,6 +33,7 @@ public:
 	void ShowReport();
 	void Inject(ATerminal* TerminalParent);
 	void Inject(AAberrationManager* Manager);
+	void Inject(UWidgetComponent* Component);
 
 private:
 	void ResetButtonIsCorrect();
@@ -69,6 +71,9 @@ private:
 	
 	UPROPERTY()
 	AAberrationGameState* State;
+
+	UPROPERTY()
+	UWidgetComponent* ThisComponent;
 
 	UPROPERTY()
 	ATerminal* Terminal;

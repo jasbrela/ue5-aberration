@@ -12,3 +12,8 @@ static TArray<T> ShuffleArray(TArray<T> Array, FRandomStream Stream)
 	}
 	return Array;
 }
+
+static FText Convert(float value)
+{
+	return FText::FromString(FString::Printf(TEXT("%.2f"), value));
+}

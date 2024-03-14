@@ -3,10 +3,9 @@
 
 #include "TrainDoor.h"
 
-#include "AberrationManager.h"
 #include "Terminal.h"
-#include "AberrationCharacter.h"
 #include "DebugMacros.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -17,12 +16,16 @@ ATrainDoor::ATrainDoor()
 	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
 	ForceCloseTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("ForceCloseTrigger"));
 	ClosedDoorCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("ClosedDoorCollision"));
+	CloseSFX = CreateDefaultSubobject<UAudioComponent>(TEXT("CloseSFX"));
+	OpenSFX = CreateDefaultSubobject<UAudioComponent>(TEXT("OpenSFX"));
 
 	Tooltip = TEXT("Open");
 	
 	SetRootComponent(DoorMesh);
 	ForceCloseTrigger->SetupAttachment(RootComponent);
 	ClosedDoorCollision->SetupAttachment(RootComponent);
+	CloseSFX->SetupAttachment(RootComponent);
+	OpenSFX->SetupAttachment(RootComponent);
 }
 
 void ATrainDoor::BeginPlay()
@@ -82,6 +85,8 @@ void ATrainDoor::Tick(float DeltaTime)
 void ATrainDoor::OpenDoor()
 {
 	if (bIsOpening) return;
+
+	OpenSFX->Play();
 	
 	bIsOpening = true;
 	bIsMoving = true;
@@ -92,7 +97,7 @@ void ATrainDoor::OpenDoor()
 void ATrainDoor::CloseDoor()
 {
 	if (!bIsOpening) return;
-	
+	CloseSFX->Play();
 	bIsOpening = false;
 	bIsMoving = true;
 	

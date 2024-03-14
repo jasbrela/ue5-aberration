@@ -13,6 +13,9 @@ void AAberrationFloating::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorTickEnabled(false);
+
+	DefaultPosition = GetActorLocation();
+	DefaultRotation = GetActorRotation();
 }
 
 void AAberrationFloating::AberrationTick(float DeltaTime)
@@ -34,6 +37,9 @@ void AAberrationFloating::Activate()
 void AAberrationFloating::Deactivate()
 {
 	SetActorTickEnabled(false);
+
+	SetActorLocation(DefaultPosition);
+	SetActorRotation(DefaultRotation);
 }
 
 float AAberrationFloating::TransformedSin(const float Alpha) const
