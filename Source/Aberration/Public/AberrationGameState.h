@@ -6,6 +6,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "AberrationGameState.generated.h"
 
+class UAberrationSaveGame;
 /**
  * 
  */
@@ -15,12 +16,23 @@ class ABERRATION_API AAberrationGameState : public AGameStateBase
 	GENERATED_BODY()
 public:
 	AAberrationGameState();
+
+	TArray<int> GetExcludedAberrations();
+	void IncreaseCompletedRuns();
+	UAberrationSaveGame* LoadGame();
+	void SaveGame();
 	
 	void SaveSeed(int NewSeed);
 	int GetSeed() const;
 	FRandomStream GetRandomStream() const;
+	
+	void SaveVolume(float Value);
+	void SaveSensX(float X);
+	void SaveSensY(float Y);
 
 	void RegisterScoreEntry(float Percentage);
+	void ExcludeAberrationEntry(int ID);
+	
 	bool GetPassed();
 	float GetFinalScore();
 	int GetFinalScorePercentage();
@@ -28,11 +40,27 @@ public:
 	int GetIncorrectAnswers();
 	int GetMaxPoints() const;
 
-	TArray<float> Percentages;
 
 private:
 	FRandomStream RandomStream;
+	TArray<float> Percentages;
+	TArray<int> ExcludedAberrations;
+	
+	UPROPERTY()
+	UAberrationSaveGame* LoadedGame = nullptr;
 	
 	UPROPERTY()
 	int Seed = 0;
+
+	UPROPERTY()
+	int CompletedRuns = 0;
+
+	UPROPERTY()
+	float Volume = 1.f;
+
+	UPROPERTY()
+	float SensX = 1.f;
+
+	UPROPERTY()
+	float SensY = 1.f;
 };

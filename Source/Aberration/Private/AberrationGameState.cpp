@@ -3,9 +3,42 @@
 
 #include "AberrationGameState.h"
 
+#include "AberrationSaveGame.h"
 #include "DebugMacros.h"
+#include "Kismet/GameplayStatics.h"
 
 AAberrationGameState::AAberrationGameState() { }
+
+TArray<int> AAberrationGameState::GetExcludedAberrations()
+{
+	return ExcludedAberrations;
+}
+
+void AAberrationGameState::IncreaseCompletedRuns()
+{
+	CompletedRuns++;
+	ExcludedAberrations.Empty();
+}
+
+UAberrationSaveGame* AAberrationGameState::LoadGame()
+{
+	if (LoadedGame == nullptr)
+	{
+		LoadedGame = Cast<UAberrationSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("AberrationExpress"), 0));
+
+		if (LoadedGame == nullptr)
+		{
+			LOG_ERROR("Failed to load game");
+			return LoadedGame;
+		}
+		LOG_SUCCESS("Loaded game. %f", LoadedGame->Volume);
+	}
+
+	CompletedRuns = LoadedGame->CompletedRuns;
+
+	return LoadedGame;
+
+}
 
 void AAberrationGameState::SaveSeed(int NewSeed)
 {
@@ -14,9 +47,45 @@ void AAberrationGameState::SaveSeed(int NewSeed)
 	LOG_SUCCESS("Seed saved as %i", Seed);
 }
 
+void AAberrationGameState::SaveVolume(float Value)
+{
+	Volume = Value;
+}
+
+void AAberrationGameState::SaveSensX(float X)
+{
+	SensX = X;
+}
+
+void AAberrationGameState::SaveSensY(float Y)
+{
+	SensY = Y;
+}
+
 int AAberrationGameState::GetSeed() const
 {
 	return GetRandomStream().GetCurrentSeed();
+}
+
+void AAberrationGameState::SaveGame()
+{
+	UAberrationSaveGame* Save = Cast<UAberrationSaveGame>(UGameplayStatics::CreateSaveGameObject(UAberrationSaveGame::StaticClass()));
+
+	Save->Volume = Volume;
+	Save->SensX = SensX;
+	Save->SensY = SensY;
+	Save->ExcludedAberrations = ExcludedAberrations;
+	Save->CompletedRuns = CompletedRuns;
+
+	const bool Success = UGameplayStatics::SaveGameToSlot(Save, TEXT("AberrationExpress"), 0);
+	
+	if (Success)
+	{
+		LOG_SUCCESS("Saved. %f", Save->Volume);
+	} else
+	{
+		LOG_ERROR("Failed to save game.");
+	}
 }
 
 FRandomStream AAberrationGameState::GetRandomStream() const
@@ -28,6 +97,11 @@ void AAberrationGameState::RegisterScoreEntry(const float Percentage)
 {
 	Percentages.Push(Percentage);
 	LOG_SUCCESS("New score entry registered: %f", Percentage);
+}
+
+void AAberrationGameState::ExcludeAberrationEntry(int ID)
+{
+	ExcludedAberrations.Push(ID);
 }
 
 bool AAberrationGameState::GetPassed()

@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "InteractionWidget.h"
 #include "Interactive.h"
+#include "AberrationGameState.h"
 #include "MenuWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
@@ -125,9 +126,9 @@ void AAberrationCharacter::Interact(const FInputActionValue& Value)
 	}
 }
 
-void AAberrationCharacter::ToggleMoveAndLookInput(bool enable)
+void AAberrationCharacter::ToggleMoveAndLookInput(bool bEnable)
 {
-	bCanMoveAndLook = enable;
+	bCanMoveAndLook = bEnable;
 
 	if (bCanMoveAndLook)
 	{
@@ -138,24 +139,24 @@ void AAberrationCharacter::ToggleMoveAndLookInput(bool enable)
 	}
 }
 
-void AAberrationCharacter::ToggleInteractiveWidget(bool visible) const
+void AAberrationCharacter::ToggleInteractiveWidget(bool bVisible) const
 {
-	InteractionWidget->SetVisibility(visible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	InteractionWidget->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
-void AAberrationCharacter::ToggleMenuWidget(bool visible) const
+void AAberrationCharacter::ToggleMenuWidget(bool bVisible) const
 {
-	MenuWidget->SetVisibility(visible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	MenuWidget->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
-void AAberrationCharacter::SetSensX(float value)
+void AAberrationCharacter::SetSensX(float Value)
 {
-	SensX = value;
+	SensX = Value;
 }
 
-void AAberrationCharacter::SetSensY(float value)
+void AAberrationCharacter::SetSensY(float Value)
 {
-	SensY = value;
+	SensY = Value;
 }
 
 void AAberrationCharacter::BeginPlay()
@@ -180,6 +181,11 @@ void AAberrationCharacter::BeginPlay()
 			MenuWidget->Inject(this);
 			
 			MenuWidget->AddToViewport(0);
+			
+			if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
+			{
+				MenuWidget->Inject(State);
+			}
 		}
 	}
 	

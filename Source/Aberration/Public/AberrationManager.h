@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "AberrationManager.generated.h"
 
+class AAberrationGameState;
 enum class EAberrationDifficulty;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManagerUpdateAberrationsDelegate, FActiveAberrations, ActiveAberrations);
@@ -41,7 +42,10 @@ private:
 	bool bOverrideSeed = false;
 	UPROPERTY(EditAnywhere)
 	int Seed = 0;
-	
+
+	UPROPERTY()
+	AAberrationGameState* AberrationState;
+		
 	FRandomStream RandomStream;
 	FTimerHandle BeginPlayDelayTimerHandle;
 	
@@ -54,6 +58,9 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	TArray<int> UnlockedAberrations;
+
+	UPROPERTY(VisibleInstanceOnly)
+	TArray<int> ExcludedAberrations;
 	
 	UPROPERTY(EditAnywhere)
 	int NumberOfCoaches = 1;

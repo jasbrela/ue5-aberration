@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MenuWidget.generated.h"
 
+class AAberrationGameState;
 class AAberrationCharacter;
 class USlider;
 class UButton;
@@ -23,7 +24,7 @@ public:
 	UMenuWidget(const FObjectInitializer& ObjectInitializer);
 	virtual void NativeConstruct() override;
 	void Inject(AAberrationCharacter* Character);
-
+	void Inject(AAberrationGameState* State);
 
 private:
 	UFUNCTION()
@@ -33,16 +34,18 @@ private:
 	void OnClickResumeButton();
 	
 	UFUNCTION()
-	void OnVolumeChanged(float value);
+	void OnVolumeChanged(float Value);
 
 	UFUNCTION()
-	void OnSensXChanged(float value);
+	void OnSensXChanged(float Value);
 
 	UFUNCTION()
-	void OnSensYChanged(float value);
+	void OnSensYChanged(float Value);
 
 	UPROPERTY()
 	AAberrationCharacter* AberrationCharacter;
+	UPROPERTY()
+	AAberrationGameState* AberrationState;
 		
 	UPROPERTY(meta = (BindWidget))
 	UButton* ResumeButton;

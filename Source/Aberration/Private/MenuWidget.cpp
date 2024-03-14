@@ -4,6 +4,9 @@
 #include "MenuWidget.h"
 
 #include "AberrationCharacter.h"
+#include "AberrationGameState.h"
+#include "AberrationSaveGame.h"
+#include "DebugMacros.h"
 #include "InputActionValue.h"
 #include "Components/Button.h"
 #include "Components/Slider.h"
@@ -27,6 +30,7 @@ void UMenuWidget::NativeConstruct()
 
 void UMenuWidget::OnClickQuitButton()
 {
+	AberrationState->SaveGame();
 	FGenericPlatformMisc::RequestExit(false);
 }
 
@@ -34,35 +38,63 @@ void UMenuWidget::OnClickResumeButton()
 {
 	if (AberrationCharacter)
 	{
+		AberrationState->SaveGame();
 		AberrationCharacter->Pause(FInputActionValue(true));
 	}
 }
 
-void UMenuWidget::OnVolumeChanged(float value)
+void UMenuWidget::OnVolumeChanged(float Value)
 {
-	VolumeValue->SetText(Convert(value));
-	UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(value, 0, 1));
+	if (AberrationState)
+	{
+		AberrationState->SaveVolume(Value);
+	}
+	VolumeSlider->SetValue(Value);
+	VolumeValue->SetText(Convert(Value));
+	UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(Value, 0, 1));
 }
 
-void UMenuWidget::OnSensXChanged(float value)
+void UMenuWidget::OnSensXChanged(float Value)
 {
 	if (AberrationCharacter)
 	{
-		AberrationCharacter->SetSensX(value);
-		SensXValue->SetText(Convert(value));
+		if (AberrationState)
+		{
+			AberrationState->SaveSensX(Value);
+		}
+		AberrationCharacter->SetSensX(Value);
+		SensXSlider->SetValue(Value);
+		SensXValue->SetText(Convert(Value));
 	}
 }
 
-void UMenuWidget::OnSensYChanged(float value)
+void UMenuWidget::OnSensYChanged(float Value)
 {
 	if (AberrationCharacter)
 	{
-		AberrationCharacter->SetSensY(value);
-		SensYValue->SetText(Convert(value));
+		if (AberrationState)
+		{
+			AberrationState->SaveSensY(Value);
+		}
+		AberrationCharacter->SetSensY(Value);
+		SensYSlider->SetValue(Value);
+		SensYValue->SetText(Convert(Value));
 	}
 }
 
 void UMenuWidget::Inject(AAberrationCharacter* Character)
 {
 	AberrationCharacter = Character;
+}
+
+void UMenuWidget::Inject(AAberrationGameState* State)
+{
+	AberrationState = State;
+
+	if (const UAberrationSaveGame* Save = AberrationState->LoadGame())
+	{
+		OnSensXChanged(Save->SensX);
+		OnSensYChanged(Save->SensY);
+		OnVolumeChanged(Save->Volume);
+	}
 }

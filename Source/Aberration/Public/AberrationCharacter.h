@@ -32,11 +32,11 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	void ToggleMoveAndLookInput(bool enable);
-	void ToggleInteractiveWidget(bool visible) const;
-	void ToggleMenuWidget(bool visible) const;
-	void SetSensX(float value);
-	void SetSensY(float value);
+	void ToggleMoveAndLookInput(bool bEnable);
+	void ToggleInteractiveWidget(bool bVisible) const;
+	void ToggleMenuWidget(bool bVisible) const;
+	void SetSensX(float Value);
+	void SetSensY(float Value);
 	void Pause(const FInputActionValue& Value);
 
 protected:

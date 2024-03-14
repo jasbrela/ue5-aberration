@@ -4,6 +4,7 @@
 #include "AberrationManager.h"
 
 #include "AberrationGameState.h"
+#include "AberrationSaveGame.h"
 #include "FActiveAberrations.h"
 #include "DebugMacros.h"
 
@@ -55,9 +56,10 @@ void AAberrationManager::GenerateSeed()
 	{
 		if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
 		{
+			AberrationState = State;
 			const int GeneratedSeed = bOverrideSeed ? Seed : FMath::RandRange(10000, 99999);
-			State->SaveSeed(GeneratedSeed);
-			RandomStream = State->GetRandomStream();
+			AberrationState->SaveSeed(GeneratedSeed);
+			RandomStream = AberrationState->GetRandomStream();
 		}
 	}
 	else
@@ -84,11 +86,23 @@ bool AAberrationManager::WasLastCoach() const
 
 void AAberrationManager::UpdateUnlockedAberrations()
 {
+	const UAberrationSaveGame* Save = AberrationState->LoadGame();
+
+	if (Save) ExcludedAberrations = Save->ExcludedAberrations;
+	
 	for (const FAberrationData* Data : AberrationsData)
 	{
 		if (Data->UnlockAfterCoach == CurrentCoach)
 		{
-			UnlockedAberrations.AddUnique(Data->ID);
+			if (Save)
+			{
+				if (Save->ExcludedAberrations.Contains(Data->ID))
+				{
+					UnlockedAberrations.AddUnique(Data->ID);
+					continue;
+				}
+			} else UnlockedAberrations.AddUnique(Data->ID);
+			
 			AvailableAberrations.AddUnique(Data->ID);
 		}
 	}	
@@ -115,8 +129,16 @@ void AAberrationManager::GenerateNextCoachAberrations()
 				LOG_WARNING("No available aberrations found.");
 			} else
 			{
+				if (AvailableAberrations.Num() == 0)
+				{
+					AberrationState->IncreaseCompletedRuns();
+					AvailableAberrations = UnlockedAberrations;
+				}
+				
 				const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
-
+				
+				AberrationState->ExcludeAberrationEntry(RandomAberration);
+				
 				AvailableAberrations.Remove(RandomAberration);
 				
 				PreviousOtherThanActiveAberrations = OtherThanActiveAberrations;
