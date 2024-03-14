@@ -326,6 +326,11 @@ void UTerminalWidget::GenerateQuestion()
 				{
 					LOG("[A] Added: %s", *CurrentAberrations[i]);
 					Answers.Add(FAnswerData(CurrentAberrations[i], false));
+					
+					if (OtherAberrations.Contains(CurrentAberrations[i]))
+					{
+						OtherAberrations.Remove(CurrentAberrations[i]);
+					}
 				} else
 				{
 					const int Index = Stream.RandRange(0, OtherAberrations.Num() - 1);

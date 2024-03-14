@@ -214,6 +214,8 @@ void AAberrationCharacter::BeginPlay()
 	{
 		UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake);
 	}
+
+	ToggleMoveAndLookInput(true);
 }
 
 void AAberrationCharacter::Tick(float DeltaTime)
