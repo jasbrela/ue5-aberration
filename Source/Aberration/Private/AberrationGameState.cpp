@@ -17,6 +17,7 @@ TArray<int> AAberrationGameState::GetExcludedAberrations()
 void AAberrationGameState::IncreaseCompletedRuns()
 {
 	CompletedRuns++;
+	LOG_SUCCESS("Completed Run: %i", CompletedRuns);
 	ExcludedAberrations.Empty();
 }
 
@@ -31,7 +32,7 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 			LOG_ERROR("Failed to load game");
 			return LoadedGame;
 		}
-		LOG_SUCCESS("Loaded game. %f", LoadedGame->Volume);
+		LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
 	}
 
 	CompletedRuns = LoadedGame->CompletedRuns;
@@ -81,7 +82,7 @@ void AAberrationGameState::SaveGame()
 	
 	if (Success)
 	{
-		LOG_SUCCESS("Saved. %f", Save->Volume);
+		LOG_SUCCESS("Saved. %i", LoadedGame->ExcludedAberrations.Num());
 	} else
 	{
 		LOG_ERROR("Failed to save game.");

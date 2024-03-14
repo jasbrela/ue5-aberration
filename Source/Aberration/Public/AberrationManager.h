@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "AberrationManager.generated.h"
 
+class ACoachID;
 class AAberrationGameState;
 enum class EAberrationDifficulty;
 
@@ -42,6 +43,12 @@ private:
 	bool bOverrideSeed = false;
 	UPROPERTY(EditAnywhere)
 	int Seed = 0;
+
+	UPROPERTY(EditInstanceOnly)
+	ACoachID* BackID;
+
+	UPROPERTY(EditInstanceOnly)
+	ACoachID* FrontID;
 
 	UPROPERTY()
 	AAberrationGameState* AberrationState;

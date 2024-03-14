@@ -9,6 +9,7 @@ AAberrationDoor::AAberrationDoor() { }
 
 void AAberrationDoor::Activate()
 {
+	Door->BlockNextForceClose();
 	Door->ForceOpenDoor();
 }
 

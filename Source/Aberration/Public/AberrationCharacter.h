@@ -27,8 +27,6 @@ class AAberrationCharacter : public ACharacter
 
 public:
 	AAberrationCharacter();
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
@@ -38,6 +36,7 @@ public:
 	void SetSensX(float Value);
 	void SetSensY(float Value);
 	void Pause(const FInputActionValue& Value);
+	void TogglePauseInput(bool bEnable);
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,11 +44,17 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
+	void Sprint(const FInputActionValue& Value);
+	void StopSprinting(const FInputActionValue& Value);
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
 private:
 	bool bCanMoveAndLook = true;
 	bool bIsMenuOpen = false;
+	bool bCanPause = true;
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	float SprintSpeedMultiplier = 1.f;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Menu")
 	TSubclassOf<UUserWidget> MenuClass;
@@ -75,6 +80,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* JumpAction;
 
@@ -86,6 +94,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
 	TSubclassOf<UCameraShakeBase> CameraShake;

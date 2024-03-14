@@ -16,6 +16,7 @@
 #include "MenuWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -126,6 +127,17 @@ void AAberrationCharacter::Interact(const FInputActionValue& Value)
 	}
 }
 
+void AAberrationCharacter::Sprint(const FInputActionValue& Value)
+{
+
+	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
+}
+
+void AAberrationCharacter::StopSprinting(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
+}
+
 void AAberrationCharacter::ToggleMoveAndLookInput(bool bEnable)
 {
 	bCanMoveAndLook = bEnable;
@@ -223,6 +235,8 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAberrationCharacter::Look);
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AAberrationCharacter::Interact);
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AAberrationCharacter::Pause);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AAberrationCharacter::Sprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AAberrationCharacter::StopSprinting);
 	}
 	else
 	{
@@ -233,7 +247,9 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void AAberrationCharacter::Pause(const FInputActionValue& Value)
 {
+	if (!bCanPause) return;
 	if (!Value.Get<bool>()) return;
+	
 	bIsMenuOpen = !bIsMenuOpen;
 
 	if (PlayerController)
@@ -243,6 +259,11 @@ void AAberrationCharacter::Pause(const FInputActionValue& Value)
 	
 	ToggleMoveAndLookInput(!bIsMenuOpen);
 	ToggleMenuWidget(bIsMenuOpen);
+}
+
+void AAberrationCharacter::TogglePauseInput(bool bEnable)
+{
+	bCanPause = bEnable;
 }
 
 void AAberrationCharacter::Move(const FInputActionValue& Value)

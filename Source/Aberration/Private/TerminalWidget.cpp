@@ -32,7 +32,7 @@ void UTerminalWidget::NativeConstruct()
 	Buttons.Add(FTerminalButtonData(Option2, Option2Text));
 	Buttons.Add(FTerminalButtonData(Option3, Option3Text));
 
-	Background->SetBrushFromTexture(FailureTexture, true);
+	Background->SetBrushFromTexture(AttentionTexture, true);
 
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 	SeedText->SetText(FText::FromString(FString::Printf(TEXT("OS-%i"), State->GetSeed())));
@@ -259,7 +259,7 @@ void UTerminalWidget::GenerateYesNoQuestion()
 	Question->SetText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
 
 	const TArray<FString> CurrentAberrations = Terminal->GetPreviousActiveAberrationsNames();
-	const bool bIsThereAnyAberration = CurrentAberrations.Num() > 0;
+	const bool bIsThereAnyAberration = !CurrentAberrations.IsEmpty();
 	
 	LOG("Is there any aberration? %s", bIsThereAnyAberration ? TEXT("true") : TEXT("false"));
 	
@@ -314,7 +314,7 @@ void UTerminalWidget::GenerateQuestion()
 
 			int AberrationsFromThisCoachQuantity = 0;
 			
-			if (CurrentAberrations.Num() > 0)
+			if (!CurrentAberrations.IsEmpty())
 			{
 				AberrationsFromThisCoachQuantity = Stream.RandRange(1, FMath::Min(CurrentAberrations.Num()-1, 2));
 				CurrentAberrations = ShuffleArray(CurrentAberrations, Stream);
@@ -355,6 +355,8 @@ void UTerminalWidget::DisplayScore()
 		{
 			Background->SetBrushFromTexture(ResultFailureTexture, true);
 		}
+
+		State->SaveGame();
 	}
 
 	ConfirmText->SetText(FText::FromString(TEXT("OK")));

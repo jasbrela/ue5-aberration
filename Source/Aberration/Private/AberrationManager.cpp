@@ -5,6 +5,7 @@
 
 #include "AberrationGameState.h"
 #include "AberrationSaveGame.h"
+#include "CoachID.h"
 #include "FActiveAberrations.h"
 #include "DebugMacros.h"
 
@@ -74,7 +75,28 @@ void AAberrationManager::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
 void AAberrationManager::ChangeCoach(int Change)
 {
 	LOG_SUCCESS("Player changed from coach %i to coach %i", CurrentCoach, CurrentCoach + Change);
+	
+	if (CurrentCoach < CoachAberrations.Num() && !CoachAberrations[CurrentCoach].Array.IsEmpty())
+	{
+		AberrationState->ExcludeAberrationEntry(CoachAberrations[CurrentCoach].Array[0]);
+	}
+	
 	CurrentCoach += Change;
+
+	if (FrontID)
+	{
+		if (CurrentCoach >= NumberOfCoaches)
+		{
+			if (CurrentCoach == NumberOfCoaches) FrontID->Hide();
+			else BackID->Hide();
+		} else
+		{
+			FrontID->UpdateMaterial(CurrentCoach+1);
+		}
+	}
+	
+	if (AberrationState) AberrationState->SaveGame();
+	if (BackID) BackID->UpdateMaterial(CurrentCoach);
 	
 	GenerateNextCoachAberrations();
 }
@@ -137,8 +159,6 @@ void AAberrationManager::GenerateNextCoachAberrations()
 				
 				const int RandomAberration = AvailableAberrations[RandomStream.RandRange(0, AvailableAberrations.Num() - 1)];
 				
-				AberrationState->ExcludeAberrationEntry(RandomAberration);
-				
 				AvailableAberrations.Remove(RandomAberration);
 				
 				PreviousOtherThanActiveAberrations = OtherThanActiveAberrations;
@@ -154,7 +174,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 					return Aberration->ID == RandomAberration;
 				});
 
-				if (CoachAberrations[CurrentCoach].Array.Num() > 0) CoachAberrations[CurrentCoach].Array.Empty();
+				if (!CoachAberrations[CurrentCoach].Array.IsEmpty()) CoachAberrations[CurrentCoach].Array.Empty();
 				
 				CoachAberrations[CurrentCoach].Array.AddUnique(RandomAberration);
 			}

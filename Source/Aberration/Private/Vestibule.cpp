@@ -32,8 +32,8 @@ void AVestibule::BeginPlay()
 	if (TeleportValue == 0)
 	{
 		LOG_WARNING("TeleportValue is set to 0. This may cause errors.");
-		
 	}
+	
 	if (bCanTeleport)
 	{
 		BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);

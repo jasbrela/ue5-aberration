@@ -27,6 +27,11 @@ ATerminal::ATerminal()
 
 void ATerminal::OnExitRange()
 {
+	if (bIsFocused)
+	{
+		Interact();
+	}
+	
 	ScreenWidgetComponent->SetVisibility(false);
 }
 
@@ -85,15 +90,16 @@ void ATerminal::Interact()
 	bIsFocused = !bIsFocused;
 
 	Character->ToggleMoveAndLookInput(!bIsFocused);
+	Character->TogglePauseInput(!bIsFocused);
 	
 	Controller->bShowMouseCursor = bIsFocused;
 	
 	if (bIsFocused)
 	{
-		Controller->SetViewTargetWithBlend(FocusActor, 1);
+		Controller->SetViewTargetWithBlend(FocusActor, .75f);
 	} else
 	{
-		Controller->SetViewTargetWithBlend(Character, 1);
+		Controller->SetViewTargetWithBlend(Character, .25f);
 	}
 
 	Character->ToggleInteractiveWidget(!bIsFocused);
@@ -117,7 +123,7 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	const FActiveAberrations Previous = AberrationManager->GetPreviousActiveAberrations();
 	PreviousAberrationsNames.Empty();
 	
-	if (Previous.Array.Num() > 0 && AberrationManager)
+	if (!Previous.Array.IsEmpty() && AberrationManager)
 	{
 		for (int i = 0; i < AberrationManager->AberrationsData.Num(); i++)
 		{

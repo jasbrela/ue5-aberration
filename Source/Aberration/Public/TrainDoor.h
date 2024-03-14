@@ -21,7 +21,8 @@ public:
 	void CloseDoor();
 	void ForceCloseDoor();
 	void ForceOpenDoor();
-
+	void BlockNextForceClose();
+	
 	virtual void Interact() override;
 	virtual void OnExitRange() override;
 	virtual void OnEnterRange() override;
@@ -35,6 +36,7 @@ protected:
 private:
 	bool bIsMoving = false;
 	bool bIsOpening = false;
+	bool bCanForceClose = true;
 
 	void DoorMovement(float DeltaTime);
 	

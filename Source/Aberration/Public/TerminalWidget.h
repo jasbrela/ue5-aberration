@@ -97,6 +97,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* FailureTexture;
 	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* AttentionTexture;
+	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* QuestionTexture;
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* SuccessTexture;

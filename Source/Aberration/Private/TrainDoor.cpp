@@ -106,6 +106,12 @@ void ATrainDoor::CloseDoor()
 
 void ATrainDoor::ForceCloseDoor()
 {
+	if (!bCanForceClose)
+	{
+		bCanForceClose = true;
+		return;
+	}
+	
 	bIsMoving = false;
 	bIsOpening = false;
 	
@@ -121,6 +127,11 @@ void ATrainDoor::ForceOpenDoor()
 	
 	const FVector Location = DoorMesh->GetRelativeLocation();
 	DoorMesh->SetRelativeLocation(FVector(Location.X, OpenDoorYLocation, Location.Z));
+}
+
+void ATrainDoor::BlockNextForceClose()
+{
+	bCanForceClose = false;
 }
 
 void ATrainDoor::Interact()
