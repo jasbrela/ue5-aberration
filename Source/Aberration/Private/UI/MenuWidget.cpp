@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024, Jasbrela. All rights reserved.
 
 
-#include "MenuWidget.h"
+#include "UI/MenuWidget.h"
 
 #include "AberrationCharacter.h"
 #include "AberrationGameState.h"

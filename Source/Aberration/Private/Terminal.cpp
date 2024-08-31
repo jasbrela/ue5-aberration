@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024, Jasbrela. All rights reserved.
 
 
 #include "Terminal.h"
 
 #include "AberrationManager.h"
-#include "TerminalWidget.h"
+#include "UI/TerminalWidget.h"
 #include "AberrationCharacter.h"
 #include "AberrationPlayerController.h"
 #include "Components/WidgetComponent.h"

@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024, Jasbrela. All rights reserved.
 
 
-#include "TerminalWidget.h"
+#include "UI/TerminalWidget.h"
 
 #include "AberrationGameState.h"
 #include "AberrationManager.h"
@@ -47,7 +47,7 @@ void UTerminalWidget::ShowReport()
 
 	QuestionsCanvas->SetVisibility(ESlateVisibility::Visible);
 	Background->SetBrushFromTexture(QuestionTexture, true);
-	Confirm->SetVisibility(ESlateVisibility::Collapsed);	
+	ToggleConfirmButton(false);
 }
 
 void UTerminalWidget::Inject(ATerminal* TerminalParent)
@@ -219,9 +219,10 @@ void UTerminalWidget::ConfirmReport()
 	ThisComponent->RequestRedraw();
 }
 
-void UTerminalWidget::ToggleConfirmButton(bool Visible) const
+void UTerminalWidget::ToggleConfirmButton(bool Enable) const
 {
-	Confirm->SetVisibility(Visible ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+	Confirm->SetIsEnabled(Enable);
+	Confirm->SetRenderOpacity(Enable ? 1.0 : 0.2);
 }
 
 void UTerminalWidget::ResetButtonsSelectedState()
@@ -242,13 +243,7 @@ void UTerminalWidget::ResetButtonsSelectedState()
 
 void UTerminalWidget::UpdateButtonStyle(int Index)
 {
-	if (Buttons[Index].bIsSelected)
-	{
-		Buttons[Index].Button->SetStyle(PressedStyle);
-	} else
-	{
-		Buttons[Index].Button->SetStyle(DefaultStyle);
-	}
+	Buttons[Index].Button->SetStyle(Buttons[Index].bIsSelected ? PressedStyle : DefaultStyle);
 }
 
 void UTerminalWidget::GenerateYesNoQuestion()

@@ -1,9 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2024, Jasbrela. All rights reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FActiveAberrations.h"
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
@@ -14,7 +13,6 @@ struct FAnswerData;
 struct FActiveAberrations;
 struct FTerminalButtonData;
 class ATerminal;
-class UCheckBox;
 class UCanvasPanel;
 class UImage;
 class UButton;
@@ -43,7 +41,7 @@ private:
 	void DisplayAnswers();
 	void OnClickOption(int Option);
 	void ConfirmReport();
-	void ToggleConfirmButton(bool Visible) const;
+	void ToggleConfirmButton(bool Enable) const;
 	void ResetButtonsSelectedState();
 	void UpdateButtonStyle(int Index);
 	void GenerateYesNoQuestion();
