@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class UTerminalButton;
 class UWidgetComponent;
 class AAberrationManager;
 class AAberrationGameState;
@@ -106,6 +107,14 @@ private:
 	UTexture2D* ResultSuccessTexture;
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* ResultFailureTexture;
+
+
+	UPROPERTY(meta = (BindWidget))
+	UTerminalButton* OptionButton1;
+	UPROPERTY(meta = (BindWidget))
+	UTerminalButton* OptionButton2;
+	UPROPERTY(meta = (BindWidget))
+	UTerminalButton* OptionButton3;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* QuestionNumber;

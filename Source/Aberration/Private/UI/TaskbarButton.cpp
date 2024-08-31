@@ -5,14 +5,8 @@
 
 UTaskbarButton::UTaskbarButton(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-bool UTaskbarButton::GetIsPressed()
+void UTaskbarButton::NativeConstruct()
 {
-	return bIsPressed;
+	Super::NativeConstruct();
 }
 
-void UTaskbarButton::UpdateButtonStyle(bool bPress)
-{
-	Button->SetStyle(bPress ? PressedStyle : DefaultStyle);
-
-	bIsPressed = bPress;
-}

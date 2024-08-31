@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
+#include "TerminalButton.h"
 #include "TaskbarButton.generated.h"
 
 class UWidgetComponent;
@@ -16,33 +15,15 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class ABERRATION_API UTaskbarButton : public UUserWidget
+class ABERRATION_API UTaskbarButton : public UTerminalButton
 {
 	GENERATED_BODY()
 
 public:
 	UTaskbarButton(const FObjectInitializer& ObjectInitializer);
-	bool GetIsPressed();
-	void UpdateButtonStyle(bool bPress);
-	
-private:	
-	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"))
-	FButtonStyle DefaultStyle;
-	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"))
-	FButtonStyle PressedStyle;
-	
+	virtual void NativeConstruct() override;
+
+private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* WindowIcon;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* Button;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Text;
-	
-	UPROPERTY(EditDefaultsOnly)
-	bool bStayPressed = false;
-
-	UPROPERTY()
-	bool bIsPressed = false;
 };
