@@ -15,6 +15,12 @@ bool UQuestionButton::IsAnswerCorrect() const
 	return bIsPressed && bIsCorrect;
 }
 
+void UQuestionButton::Reset()
+{
+	Super::Reset();
+	bIsCorrect = false;
+}
+
 void UQuestionButton::SetIsCorrect(bool IsCorrect)
 {
 	bIsCorrect = IsCorrect;

@@ -9,7 +9,7 @@
 #include "UI/ButtonStyleData.h"
 #include "TerminalButton.generated.h"
 
-DECLARE_DELEGATE(FOnClickTerminalButton)
+DECLARE_DELEGATE(FOnClickButtonDelegate)
 
 /**
  * 
@@ -22,16 +22,19 @@ public:
 	UTerminalButton(const FObjectInitializer& ObjectInitializer);
 	virtual void NativeConstruct() override;
 
-	bool GetIsPressed() const;
-	void UpdateButtonStyle(bool bPress);
-	void SetOnClick(FOnClickTerminalButton& Callback);
+	bool IsPressed() const;
+	void UpdateButtonStyle() const;
+	virtual void Reset();
+	void SetOnClick(const FOnClickButtonDelegate& Callback);
 	void SetText(const FString& NewText) const;
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Text;
 
+	UPROPERTY(EditAnywhere)
+	int ID = -1;
+	
+protected:
 	UPROPERTY()
 	bool bIsPressed = false;
 	
@@ -39,15 +42,18 @@ private:
 	UFUNCTION()
 	void OnClickButton();
 	
-	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"))
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Text;
+	
+	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"), Category="Style")
 	UButtonStyleData* DefaultStyle;
-	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"))
+	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"), Category="Style")
 	UButtonStyleData* PressedStyle;
-
+	
 	UPROPERTY(EditDefaultsOnly)
 	bool bStayPressed = false;
 
-	FOnClickTerminalButton OnClick;
+	FOnClickButtonDelegate OnClick;
 	
 	
 };

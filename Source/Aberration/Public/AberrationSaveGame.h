@@ -17,10 +17,10 @@ class ABERRATION_API UAberrationSaveGame : public USaveGame
 public:
 	UAberrationSaveGame();
 
-	UPROPERTY(EditAnywhere)
+	/*UPROPERTY(EditAnywhere)
 	TArray<int> ExcludedAberrations;
 
-	int CompletedRuns = 0;
+	int CompletedRuns = 0;*/
 
 	UPROPERTY(EditAnywhere)
 	float Volume = 1.f;

@@ -29,6 +29,7 @@ public:
 	int GetCurrentCoach() const;
 	void ChangeCoach(int Change);
 	bool WasLastCoach() const;
+	int GetNumberOfCoaches() const;
 
 	FOnManagerUpdateAberrationsDelegate ManagerUpdateAberrationsDelegate;
 	

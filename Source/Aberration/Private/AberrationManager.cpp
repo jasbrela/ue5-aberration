@@ -107,6 +107,11 @@ bool AAberrationManager::WasLastCoach() const
 	return CurrentCoach > NumberOfCoaches;
 }
 
+int AAberrationManager::GetNumberOfCoaches() const
+{
+	return NumberOfCoaches;
+}
+
 void AAberrationManager::UpdateUnlockedAberrations()
 {
 	const UAberrationSaveGame* Save = AberrationState->LoadGame();

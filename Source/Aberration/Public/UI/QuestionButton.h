@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "TerminalButton.h"
-#include "Blueprint/UserWidget.h"
 #include "QuestionButton.generated.h"
 
 /**
@@ -19,7 +18,8 @@ public:
 	virtual void NativeConstruct() override;
 
 	bool IsAnswerCorrect() const;
+	virtual void Reset() override;
 	void SetIsCorrect(bool IsCorrect);
 private:
-	bool bIsCorrect = false;
+	bool bIsCorrect = false; //TODO: Is it necessary?
 };

@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "QuestionButton.h"
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class AAberrationManager;
+class UQuestionnaireWidget;
 class UTerminalButton;
 class UWidgetComponent;
-class AAberrationManager;
 class AAberrationGameState;
 struct FAnswerData;
 struct FActiveAberrations;
@@ -18,6 +20,7 @@ class UCanvasPanel;
 class UImage;
 class UButton;
 class UTextBlock;
+
 /**
  * 
  */
@@ -29,69 +32,35 @@ public:
     UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
 	
+	void InitializeTerminal();
 	void ShowReport();
-	void Inject(ATerminal* TerminalParent);
-	void Inject(AAberrationManager* Manager);
+	
 	void Inject(UWidgetComponent* Component);
-
+	void Inject(AAberrationManager* Manager);
+	void Inject(ATerminal* TerminalParent);
 private:
-	void ResetButtonIsCorrect();
-	void SetButtonIsCorrect(int Option, bool IsCorrect);
-	void SetButtonText(int Option, FString Text);
-	void SetButtonVisibility(int Option, bool Visible);
-	void DisplayAnswers();
-	void OnClickOption(int Option);
-	void ConfirmReport();
-	void ToggleConfirmButton(bool Enable) const;
-	void ResetButtonsSelectedState();
-	void UpdateButtonStyle(int Index);
+	void SetAnswersText();
 	void GenerateYesNoQuestion();
 	void GenerateQuestion();
-	void DisplayScore();
-	bool bMultipleAnswers = false;
-	bool bCanConfirm = false;
 	bool bFinished = false;
 	
 	FRandomStream Stream;
-	TArray<FTerminalButtonData> Buttons;
 	TArray<FAnswerData> Answers;
-	
-	UFUNCTION()
-	void OnClickOption1();
-	
-	UFUNCTION()
-	void OnClickOption2();
-	
-	UFUNCTION()
-	void OnClickOption3();
 
-	UFUNCTION()
-	void NextPage();
-	
 	UPROPERTY()
 	AAberrationGameState* State;
-
-	UPROPERTY()
-	UWidgetComponent* ThisComponent;
-
 	UPROPERTY()
 	ATerminal* Terminal;
-
+	UPROPERTY()
+	UWidgetComponent* WidgetComponent;
 	UPROPERTY()
 	AAberrationManager* AberrationManager;
-
-	FTimerHandle LoadingTimerHandle;
-	
-	UPROPERTY(EditDefaultsOnly)
-	FButtonStyle DefaultStyle;
-	UPROPERTY(EditDefaultsOnly)
-	FButtonStyle PressedStyle;
 	
 	UPROPERTY(meta = (BindWidget))
 	UImage* Background;
 
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* QuestionsCanvas;
+	UQuestionnaireWidget* Questionnaire;
 
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* FailureTexture;
@@ -103,51 +72,12 @@ private:
 	UTexture2D* SuccessTexture;
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* LoadingTexture;
+	
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* ResultSuccessTexture;
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* ResultFailureTexture;
-
-
-	UPROPERTY(meta = (BindWidget))
-	UTerminalButton* OptionButton1;
-	UPROPERTY(meta = (BindWidget))
-	UTerminalButton* OptionButton2;
-	UPROPERTY(meta = (BindWidget))
-	UTerminalButton* OptionButton3;
 	
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* QuestionNumber;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Question;
-	
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Option1Text;
-	UPROPERTY(meta = (BindWidget))
-	UButton* Option1;
-	
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Option2Text;
-	UPROPERTY(meta = (BindWidget))
-	UButton* Option2;
-	
-	UPROPERTY(meta = (BindWidget))
-	UButton* Option3;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Option3Text;
-	
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ScorePercentageText;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* OutOfPointsText;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* IncorrectAnswersText;
-	
-	UPROPERTY(meta = (BindWidget))
-	UButton* Confirm;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ConfirmText;
-
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* SeedText;
 };

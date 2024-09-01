@@ -13,19 +13,23 @@ void UTerminalButton::NativeConstruct()
 	Button->OnClicked.AddDynamic(this, &UTerminalButton::OnClickButton);
 }
 
-bool UTerminalButton::GetIsPressed() const
+bool UTerminalButton::IsPressed() const
 {
 	return bIsPressed;
 }
 
-void UTerminalButton::UpdateButtonStyle(bool bPress)
+void UTerminalButton::UpdateButtonStyle() const
 {
-	Button->SetStyle(bPress ? PressedStyle->Style : DefaultStyle->Style);
-
-	bIsPressed = bPress;
+	Button->SetStyle(bIsPressed ? PressedStyle->Style : DefaultStyle->Style);
 }
 
-void UTerminalButton::SetOnClick(FOnClickTerminalButton& Callback)
+void UTerminalButton::Reset()
+{
+	bIsPressed = false;
+	UpdateButtonStyle();
+}
+
+void UTerminalButton::SetOnClick(const FOnClickButtonDelegate& Callback)
 {
 	OnClick = Callback;
 }
@@ -41,4 +45,8 @@ void UTerminalButton::OnClickButton() // DO NOT MAKE IT CONST
 	{
 		OnClick.Execute();
 	}
+
+	bIsPressed = !bIsPressed;
+
+	UpdateButtonStyle();
 }

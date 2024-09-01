@@ -30,7 +30,7 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 		LOG_ERROR("Failed to load game");
 		return nullptr;
 	}
-	LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
+	/*LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
 
 	ExcludedAberrations.Empty();
 
@@ -40,7 +40,7 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 		ExcludeAberration(LoadedGame->ExcludedAberrations[i], false);
 	}
 	
-	CompletedRuns = LoadedGame->CompletedRuns;
+	CompletedRuns = LoadedGame->CompletedRuns;*/
 	SensX = LoadedGame->SensX;
 	SensY = LoadedGame->SensY;
 	Volume = LoadedGame->Volume;
@@ -91,14 +91,14 @@ void AAberrationGameState::SaveGame()
 	Save->Volume = Volume;
 	Save->SensX = SensX;
 	Save->SensY = SensY;
-	Save->ExcludedAberrations.Empty();
+	/*Save->ExcludedAberrations.Empty();
 
 	for (int i = 0; i < ExcludedAberrations.Num(); i++)
 	{
 		Save->ExcludedAberrations.AddUnique(ExcludedAberrations[i]);
 	}
 	
-	Save->CompletedRuns = CompletedRuns;
+	Save->CompletedRuns = CompletedRuns;*/
 
 	const bool Success = UGameplayStatics::SaveGameToSlot(Save, TEXT("AberrationExpress"), 0);
 	
