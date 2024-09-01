@@ -6,6 +6,9 @@
 #include "TerminalButton.h"
 #include "QuestionButton.generated.h"
 
+// TODO: use this to identify clicked button etc
+DECLARE_DELEGATE_OneParam(FOnClickQuestionButtonDelegate, int)
+
 /**
  * 
  */
@@ -16,10 +19,18 @@ class ABERRATION_API UQuestionButton : public UTerminalButton
 public:
 	UQuestionButton(const FObjectInitializer& ObjectInitializer);
 	virtual void NativeConstruct() override;
-
+	
+	void SetOnClickQuestion(const FOnClickQuestionButtonDelegate& Callback);
+	void SetIsCorrect(bool IsCorrect);
 	bool IsAnswerCorrect() const;
 	virtual void Reset() override;
-	void SetIsCorrect(bool IsCorrect);
-private:
+private:	
+	virtual void OnClickButton() override;
+	
 	bool bIsCorrect = false; //TODO: Is it necessary?
+	FOnClickQuestionButtonDelegate OnClick;
+	
+	UPROPERTY(EditAnywhere)
+	int ID = -1;
+
 };

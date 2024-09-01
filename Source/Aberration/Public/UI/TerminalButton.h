@@ -29,10 +29,6 @@ public:
 	void SetText(const FString& NewText) const;
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button;
-
-
-	UPROPERTY(EditAnywhere)
-	int ID = -1;
 	
 protected:
 	UPROPERTY()
@@ -40,7 +36,7 @@ protected:
 	
 private:
 	UFUNCTION()
-	void OnClickButton();
+	virtual void OnClickButton();
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Text;
@@ -54,6 +50,4 @@ private:
 	bool bStayPressed = false;
 
 	FOnClickButtonDelegate OnClick;
-	
-	
 };
