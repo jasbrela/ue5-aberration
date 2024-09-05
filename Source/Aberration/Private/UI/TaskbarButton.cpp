@@ -5,8 +5,3 @@
 
 UTaskbarButton::UTaskbarButton(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UTaskbarButton::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
-

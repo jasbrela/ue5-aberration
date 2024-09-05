@@ -18,7 +18,6 @@ class ABERRATION_API UInteractionWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	UInteractionWidget(const FObjectInitializer& ObjectInitializer);
-	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleTooltip(bool bInteractiveActorFound, FString Instruction = TEXT("Interact"));

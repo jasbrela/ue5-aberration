@@ -3,7 +3,6 @@
 
 #include "UI/InteractionWidget.h"
 
-#include "DebugMacros.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
@@ -25,9 +24,4 @@ void UInteractionWidget::ToggleTooltip(bool bInteractiveActorFound, FString Inst
 		Crosshair->SetOpacity(0.4);
 		Tooltip->SetVisibility(ESlateVisibility::Collapsed);
 	}
-}
-
-void UInteractionWidget::NativeConstruct()
-{
-	Super::NativeConstruct();
 }

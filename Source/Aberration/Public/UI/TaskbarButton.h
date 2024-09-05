@@ -21,7 +21,6 @@ class ABERRATION_API UTaskbarButton : public UTerminalButton
 
 public:
 	UTaskbarButton(const FObjectInitializer& ObjectInitializer);
-	virtual void NativeConstruct() override;
 
 private:
 	UPROPERTY(meta = (BindWidget))

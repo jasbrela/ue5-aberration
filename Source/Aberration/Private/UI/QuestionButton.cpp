@@ -5,8 +5,6 @@
 
 UQuestionButton::UQuestionButton(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UQuestionButton::NativeConstruct() { Super::NativeConstruct(); }
-
 void UQuestionButton::SetOnClickQuestion(const FOnClickQuestionButtonDelegate& Callback)
 {
 	OnClick = Callback;

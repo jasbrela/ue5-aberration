@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "TerminalButton.h"
-#include "Blueprint/UserWidget.h"
 #include "DesktopIcon.generated.h"
 
 class UImage;
@@ -19,9 +18,8 @@ class ABERRATION_API UDesktopIcon : public UTerminalButton
 public:
 	UDesktopIcon(const FObjectInitializer& ObjectInitializer);
 	virtual void NativePreConstruct() override;
-	virtual void NativeConstruct() override;
-	void OnClickAnywhere(const FPointerEvent& InMouseEvent);
 	virtual void UpdateButtonStyle() const override;
+	void OnClickAnywhere();
 	
 protected:
 	

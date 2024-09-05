@@ -20,7 +20,6 @@ class ABERRATION_API UTerminalButton : public UUserWidget
 	GENERATED_BODY()
 public:
 	UTerminalButton(const FObjectInitializer& ObjectInitializer);
-	virtual void NativeConstruct() override;
 	virtual void Reset();
 	virtual void UpdateButtonStyle() const;
 	void SetOnClick(const FOnClickButtonDelegate& Callback);
@@ -44,10 +43,12 @@ protected:
 private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button;
-	
-	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"), Category="Style")
+
+	/** This value is only used when bStayPressed is true */
+	UPROPERTY(EditDefaultsOnly)
 	UButtonStyleData* DefaultStyle;
-	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"), Category="Style")
+	/** This value is only used when bStayPressed is true */
+	UPROPERTY(EditDefaultsOnly)
 	UButtonStyleData* PressedStyle;
 	
 };

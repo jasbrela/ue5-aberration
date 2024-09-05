@@ -11,7 +11,6 @@
 #include "Components/AudioComponent.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
-#include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 #include "Sound/SoundCue.h"
 #include "UI/DesktopIcon.h"
@@ -34,14 +33,22 @@ void UTerminalWidget::NativeConstruct()
 
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 	//SeedText->SetText(FText::FromString(FString::Printf(TEXT("OS-%i"), State->GetSeed())));
+
+	QuizIcon->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UTerminalWidget::OnClickQuiz));
+	NotesIcon->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UTerminalWidget::OnClickNotes));
+
+	Questionnaire->InitializeQuestionnaire();
 }
 
 FReply UTerminalWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	QuizIcon->OnClickAnywhere(InMouseEvent);
-	NotesIcon->OnClickAnywhere(InMouseEvent);
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		if (QuizIcon) QuizIcon->OnClickAnywhere();
+		if (NotesIcon) NotesIcon->OnClickAnywhere();
 
-	AudioComponent->Play();
+		AudioComponent->Play();
+	}
 	
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
@@ -92,6 +99,33 @@ void UTerminalWidget::InitializeTerminal()
 void UTerminalWidget::ShowReport() const
 {	
 	GenerateYesNoQuestion();
+}
+
+void UTerminalWidget::OnClickDesktopIcon() const
+{
+	if (QuizIcon->IsPressed()) QuizIcon->OnClickAnywhere();
+	if (NotesIcon->IsPressed()) NotesIcon->OnClickAnywhere();
+}
+
+void UTerminalWidget::OnClickQuiz() const
+{
+	if (QuizIcon->IsPressed())
+	{
+		Questionnaire->Open();
+	}
+	
+	OnClickDesktopIcon();
+}
+
+void UTerminalWidget::OnClickNotes()
+{
+	if (NotesIcon->IsPressed())
+	{
+		LOG("Open Notes");
+		// TODO: Open notes.
+	}
+	
+	OnClickDesktopIcon();
 }
 
 void UTerminalWidget::SetAnswersText()

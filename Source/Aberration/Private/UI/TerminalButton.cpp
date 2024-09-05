@@ -6,13 +6,6 @@
 
 UTerminalButton::UTerminalButton(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UTerminalButton::NativeConstruct()
-{
-	Super::NativeConstruct();
-	
-	Button->OnClicked.AddDynamic(this, &UTerminalButton::OnClickButton);
-}
-
 bool UTerminalButton::IsPressed() const
 {
 	return bIsPressed;
@@ -31,6 +24,11 @@ void UTerminalButton::Reset()
 
 void UTerminalButton::SetOnClick(const FOnClickButtonDelegate& Callback)
 {
+	if (!OnClick.IsBound())
+	{
+		Button->OnClicked.AddDynamic(this, &UTerminalButton::OnClickButton);
+	}
+	
 	OnClick = Callback;
 }
 

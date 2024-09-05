@@ -3,7 +3,6 @@
 
 #include "UI/DesktopIcon.h"
 
-#include "DebugMacros.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
 
@@ -21,15 +20,10 @@ void UDesktopIcon::NativePreConstruct()
 	}
 }
 
-void UDesktopIcon::NativeConstruct() { Super::NativeConstruct(); }
-
-void UDesktopIcon::OnClickAnywhere(const FPointerEvent& InMouseEvent)
+void UDesktopIcon::OnClickAnywhere()
 {
-	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
-	{
-		bIsPressed = false;
-		UpdateButtonStyle();
-	}
+	bIsPressed = false;
+	UpdateButtonStyle();
 }
 
 void UDesktopIcon::UpdateButtonStyle() const
@@ -41,12 +35,9 @@ void UDesktopIcon::UpdateButtonStyle() const
 
 void UDesktopIcon::OnClickButton()
 {
-	if (bIsPressed)
+	if (OnClick.IsBound())
 	{
-		if (OnClick.IsBound())
-		{
-			OnClick.Execute();
-		}
+		OnClick.Execute();
 	}
 	
 	bIsPressed = !bIsPressed;

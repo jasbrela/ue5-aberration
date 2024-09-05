@@ -18,7 +18,6 @@ class ABERRATION_API UQuestionButton : public UTerminalButton
 	GENERATED_BODY()
 public:
 	UQuestionButton(const FObjectInitializer& ObjectInitializer);
-	virtual void NativeConstruct() override;
 	
 	void SetOnClickQuestion(const FOnClickQuestionButtonDelegate& Callback);
 	void SetIsCorrect(bool bIsQuestionCorrect);

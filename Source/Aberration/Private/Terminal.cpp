@@ -7,6 +7,7 @@
 #include "UI/TerminalWidget.h"
 #include "AberrationCharacter.h"
 #include "AberrationPlayerController.h"
+#include "DebugMacros.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -92,7 +93,7 @@ void ATerminal::Interact()
 	Character->ToggleMoveAndLookInput(!bIsFocused);
 	Character->TogglePauseInput(!bIsFocused);
 	
-	Controller->bShowMouseCursor = bIsFocused;
+	//Controller->bShowMouseCursor = bIsFocused;
 	
 	if (bIsFocused)
 	{

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "QuestionnaireWidget.generated.h"
 
+class UButton;
 class UUniformGridPanel;
 class AAberrationManager;
 class UTerminalButton;
@@ -29,10 +30,12 @@ class ABERRATION_API UQuestionnaireWidget : public UUserWidget
 
 public:
 	UQuestionnaireWidget(const FObjectInitializer& ObjectInitializer);
-	virtual void NativeConstruct() override;
 
-	void Open() const;
-	void Close() const;
+	void InitializeQuestionnaire();
+
+	void Open();
+	UFUNCTION()
+	void Close();
 	
 	void ResetButtons() const;
 
@@ -82,9 +85,6 @@ private:
 	UUniformGridPanel* AnswerFeedback;
 	
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* WrapCanvas;
-	
-	UPROPERTY(meta = (BindWidget))
 	UImage* Background;
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* LoadingTexture;
@@ -98,6 +98,9 @@ private:
 	
 	UPROPERTY(meta = (BindWidget))
 	UTerminalButton* Confirm;
+	
+	UPROPERTY(meta = (BindWidget))
+	UButton* MinimizeButton;
 	
 	UFUNCTION()
 	void NextPage();

@@ -11,16 +11,17 @@
 #include "Terminal.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
-#include "Components/UniformGridPanel.h"
 
 UQuestionnaireWidget::UQuestionnaireWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UQuestionnaireWidget::NativeConstruct()
+void UQuestionnaireWidget::InitializeQuestionnaire()
 {
 	Confirm->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::NextPage));
 	Option1->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
 	Option2->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
 	Option3->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
+
+	MinimizeButton->OnClicked.AddDynamic(this, &UQuestionnaireWidget::Close);
 	
 	Buttons.Add(Option1);
 	Buttons.Add(Option2);
@@ -29,14 +30,14 @@ void UQuestionnaireWidget::NativeConstruct()
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 }
 
-void UQuestionnaireWidget::Open() const
+void UQuestionnaireWidget::Open()
 {
-	WrapCanvas->SetVisibility(ESlateVisibility::Visible);
+	SetVisibility(ESlateVisibility::Visible);
 }
 
-void UQuestionnaireWidget::Close() const
+void UQuestionnaireWidget::Close()
 {
-	WrapCanvas->SetVisibility(ESlateVisibility::Collapsed);
+	SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UQuestionnaireWidget::OnClickOption(const int ID, const bool bIsPressed) const

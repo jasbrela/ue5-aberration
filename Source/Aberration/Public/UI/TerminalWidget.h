@@ -36,6 +36,9 @@ public:
 
 	void InitializeTerminal();
 	void ShowReport() const;
+	void OnClickDesktopIcon() const;
+	void OnClickQuiz() const;
+	void OnClickNotes();
 	
 	void Inject(UWidgetComponent* Component);
 	void Inject(AAberrationManager* Manager);
