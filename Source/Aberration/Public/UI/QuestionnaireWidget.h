@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "QuestionnaireWidget.generated.h"
 
+class UUniformGridPanel;
 class AAberrationManager;
 class UTerminalButton;
 class UQuestionButton;
@@ -16,7 +17,7 @@ class UTextBlock;
 class ATerminal;
 class UWidgetComponent;
 
-DECLARE_DELEGATE(FOnSubmitQuestionDelegate)
+DECLARE_DELEGATE(FOnSubmitYesNoQuestionDelegate)
 
 /**
  * 
@@ -34,13 +35,14 @@ public:
 	void Close() const;
 	
 	void ResetButtons() const;
-	
+
+	void IncreaseQuestionNumber();
 	void SetAnswerText(int Index, const FString& Text);
-	void SetAnswerStatus(int Index, bool bIsWrong);
+	void SetAnswerStatus(int Index, bool bIsCorrect);
 	void SetMultipleAnswers(bool bValue);
 	void SetCanFinishQuestion(bool bValue);
 	void SetQuestionTitle(const FString& Text) const;
-	void SetOnSubmitQuestion(const FOnSubmitQuestionDelegate& Callback);
+	void SetOnSubmitQuestion(const FOnSubmitYesNoQuestionDelegate& Callback);
 
 	void ShowResults();
 
@@ -49,14 +51,15 @@ public:
 	void Inject(ATerminal* TerminalParent);
 
 private:
-	void ToggleConfirmButton(bool Enable) const;
+	void ToggleConfirmButton(bool bEnable) const;
 	void ConfirmReport();
-	void OnClickOption() const;
+	void OnClickOption(int ID, bool bIsPressed) const;
 	bool bShowedResults = false;
 	bool bHasMultipleAnswers = false;
 	bool bCanFinishQuestion = false;
 	int QuestionNumber = 1;
-	FOnSubmitQuestionDelegate OnSubmitQuestion;
+	int MaxQuestions = 10;
+	FOnSubmitYesNoQuestionDelegate OnSubmitYesNoQuestion;
 	FTimerHandle LoadingTimerHandle;
 	TArray<UQuestionButton*> Buttons;
 
@@ -75,6 +78,8 @@ private:
 	UTextBlock* QuestionNumberText;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* MaxQuestionsNumberText;
+	UPROPERTY(meta = (BindWidget))
+	UUniformGridPanel* AnswerFeedback;
 	
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* WrapCanvas;

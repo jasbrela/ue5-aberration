@@ -21,33 +21,33 @@ class ABERRATION_API UTerminalButton : public UUserWidget
 public:
 	UTerminalButton(const FObjectInitializer& ObjectInitializer);
 	virtual void NativeConstruct() override;
-
-	bool IsPressed() const;
-	void UpdateButtonStyle() const;
 	virtual void Reset();
+	virtual void UpdateButtonStyle() const;
 	void SetOnClick(const FOnClickButtonDelegate& Callback);
 	void SetText(const FString& NewText) const;
-	UPROPERTY(meta = (BindWidget))
-	UButton* Button;
+	bool IsPressed() const;
 	
 protected:
-	UPROPERTY()
-	bool bIsPressed = false;
-	
-private:
 	UFUNCTION()
 	virtual void OnClickButton();
 	
+	UPROPERTY()
+	bool bIsPressed = false;
+	
+	FOnClickButtonDelegate OnClick;
+	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Text;
+	
+	UPROPERTY(EditAnywhere)
+	bool bStayPressed = false;
+private:
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button;
 	
 	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"), Category="Style")
 	UButtonStyleData* DefaultStyle;
 	UPROPERTY(EditDefaultsOnly, meta=(EditCondition = "bStayPressed"), Category="Style")
 	UButtonStyleData* PressedStyle;
 	
-	UPROPERTY(EditDefaultsOnly)
-	bool bStayPressed = false;
-
-	FOnClickButtonDelegate OnClick;
 };

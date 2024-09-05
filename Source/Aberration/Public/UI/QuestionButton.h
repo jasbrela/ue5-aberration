@@ -7,7 +7,7 @@
 #include "QuestionButton.generated.h"
 
 // TODO: use this to identify clicked button etc
-DECLARE_DELEGATE_OneParam(FOnClickQuestionButtonDelegate, int)
+DECLARE_DELEGATE_TwoParams(FOnClickQuestionButtonDelegate, int, bool)
 
 /**
  * 
@@ -21,10 +21,10 @@ public:
 	virtual void NativeConstruct() override;
 	
 	void SetOnClickQuestion(const FOnClickQuestionButtonDelegate& Callback);
-	void SetIsCorrect(bool IsCorrect);
+	void SetIsCorrect(bool bIsQuestionCorrect);
 	bool IsAnswerCorrect() const;
 	virtual void Reset() override;
-private:	
+private:
 	virtual void OnClickButton() override;
 	
 	bool bIsCorrect = false; //TODO: Is it necessary?

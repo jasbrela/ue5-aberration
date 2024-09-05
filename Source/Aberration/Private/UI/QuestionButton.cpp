@@ -5,10 +5,7 @@
 
 UQuestionButton::UQuestionButton(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UQuestionButton::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
+void UQuestionButton::NativeConstruct() { Super::NativeConstruct(); }
 
 void UQuestionButton::SetOnClickQuestion(const FOnClickQuestionButtonDelegate& Callback)
 {
@@ -26,9 +23,9 @@ void UQuestionButton::Reset()
 	bIsCorrect = false;
 }
 
-void UQuestionButton::SetIsCorrect(bool IsCorrect)
+void UQuestionButton::SetIsCorrect(const bool bIsQuestionCorrect)
 {
-	bIsCorrect = IsCorrect;
+	bIsCorrect = bIsQuestionCorrect;
 }
 
 void UQuestionButton::OnClickButton()
@@ -37,6 +34,6 @@ void UQuestionButton::OnClickButton()
 	
 	if (OnClick.IsBound())
 	{
-		OnClick.Execute(ID);
+		OnClick.Execute(ID, bIsPressed);
 	}
 }

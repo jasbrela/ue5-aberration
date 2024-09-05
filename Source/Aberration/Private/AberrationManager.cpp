@@ -114,22 +114,22 @@ int AAberrationManager::GetNumberOfCoaches() const
 
 void AAberrationManager::UpdateUnlockedAberrations()
 {
-	const UAberrationSaveGame* Save = AberrationState->LoadGame();
+	// const UAberrationSaveGame* Save = AberrationState->LoadGame();
 
-	if (Save) ExcludedAberrations = Save->ExcludedAberrations;
+	// if (Save) ExcludedAberrations = Save->ExcludedAberrations;
 	
 	for (const FAberrationData* Data : AberrationsData)
 	{
 		if (Data->UnlockAfterCoach == CurrentCoach)
 		{
-			if (Save)
+			/* if (Save)
 			{
 				if (!Save->ExcludedAberrations.Contains(Data->ID))
 				{
 					AvailableAberrations.AddUnique(Data->ID);
 					continue;
 				}
-			} else AvailableAberrations.AddUnique(Data->ID);
+			} else */AvailableAberrations.AddUnique(Data->ID);
 			
 			UnlockedAberrations.AddUnique(Data->ID);
 		}
@@ -188,7 +188,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 		{
 			LOG_WARNING("[%i] No aberration generated.", CurrentCoach);
 		}
-	} else LOG_ERROR("Couldnt generate aberration");
+	} else LOG_ERROR("Couldn't generate aberration");
 	
 	ManagerUpdateAberrationsDelegate.Broadcast(GetActiveAberrations());
 }

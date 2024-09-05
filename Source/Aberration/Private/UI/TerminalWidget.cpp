@@ -8,9 +8,13 @@
 #include "FAnswerData.h"
 #include "Helper.h"
 #include "Terminal.h"
+#include "Components/AudioComponent.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
+#include "Sound/SoundCue.h"
+#include "UI/DesktopIcon.h"
 #include "UI/QuestionnaireWidget.h"
 
 UTerminalWidget::UTerminalWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
@@ -18,18 +22,49 @@ UTerminalWidget::UTerminalWidget(const FObjectInitializer& ObjectInitializer) : 
 void UTerminalWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	Background->SetBrushFromTexture(AttentionTexture, true);
+	
+	AudioComponent = NewObject<UAudioComponent>(this);
+	if (AudioComponent)
+	{
+        AudioComponent->RegisterComponentWithWorld(GetWorld());
+		AudioComponent->SetSound(MouseClickSound);
+		AudioComponent->SetAutoActivate(false);
+	}
+	//Background->SetBrushFromTexture(AttentionTexture, true);
 
 	State = GetWorld()->GetGameState<AAberrationGameState>();
-	SeedText->SetText(FText::FromString(FString::Printf(TEXT("OS-%i"), State->GetSeed())));
+	//SeedText->SetText(FText::FromString(FString::Printf(TEXT("OS-%i"), State->GetSeed())));
 }
 
-void UTerminalWidget::ShowReport()
-{	
-	GenerateYesNoQuestion();
+FReply UTerminalWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	QuizIcon->OnClickAnywhere(InMouseEvent);
+	NotesIcon->OnClickAnywhere(InMouseEvent);
+
+	AudioComponent->Play();
+	
+	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
 }
 
+FReply UTerminalWidget::NativeOnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	if (CursorImage)
+	{
+		const FVector2D MousePosition = MouseEvent.GetScreenSpacePosition();
+		const FVector2D LocalMousePosition = MyGeometry.AbsoluteToLocal(MousePosition);
+
+		// Update the image position
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(CursorImage->Slot))
+		{
+			CanvasSlot->SetPosition(LocalMousePosition);
+		}
+	}
+
+	return Super::NativeOnMouseMove(MyGeometry, MouseEvent);
+}
+
+#pragma region INJECTIONS
 void UTerminalWidget::Inject(UWidgetComponent* Component)
 {
 	WidgetComponent = Component;
@@ -47,10 +82,16 @@ void UTerminalWidget::Inject(ATerminal* TerminalParent)
 	Terminal = TerminalParent;
 	Questionnaire->Inject(TerminalParent);
 }
+#pragma endregion
 
 void UTerminalWidget::InitializeTerminal()
 {
-	Questionnaire->SetOnSubmitQuestion(FOnSubmitQuestionDelegate::CreateUObject(this, &UTerminalWidget::GenerateYesNoQuestion));
+	Questionnaire->SetOnSubmitQuestion(FOnSubmitYesNoQuestionDelegate::CreateUObject(this, &UTerminalWidget::GenerateQuestion));
+}
+
+void UTerminalWidget::ShowReport() const
+{	
+	GenerateYesNoQuestion();
 }
 
 void UTerminalWidget::SetAnswersText()
@@ -63,8 +104,9 @@ void UTerminalWidget::SetAnswersText()
 	WidgetComponent->RequestRedraw();
 }
 
-void UTerminalWidget::GenerateYesNoQuestion()
+void UTerminalWidget::GenerateYesNoQuestion() const
 {
+	Questionnaire->IncreaseQuestionNumber();
 	Questionnaire->SetMultipleAnswers(false);
 	Questionnaire->SetQuestionTitle(TEXT("Have you found any aberrations in this train coach?"));
 
@@ -144,6 +186,8 @@ void UTerminalWidget::GenerateQuestion()
 				}
 			}
 		}
+
+		Questionnaire->SetCanFinishQuestion(true);
 		
 		Answers = ShuffleArray(Answers, Stream);
 		SetAnswersText();

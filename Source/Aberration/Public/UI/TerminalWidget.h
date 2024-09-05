@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "QuestionButton.h"
 #include "Blueprint/UserWidget.h"
 #include "TerminalWidget.generated.h"
 
+class UDesktopIcon;
 class AAberrationManager;
 class UQuestionnaireWidget;
 class UTerminalButton;
@@ -31,22 +31,31 @@ class ABERRATION_API UTerminalWidget : public UUserWidget
 public:
     UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
-	
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
+
 	void InitializeTerminal();
-	void ShowReport();
+	void ShowReport() const;
 	
 	void Inject(UWidgetComponent* Component);
 	void Inject(AAberrationManager* Manager);
 	void Inject(ATerminal* TerminalParent);
+	
 private:
 	void SetAnswersText();
-	void GenerateYesNoQuestion();
+	void GenerateYesNoQuestion() const;
 	void GenerateQuestion();
 	bool bFinished = false;
 	
 	FRandomStream Stream;
 	TArray<FAnswerData> Answers;
+	
+	UPROPERTY()
+	UAudioComponent* AudioComponent;
 
+	UPROPERTY(EditAnywhere)
+	USoundCue* MouseClickSound;
+	
 	UPROPERTY()
 	AAberrationGameState* State;
 	UPROPERTY()
@@ -55,29 +64,20 @@ private:
 	UWidgetComponent* WidgetComponent;
 	UPROPERTY()
 	AAberrationManager* AberrationManager;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* CursorImage;
 	
 	UPROPERTY(meta = (BindWidget))
 	UImage* Background;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	UQuestionnaireWidget* Questionnaire;
 
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* FailureTexture;
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* AttentionTexture;
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* QuestionTexture;
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* SuccessTexture;
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* LoadingTexture;
-	
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* ResultSuccessTexture;
-	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* ResultFailureTexture;
-	
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* SeedText;
+	UDesktopIcon* QuizIcon;
+
+	UPROPERTY(meta = (BindWidget))
+	UDesktopIcon* NotesIcon;
+	
 };

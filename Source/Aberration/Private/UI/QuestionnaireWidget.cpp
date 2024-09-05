@@ -11,15 +11,16 @@
 #include "Terminal.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
+#include "Components/UniformGridPanel.h"
 
 UQuestionnaireWidget::UQuestionnaireWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
 void UQuestionnaireWidget::NativeConstruct()
 {
 	Confirm->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::NextPage));
-	Option1->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
-	Option2->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
-	Option3->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
+	Option1->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
+	Option2->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
+	Option3->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
 	
 	Buttons.Add(Option1);
 	Buttons.Add(Option2);
@@ -38,17 +39,31 @@ void UQuestionnaireWidget::Close() const
 	WrapCanvas->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void UQuestionnaireWidget::OnClickOption() const
+void UQuestionnaireWidget::OnClickOption(const int ID, const bool bIsPressed) const
 {
-	// TODO: FORCE "RELEASE" OF PREVIOUS SELECTED BUTTONS
-	const bool AnySelected = Buttons.ContainsByPredicate([](const UQuestionButton* Button) { return Button->IsPressed(); });
-	ToggleConfirmButton(AnySelected);
+	if (!bHasMultipleAnswers && bIsPressed)
+	{
+		for (int i = 0; i < Buttons.Num(); i++)
+		{
+			if (ID == i) continue;
+			
+			if (Buttons[i]->IsPressed())
+			{
+				Buttons[i]->Reset(); 
+			}
+		}
+		ToggleConfirmButton(bIsPressed);
+	} else
+	{
+		const bool AnySelected = Buttons.ContainsByPredicate([](const UQuestionButton* Button) { return Button->IsPressed(); });
+		ToggleConfirmButton(AnySelected);
+	}
 }
 
-void UQuestionnaireWidget::ToggleConfirmButton(bool Enable) const
+void UQuestionnaireWidget::ToggleConfirmButton(const bool bEnable) const
 {
-	Confirm->SetIsEnabled(Enable);
-	Confirm->SetRenderOpacity(Enable ? 1.0 : 0.2);
+	Confirm->SetIsEnabled(bEnable);
+	Confirm->SetRenderOpacity(bEnable ? 1.0 : 0.2);
 }
 
 void UQuestionnaireWidget::ConfirmReport()
@@ -93,7 +108,7 @@ void UQuestionnaireWidget::ConfirmReport()
 	}
 	
 	State->RegisterScoreEntry(ScoreEntry);
-		
+
 	WidgetComponent->RequestRedraw();
 }
 
@@ -107,6 +122,14 @@ void UQuestionnaireWidget::ResetButtons() const
 	WidgetComponent->RequestRedraw();
 }
 
+void UQuestionnaireWidget::IncreaseQuestionNumber()
+{
+	QuestionNumber++;
+
+	QuestionNumberText->SetText(FText::AsNumber(QuestionNumber));
+	QuestionNumberText->SetText(FText::FromString(FString::Printf(TEXT("%i out of %i"), QuestionNumber, MaxQuestions)));
+}
+
 void UQuestionnaireWidget::SetAnswerText(const int Index, const FString& Text)
 {
 	if (Index == 2)
@@ -114,13 +137,14 @@ void UQuestionnaireWidget::SetAnswerText(const int Index, const FString& Text)
 		Buttons[Index]->SetVisibility(Text.IsEmpty() ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
 	}
 	Buttons[Index]->SetText(Text);
+	Buttons[Index]->Reset();
 }
 
-void UQuestionnaireWidget::SetAnswerStatus(int Index, bool bIsWrong)
+void UQuestionnaireWidget::SetAnswerStatus(int Index, bool bIsCorrect)
 {
-	if (bIsWrong)
+	if (bIsCorrect)
 	{
-		// TODO: Set text color
+		Buttons[Index]->SetIsCorrect(bIsCorrect);
 	}
 }
 
@@ -139,9 +163,9 @@ void UQuestionnaireWidget::SetQuestionTitle(const FString& Text) const
 	QuestionText->SetText(FText::FromString(Text));
 }
 
-void UQuestionnaireWidget::SetOnSubmitQuestion(const FOnSubmitQuestionDelegate& Callback)
+void UQuestionnaireWidget::SetOnSubmitQuestion(const FOnSubmitYesNoQuestionDelegate& Callback)
 {
-	OnSubmitQuestion = Callback;
+	OnSubmitYesNoQuestion = Callback;
 }
 
 void UQuestionnaireWidget::ShowResults()
@@ -154,19 +178,13 @@ void UQuestionnaireWidget::ShowResults()
 		State->SaveGame();
 	}
 	
-	/*ScorePercentageText->SetText(FText::FromString(FString::Printf(TEXT("%i%%"),  State->GetFinalScorePercentage())));
-	ScorePercentageText->SetVisibility(ESlateVisibility::Visible);
-	OutOfPointsText->SetText(FText::FromString(FString::Printf(TEXT("%.2f out of %i points"),  State->GetFinalScore(), State->GetMaxPoints())));
-	OutOfPointsText->SetVisibility(ESlateVisibility::Visible);
-	IncorrectAnswersText->SetText(FText::FromString(FString::Printf(TEXT("%i incorrect answers"),  State->GetIncorrectAnswers())));
-	IncorrectAnswersText->SetVisibility(ESlateVisibility::Visible);*/
-
 	WidgetComponent->RequestRedraw();
 }
 
 void UQuestionnaireWidget::Inject(AAberrationManager* Manager)
 {
 	AberrationManager = Manager;
+	MaxQuestions = AberrationManager->GetNumberOfCoaches();
 }
 
 void UQuestionnaireWidget::Inject(UWidgetComponent* Component)
@@ -187,19 +205,17 @@ void UQuestionnaireWidget::NextPage()
 		return;
 	}
 	
-	if (bCanFinishQuestion) // TODO: FINISH QUESTION IF (Button[1] (NO) IS SELECTED IN FIRST QUESTION
+	if (bCanFinishQuestion || Buttons[1]->IsPressed())
 	{
 		ConfirmReport();
 		return;
 	}
 	
-	ResetButtons();
-
-	if (OnSubmitQuestion.IsBound())
-	{
-		OnSubmitQuestion.Execute();
-	}
-
+	if (OnSubmitYesNoQuestion.IsBound())
+    {
+    	OnSubmitYesNoQuestion.Execute();
+    }
+	
 	WidgetComponent->RequestRedraw();
 }
 
