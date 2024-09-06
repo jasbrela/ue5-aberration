@@ -3,11 +3,15 @@
 
 #include "UI/QuestionButton.h"
 
+#include "DebugMacros.h"
+
 UQuestionButton::UQuestionButton(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
 void UQuestionButton::SetOnClickQuestion(const FOnClickQuestionButtonDelegate& Callback)
 {
-	OnClick = Callback;
+	RegisterButtonCallback();
+	
+	OnClickQuestion = Callback;
 }
 
 bool UQuestionButton::IsAnswerCorrect() const
@@ -30,8 +34,12 @@ void UQuestionButton::OnClickButton()
 {
 	Super::OnClickButton();
 	
-	if (OnClick.IsBound())
+	if (OnClickQuestion.IsBound())
 	{
-		OnClick.Execute(ID, bIsPressed);
+		if (ID == -1)
+		{
+			LOG_WARNING("ID is -1. This might cause unexpected behaviour.");
+		}
+		OnClickQuestion.Execute(ID, bIsPressed);
 	}
 }

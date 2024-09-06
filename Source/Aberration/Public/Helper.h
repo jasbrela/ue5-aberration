@@ -17,3 +17,5 @@ static FText Convert(const float Value)
 {
 	return FText::FromString(FString::Printf(TEXT("%.2f"), Value));
 }
+
+#define BOOL_TO_TEXT(b) (b ? TEXT("true") : TEXT("false"))

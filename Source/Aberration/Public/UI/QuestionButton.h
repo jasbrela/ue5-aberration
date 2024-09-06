@@ -27,7 +27,7 @@ private:
 	virtual void OnClickButton() override;
 	
 	bool bIsCorrect = false; //TODO: Is it necessary?
-	FOnClickQuestionButtonDelegate OnClick;
+	FOnClickQuestionButtonDelegate OnClickQuestion;
 	
 	UPROPERTY(EditAnywhere)
 	int ID = -1;

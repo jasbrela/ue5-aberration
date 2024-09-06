@@ -21,12 +21,14 @@ class ABERRATION_API UTerminalButton : public UUserWidget
 public:
 	UTerminalButton(const FObjectInitializer& ObjectInitializer);
 	virtual void Reset();
-	virtual void UpdateButtonStyle() const;
 	void SetOnClick(const FOnClickButtonDelegate& Callback);
 	void SetText(const FString& NewText) const;
 	bool IsPressed() const;
 	
 protected:
+	void RegisterButtonCallback();
+	virtual void UpdateButtonStyle() const;
+	
 	UFUNCTION()
 	virtual void OnClickButton();
 	
