@@ -14,30 +14,18 @@
 
 UQuestionnaireWidget::UQuestionnaireWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UQuestionnaireWidget::InitializeQuestionnaire()
+void UQuestionnaireWidget::InitializeWindow()
 {
 	Confirm->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::NextPage));
 	Option1->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
 	Option2->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
 	Option3->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
-
-	MinimizeButton->OnClicked.AddDynamic(this, &UQuestionnaireWidget::Close);
 	
 	Buttons.Add(Option1);
 	Buttons.Add(Option2);
 	Buttons.Add(Option3);
 	
 	State = GetWorld()->GetGameState<AAberrationGameState>();
-}
-
-void UQuestionnaireWidget::Open()
-{
-	SetVisibility(ESlateVisibility::Visible);
-}
-
-void UQuestionnaireWidget::Close()
-{
-	SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UQuestionnaireWidget::OnClickOption(const int ID, const bool bIsPressed) const

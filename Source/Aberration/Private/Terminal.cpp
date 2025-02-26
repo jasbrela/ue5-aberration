@@ -71,14 +71,14 @@ void ATerminal::BeginPlay()
 			//LOG("%s   SET MANAGER", *GetActorLabel());
 			AberrationManager = Manager;
 			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ATerminal::UpdateReport);
-			ScreenWidget->Inject(AberrationManager);
+			//ScreenWidget->Inject(AberrationManager);
 		}
 	}
 
 	if (ScreenWidget)
 	{
-		ScreenWidget->Inject(ScreenWidgetComponent);
-		ScreenWidget->Inject(this);
+		//ScreenWidget->Inject(ScreenWidgetComponent);
+		//ScreenWidget->Inject(this);
 	}
 }
 
@@ -86,7 +86,7 @@ void ATerminal::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
 
 void ATerminal::Interact()
 {
-	//LOG("[%s] Interact", *GetActorLabel());
+	LOG("[%s] Interact", *GetActorLabel());
 
 	bIsFocused = !bIsFocused;
 
@@ -137,7 +137,7 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	
 	if (ScreenWidget)
 	{
-		ScreenWidget->ShowReport();
+		//ScreenWidget->ShowReport();
 	}
 }
 

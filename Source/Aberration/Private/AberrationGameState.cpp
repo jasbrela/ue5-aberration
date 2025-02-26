@@ -13,7 +13,7 @@ void AAberrationGameState::IncreaseCompletedRuns()
 {
 	CompletedRuns++;
 	LOG_SUCCESS("Completed Run: %i", CompletedRuns);
-	ExcludedAberrations.Empty();
+	ResetExcludedAberrations();
 }
 
 UAberrationSaveGame* AAberrationGameState::LoadGame()
@@ -30,6 +30,7 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 		LOG_ERROR("Failed to load game");
 		return nullptr;
 	}
+	
 	/*LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
 
 	ExcludedAberrations.Empty();
@@ -135,6 +136,11 @@ void AAberrationGameState::ExcludeAberration(const int ID, const bool bSave)
 
 	//LOG("Push new aberration: %i (%i), %s", ID, ExcludedAberrations.Num(), bSave ? TEXT("true") : TEXT("false"));
 	if (bSave) SaveGame();
+}
+
+void AAberrationGameState::ResetExcludedAberrations()
+{
+	ExcludedAberrations.Empty();
 }
 
 bool AAberrationGameState::GetPassed()

@@ -118,10 +118,13 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 
 void AAberrationCharacter::Interact(const FInputActionValue& Value)
 {
-	if (!Value.Get<bool>()) return;
+	UE_LOG(LogTemp, Warning, TEXT("Interact !! A"));
+	//if (!Value.Get<bool>()) return;
+	UE_LOG(LogTemp, Warning, TEXT("Interact !! B"));
 	
 	if (CurrentInteractiveActor)
 	{
+	UE_LOG(LogTemp, Warning, TEXT("Interact !! C"));
 		CurrentInteractiveActor->Interact();
 	}
 }

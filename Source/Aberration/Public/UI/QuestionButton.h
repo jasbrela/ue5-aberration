@@ -23,13 +23,13 @@ public:
 	void SetIsCorrect(bool bIsQuestionCorrect);
 	bool IsAnswerCorrect() const;
 	virtual void Reset() override;
+	UPROPERTY(EditAnywhere)
+	int ID = -1;
 private:
 	virtual void OnClickButton() override;
 	
 	bool bIsCorrect = false; //TODO: Is it necessary?
 	FOnClickQuestionButtonDelegate OnClickQuestion;
 	
-	UPROPERTY(EditAnywhere)
-	int ID = -1;
 
 };

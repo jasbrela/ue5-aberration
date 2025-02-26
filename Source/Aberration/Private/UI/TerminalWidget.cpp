@@ -16,6 +16,7 @@
 #include "UI/DesktopIcon.h"
 #include "UI/QuestionnaireWidget.h"
 
+/*
 UTerminalWidget::UTerminalWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
 void UTerminalWidget::NativeConstruct()
@@ -37,15 +38,15 @@ void UTerminalWidget::NativeConstruct()
 	QuizIcon->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UTerminalWidget::OnClickQuiz));
 	NotesIcon->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UTerminalWidget::OnClickNotes));
 
-	Questionnaire->InitializeQuestionnaire();
+	Questionnaire->InitializeWindow();
+	//Notes->InitializeWindow();
 }
 
 FReply UTerminalWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		if (QuizIcon) QuizIcon->OnClickAnywhere();
-		if (NotesIcon) NotesIcon->OnClickAnywhere();
+		OnClickAnywhere();
 
 		AudioComponent->Play();
 	}
@@ -111,18 +112,25 @@ void UTerminalWidget::OnClickQuiz() const
 {
 	if (QuizIcon->IsPressed())
 	{
-		Questionnaire->Open();
+		OnClickAnywhere();
+		//Questionnaire->Open();
 	}
 	
 	OnClickDesktopIcon();
 }
 
-void UTerminalWidget::OnClickNotes()
+void UTerminalWidget::OnClickAnywhere() const
+{
+	if (QuizIcon) QuizIcon->OnClickAnywhere();
+	if (NotesIcon) NotesIcon->OnClickAnywhere();
+}
+
+void UTerminalWidget::OnClickNotes() const
 {
 	if (NotesIcon->IsPressed())
 	{
-		LOG("Open Notes");
-		// TODO: Open notes.
+		//Notes->Open();
+		OnClickAnywhere();
 	}
 	
 	OnClickDesktopIcon();
@@ -227,3 +235,4 @@ void UTerminalWidget::GenerateQuestion()
 		SetAnswersText();
 	}
 }
+*/

@@ -29,23 +29,24 @@ class ABERRATION_API UTerminalWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-    UTerminalWidget(const FObjectInitializer& ObjectInitializer);
+    /*UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
 	void InitializeTerminal();
 	void ShowReport() const;
+	void OnClickAnywhere() const;
 	void OnClickDesktopIcon() const;
 	void OnClickQuiz() const;
-	void OnClickNotes();
+	void OnClickNotes() const;
 	
 	void Inject(UWidgetComponent* Component);
 	void Inject(AAberrationManager* Manager);
-	void Inject(ATerminal* TerminalParent);
+	void Inject(ATerminal* TerminalParent);*/
 	
 private:
-	void SetAnswersText();
+	/*void SetAnswersText();
 	void GenerateYesNoQuestion() const;
 	void GenerateQuestion();
 	bool bFinished = false;
@@ -72,15 +73,16 @@ private:
 	UImage* CursorImage;
 	
 	UPROPERTY(meta = (BindWidget))
-	UImage* Background;
+	UImage* Background;*/
 	
+	/*
 	UPROPERTY(meta = (BindWidget))
 	UQuestionnaireWidget* Questionnaire;
-
+	
 	UPROPERTY(meta = (BindWidget))
 	UDesktopIcon* QuizIcon;
 
 	UPROPERTY(meta = (BindWidget))
-	UDesktopIcon* NotesIcon;
+	UDesktopIcon* NotesIcon;*/
 	
 };

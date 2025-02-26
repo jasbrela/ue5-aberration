@@ -10,7 +10,6 @@
 
 class ACoachID;
 class AAberrationGameState;
-enum class EAberrationDifficulty;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManagerUpdateAberrationsDelegate, FActiveAberrations, ActiveAberrations);
 

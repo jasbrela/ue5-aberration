@@ -31,11 +31,7 @@ class ABERRATION_API UQuestionnaireWidget : public UUserWidget
 public:
 	UQuestionnaireWidget(const FObjectInitializer& ObjectInitializer);
 
-	void InitializeQuestionnaire();
-
-	void Open();
-	UFUNCTION()
-	void Close();
+	virtual void InitializeWindow();
 	
 	void ResetButtons() const;
 
@@ -46,7 +42,7 @@ public:
 	void SetCanFinishQuestion(bool bValue);
 	void SetQuestionTitle(const FString& Text) const;
 	void SetOnSubmitQuestion(const FOnSubmitYesNoQuestionDelegate& Callback);
-
+	
 	void ShowResults();
 
 	void Inject(AAberrationManager* Manager);
@@ -98,10 +94,7 @@ private:
 	
 	UPROPERTY(meta = (BindWidget))
 	UTerminalButton* Confirm;
-	
-	UPROPERTY(meta = (BindWidget))
-	UButton* MinimizeButton;
-	
+		
 	UFUNCTION()
 	void NextPage();
 };
