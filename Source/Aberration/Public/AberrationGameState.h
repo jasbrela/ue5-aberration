@@ -31,6 +31,8 @@ public:
 
 	void RegisterScoreEntry(float Percentage);
 	void ExcludeAberration(int ID, bool bSave = true);
+
+	void ResetExcludedAberrations();
 	
 	bool GetPassed();
 	float GetFinalScore();

@@ -202,6 +202,8 @@ void UQuestionnaireWidget::NextPage()
 {
 	if (bShowedResults) /* RESTART GAME */
 	{
+		State->ResetExcludedAberrations();
+
 		UGameplayStatics::OpenLevel(this, TEXT("Train"));
 		return;
 	}
