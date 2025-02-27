@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AberrationCharacter.h"
 #include "GameFramework/GameStateBase.h"
 #include "AberrationGameState.generated.h"
 
+class USettingsViewModel;
 class UAberrationSaveGame;
 /**
  * 
@@ -24,10 +26,6 @@ public:
 	void SaveSeed(int NewSeed);
 	int GetSeed() const;
 	FRandomStream GetRandomStream() const;
-	
-	void SaveVolume(float Value);
-	void SaveSensX(float X);
-	void SaveSensY(float Y);
 
 	void RegisterScoreEntry(float Percentage);
 	void ExcludeAberration(int ID, bool bSave = true);
@@ -40,9 +38,12 @@ public:
 
 	int GetIncorrectAnswers();
 	int GetMaxPoints() const;
-
+	void SetCharacter(AAberrationCharacter* AberrationCharacter);
 
 private:
+	UPROPERTY()
+	USettingsViewModel* SettingsVM;
+	
 	bool bLoadedGame;
 	FRandomStream RandomStream;
 	TArray<float> Percentages;
@@ -56,13 +57,12 @@ private:
 
 	UPROPERTY()
 	int CompletedRuns = 0;
+	
+	UPROPERTY(EditDefaultsOnly)
+	USoundClass* SoundClass;
+	
+	UPROPERTY(EditDefaultsOnly)
+	USoundMix* SoundClassMix;
 
-	UPROPERTY()
-	float Volume = 1.f;
-
-	UPROPERTY()
-	float SensX = 1.f;
-
-	UPROPERTY()
-	float SensY = 1.f;
+	AAberrationCharacter* Character;
 };

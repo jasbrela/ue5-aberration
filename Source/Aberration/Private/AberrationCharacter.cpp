@@ -192,13 +192,14 @@ void AAberrationCharacter::BeginPlay()
 																 MenuClass, TEXT("MenuUI"));
 
 			ToggleMenuWidget(false);
-			MenuWidget->Inject(this);
+			MenuWidget->SetCharacter(this);
 			
 			MenuWidget->AddToViewport(0);
 			
 			if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
 			{
-				MenuWidget->Inject(State);
+				State->SetCharacter(this);
+				MenuWidget->SetGameState(State);
 			}
 		}
 	}
@@ -252,7 +253,7 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 void AAberrationCharacter::Pause(const FInputActionValue& Value)
 {
 	if (!bCanPause) return;
-	if (!Value.Get<bool>()) return;
+	//if (!Value.Get<bool>()) return;
 	
 	bIsMenuOpen = !bIsMenuOpen;
 

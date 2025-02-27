@@ -23,8 +23,8 @@ class ABERRATION_API UMenuWidget : public UUserWidget
 public:
 	UMenuWidget(const FObjectInitializer& ObjectInitializer);
 	virtual void NativeConstruct() override;
-	void Inject(AAberrationCharacter* Character);
-	void Inject(AAberrationGameState* State);
+	void SetCharacter(AAberrationCharacter* Character);
+	void SetGameState(AAberrationGameState* State);
 
 private:
 	bool bCanSave = false;
@@ -34,15 +34,6 @@ private:
 
 	UFUNCTION()
 	void OnClickResumeButton();
-	
-	UFUNCTION()
-	void OnVolumeChanged(float Value);
-
-	UFUNCTION()
-	void OnSensXChanged(float Value);
-
-	UFUNCTION()
-	void OnSensYChanged(float Value);
 
 	UPROPERTY()
 	AAberrationCharacter* AberrationCharacter;
@@ -54,25 +45,4 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* QuitButton;
-	
-	UPROPERTY(meta = (BindWidget))
-	USlider* SensYSlider;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* SensYValue;
-	
-	UPROPERTY(meta = (BindWidget))
-	USlider* SensXSlider;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* SensXValue;
-	
-	UPROPERTY(meta = (BindWidget))
-	USlider* VolumeSlider;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* VolumeValue;
-
-	UPROPERTY(EditDefaultsOnly)
-	USoundClass* SoundClass;
-	
-	UPROPERTY(EditDefaultsOnly)
-	USoundMix* SoundClassMix;
 };

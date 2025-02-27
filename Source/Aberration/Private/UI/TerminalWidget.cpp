@@ -13,7 +13,6 @@
 #include "Components/Image.h"
 #include "Components/WidgetComponent.h"
 #include "Sound/SoundCue.h"
-#include "UI/DesktopIcon.h"
 #include "UI/QuestionnaireWidget.h"
 
 /*

@@ -6,6 +6,9 @@
 #include "AberrationSaveGame.h"
 #include "DebugMacros.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/SettingsViewModel.h"
+#include "Types/MVVMViewModelContext.h"
+#include "MVVMGameSubsystem.h"
 
 AAberrationGameState::AAberrationGameState() { }
 
@@ -18,18 +21,15 @@ void AAberrationGameState::IncreaseCompletedRuns()
 
 UAberrationSaveGame* AAberrationGameState::LoadGame()
 {
-	if (bLoadedGame)
+	/*if (bLoadedGame)
 	{
 		return LoadedGame;
-	} 
+	} */
 	
 	LoadedGame = Cast<UAberrationSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("AberrationExpress"), 0));
 
-	if (LoadedGame == nullptr)
-	{
-		LOG_ERROR("Failed to load game");
-		return nullptr;
-	}
+	SettingsVM = NewObject<USettingsViewModel>(USettingsViewModel::StaticClass());
+	
 	
 	/*LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
 
@@ -42,11 +42,35 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 	}
 	
 	CompletedRuns = LoadedGame->CompletedRuns;*/
-	SensX = LoadedGame->SensX;
-	SensY = LoadedGame->SensY;
-	Volume = LoadedGame->Volume;
+	bLoadedGame = LoadedGame != nullptr;
+	
+	if (bLoadedGame)
+	{
+		SettingsVM->SetVolume(LoadedGame->Volume);
+		SettingsVM->SetSensY(LoadedGame->SensY);
+		SettingsVM->SetSensX(LoadedGame->SensX);
 
-	bLoadedGame = true;
+		Character->SetSensX(LoadedGame->SensX);
+		Character->SetSensY(LoadedGame->SensY);
+
+		UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(LoadedGame->Volume, 0, 1));
+	}
+	
+	FMVVMViewModelContext Context;
+	Context.ContextClass = USettingsViewModel::StaticClass();
+	Context.ContextName = TEXT("SettingsVM");
+				
+	const UMVVMGameSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>();
+	Subsystem->GetViewModelCollection()->AddViewModelInstance(Context, SettingsVM);
+
+	UE_LOG(LogTemp, Warning, TEXT("Set up Settings MV"));
+	
+	if (LoadedGame == nullptr)
+	{
+		LOG_ERROR("Failed to load game");
+		return nullptr;
+	}
+
 	return LoadedGame;
 }
 
@@ -55,29 +79,6 @@ void AAberrationGameState::SaveSeed(const int NewSeed)
 	Seed = NewSeed;
 	RandomStream = FRandomStream(Seed) ;
 	LOG_SUCCESS("Seed saved as %i", Seed);
-}
-
-void AAberrationGameState::SaveVolume(const float Value)
-{
-	LOG("Volume set to %f", Value);
-	Volume = Value;
-	SaveGame();
-}
-
-void AAberrationGameState::SaveSensX(const float X)
-{
-	LOG("Sens X set to %f", X);
-
-	SensX = X;
-	SaveGame();
-}
-
-void AAberrationGameState::SaveSensY(const float Y)
-{
-	LOG("Sens Y set to %f", Y);
-
-	SensY = Y;
-	SaveGame();
 }
 
 int AAberrationGameState::GetSeed() const
@@ -89,9 +90,16 @@ void AAberrationGameState::SaveGame()
 {
 	UAberrationSaveGame* Save = Cast<UAberrationSaveGame>(UGameplayStatics::CreateSaveGameObject(UAberrationSaveGame::StaticClass()));
 
-	Save->Volume = Volume;
-	Save->SensX = SensX;
-	Save->SensY = SensY;
+	Save->Volume = SettingsVM->GetVolume();
+	Save->SensX = SettingsVM->GetSensX();
+	Save->SensY = SettingsVM->GetSensY();
+	
+	Character->SetSensX(LoadedGame->SensX);
+	Character->SetSensY(LoadedGame->SensY);
+	UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(SettingsVM->GetVolume(), 0, 1));
+	
+	LOG("Volume set to %f / Sens X set to %f / Sens Y set to %f", Save->Volume, Save->SensX, Save->SensY);
+
 	/*Save->ExcludedAberrations.Empty();
 
 	for (int i = 0; i < ExcludedAberrations.Num(); i++)
@@ -191,4 +199,9 @@ int AAberrationGameState::GetIncorrectAnswers()
 int AAberrationGameState::GetMaxPoints() const
 {
 	return Percentages.Num();
+}
+
+void AAberrationGameState::SetCharacter(AAberrationCharacter* AberrationCharacter)
+{
+	Character = AberrationCharacter;
 }

@@ -1,16 +1,26 @@
 // Copyright (c) 2024, Jasbrela. All rights reserved.
 
 
-#include "UI/QuestionnaireViewModel.h"
+#include "UI/TerminalViewModel.h"
 
-int32 UQuestionnaireViewModel::GetCurrentQuestionNumber() const { return CurrentQuestionNumber; }
-FText UQuestionnaireViewModel::GetQuestionText() const { return QuestionText; }
-FText UQuestionnaireViewModel::GetAnswerText1() const { return AnswerText1; }
-FText UQuestionnaireViewModel::GetAnswerText2() const { return AnswerText2; }
-FText UQuestionnaireViewModel::GetAnswerText3() const { return AnswerText3; }
+int32 UTerminalViewModel::GetCurrentQuestionNumber() const { return CurrentQuestionNumber; }
+FText UTerminalViewModel::GetQuestionText() const { return QuestionText; }
+FText UTerminalViewModel::GetAnswerText1() const { return AnswerText1; }
+FText UTerminalViewModel::GetAnswerText2() const { return AnswerText2; }
+FText UTerminalViewModel::GetAnswerText3() const { return AnswerText3; }
+
+FText UTerminalViewModel::GetSeedText() const
+{
+	return FText::FromString(FString::Printf(TEXT("OS-%i"), Seed));
+}
+
+void UTerminalViewModel::SetSeed(const int32 Value)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(Seed, Value);
+}
 
 
-void UQuestionnaireViewModel::SetQuestionTexture(int Index, UTexture2D* Texture)
+void UTerminalViewModel::SetQuestionTexture(int Index, UTexture2D* Texture)
 {
 	switch (Index)
 	{
@@ -50,11 +60,11 @@ void UQuestionnaireViewModel::SetQuestionTexture(int Index, UTexture2D* Texture)
 	}
 }
 
-void UQuestionnaireViewModel::SetCurrentQuestionNumber(int32 Value) { UE_MVVM_SET_PROPERTY_VALUE(CurrentQuestionNumber, Value); }
+void UTerminalViewModel::SetCurrentQuestionNumber(int32 Value) { UE_MVVM_SET_PROPERTY_VALUE(CurrentQuestionNumber, Value); }
 
-void UQuestionnaireViewModel::SetQuestionText(const FText& Value) { UE_MVVM_SET_PROPERTY_VALUE(QuestionText, Value); }
+void UTerminalViewModel::SetQuestionText(const FText& Value) { UE_MVVM_SET_PROPERTY_VALUE(QuestionText, Value); }
 
-void UQuestionnaireViewModel::SetAnswerText(int Index, const FText& Value)
+void UTerminalViewModel::SetAnswerText(int Index, const FText& Value)
 {
 	if (Index == 0)
 	{

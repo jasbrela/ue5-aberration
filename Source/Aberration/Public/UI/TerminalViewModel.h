@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
-#include "QuestionnaireViewModel.generated.h"
+#include "TerminalViewModel.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ABERRATION_API UQuestionnaireViewModel : public UMVVMViewModelBase
+class ABERRATION_API UTerminalViewModel : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
 
@@ -21,6 +21,10 @@ public:
 	FText GetAnswerText2() const;
 	FText GetAnswerText3() const;
 
+	UFUNCTION(BlueprintPure, FieldNotify)
+	FText GetSeedText() const;
+	
+	void SetSeed(const int32 Value);
 	
 	void SetQuestionTexture(int Index, UTexture2D* Texture);
 	void SetCurrentQuestionNumber(int32 Value);
@@ -43,6 +47,9 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Getter)
 	FText AnswerText3;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	int32 Seed;
 	
 #pragma region QuestionTextures
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
