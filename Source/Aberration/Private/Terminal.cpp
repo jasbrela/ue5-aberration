@@ -57,6 +57,17 @@ void ATerminal::OnEnterRange()
 	ScreenWidgetComponent->SetVisibility(true);
 }
 
+void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
+{
+	if (Answers[SelectedAnswerIndex].bIsCorrect)
+	{
+		TerminalVM->SetQuestionResultTexture(QuestionNumber-1, CorrectTexture);
+	} else
+	{
+		TerminalVM->SetQuestionResultTexture(QuestionNumber-1, WrongTexture);
+	}
+}
+
 void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
@@ -77,6 +88,8 @@ void ATerminal::BeginPlay()
 	}
 	
 	ScreenWidget = Cast<UTerminalWidget>(ScreenWidgetComponent->GetWidget());
+	
+	ScreenWidget->OnConfirmReport = FOnConfirmReport::CreateUObject(this, &ThisClass::OnConfirmReport);
 
 	if (ACharacter* BaseCharacter = UGameplayStatics::GetPlayerCharacter(this, 0))
 	{
@@ -101,6 +114,7 @@ void ATerminal::BeginPlay()
 	}
 	
 	State = GetWorld()->GetGameState<AAberrationGameState>();
+	State->SetTerminalVM(TerminalVM);
 	
 	if (ScreenWidget)
 	{
@@ -166,7 +180,6 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	{
 		QuestionNumber++;
 		TerminalVM->SetCurrentQuestionNumber(QuestionNumber);
-		TerminalVM->SetSeed(State->GetSeed());
 		
 		Stream = State->GetRandomStream();
 

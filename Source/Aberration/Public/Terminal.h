@@ -35,6 +35,9 @@ public:
 	virtual void Interact() override;
 	virtual void OnExitRange() override;
 	virtual void OnEnterRange() override;
+
+	UFUNCTION(BlueprintCallable)
+	void OnConfirmReport(int SelectedAnswerIndex);
 	
 	FOnPlayerFillReportDelegate PlayerFillReportDelegate;
 
@@ -87,10 +90,10 @@ private:
 	AAberrationGameState* State;
 
 	UPROPERTY(EditDefaultsOnly)
-	UTexture2D CorrectTexture;
+	UTexture2D* CorrectTexture;
 	UPROPERTY(EditDefaultsOnly)
-	UTexture2D HalfTexture;
+	UTexture2D* HalfTexture;
 	UPROPERTY(EditDefaultsOnly)
-	UTexture2D WrongTexture;
+	UTexture2D* WrongTexture;
 
 };

@@ -9,6 +9,7 @@
 #include "UI/SettingsViewModel.h"
 #include "Types/MVVMViewModelContext.h"
 #include "MVVMGameSubsystem.h"
+#include "UI/TerminalViewModel.h"
 
 AAberrationGameState::AAberrationGameState() { }
 
@@ -77,8 +78,13 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 void AAberrationGameState::SaveSeed(const int NewSeed)
 {
 	Seed = NewSeed;
-	RandomStream = FRandomStream(Seed) ;
+	RandomStream = FRandomStream(Seed);
 	LOG_SUCCESS("Seed saved as %i", Seed);
+	
+	if (TerminalVM)
+	{
+		TerminalVM->SetSeed(Seed);
+	}
 }
 
 int AAberrationGameState::GetSeed() const
@@ -118,6 +124,12 @@ void AAberrationGameState::SaveGame()
 	{
 		LOG_ERROR("Failed to save game.");
 	}
+}
+
+void AAberrationGameState::SetTerminalVM(UTerminalViewModel* VM)
+{
+	TerminalVM = VM;
+	TerminalVM->SetSeed(Seed);
 }
 
 FRandomStream AAberrationGameState::GetRandomStream() const

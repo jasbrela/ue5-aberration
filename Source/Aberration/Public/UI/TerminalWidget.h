@@ -22,6 +22,8 @@ class UImage;
 class UButton;
 class UTextBlock;
 
+DECLARE_DELEGATE_OneParam(FOnConfirmReport, int)
+
 /**
  * 
  */
@@ -33,6 +35,8 @@ public:
     UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	FOnConfirmReport OnConfirmReport;
+
 	/*
 
 	void InitializeTerminal();

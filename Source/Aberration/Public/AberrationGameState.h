@@ -7,6 +7,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "AberrationGameState.generated.h"
 
+class UTerminalViewModel;
 class USettingsViewModel;
 class UAberrationSaveGame;
 /**
@@ -22,7 +23,8 @@ public:
 	void IncreaseCompletedRuns();
 	UAberrationSaveGame* LoadGame();
 	void SaveGame();
-	
+
+	void SetTerminalVM(UTerminalViewModel* VM);
 	void SaveSeed(int NewSeed);
 	int GetSeed() const;
 	FRandomStream GetRandomStream() const;
@@ -43,6 +45,9 @@ public:
 private:
 	UPROPERTY()
 	USettingsViewModel* SettingsVM;
+
+	UPROPERTY()
+	UTerminalViewModel* TerminalVM;
 	
 	bool bLoadedGame;
 	FRandomStream RandomStream;

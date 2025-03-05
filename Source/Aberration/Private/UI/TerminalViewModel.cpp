@@ -21,7 +21,10 @@ void UTerminalViewModel::SetLocalMousePosition(FVector2D Position)
 
 void UTerminalViewModel::SetSeed(const int32 Value)
 {
-	UE_MVVM_SET_PROPERTY_VALUE(Seed, Value);
+	if (UE_MVVM_SET_PROPERTY_VALUE(Seed, Value))
+	{
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetSeedText);
+	}
 }
 
 
