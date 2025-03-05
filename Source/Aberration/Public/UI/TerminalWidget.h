@@ -34,7 +34,6 @@ public:
     virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	/*
-	virtual FReply NativeOnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
 	void InitializeTerminal();
 	void ShowReport() const;
@@ -43,14 +42,15 @@ public:
 	void OnClickQuiz() const;
 	void OnClickNotes() const;
 	
-	void Inject(UWidgetComponent* Component);
-	void Inject(AAberrationManager* Manager);
-	void Inject(ATerminal* TerminalParent);*/
+	*/
+	UPROPERTY(BlueprintReadOnly)
+	bool bHasMultipleChoices;
 	
 private:
 	UPROPERTY()
 	UAudioComponent* AudioComponent;
 
+	
 	UPROPERTY(EditAnywhere)
 	USoundCue* MouseClickSound;
 

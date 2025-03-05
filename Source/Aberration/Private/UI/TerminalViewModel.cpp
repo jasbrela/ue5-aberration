@@ -25,7 +25,7 @@ void UTerminalViewModel::SetSeed(const int32 Value)
 }
 
 
-void UTerminalViewModel::SetQuestionTexture(int Index, UTexture2D* Texture)
+void UTerminalViewModel::SetQuestionResultTexture(int Index, UTexture2D* Texture)
 {
 	switch (Index)
 	{

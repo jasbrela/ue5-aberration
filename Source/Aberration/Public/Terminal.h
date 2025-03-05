@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "Terminal.generated.h"
 
+struct FAnswerData;
+class AAberrationGameState;
 class UTerminalViewModel;
 struct FActiveAberrations;
 class AAberrationManager;
@@ -46,6 +48,11 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	FRandomStream Stream;
+	bool bIsFocused = false;
+	int QuestionNumber = 1;
+	TArray<FAnswerData> Answers;
+
 	UPROPERTY()
 	UTerminalViewModel* TerminalVM;
 	
@@ -54,8 +61,6 @@ private:
 
 	UPROPERTY(EditInstanceOnly)
 	bool bDisable = false;
-	
-	bool bIsFocused = false;
 	
 	UPROPERTY(EditInstanceOnly)
 	UWidgetComponent* ScreenWidgetComponent;
@@ -78,9 +83,14 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	AAberrationManager* AberrationManager;
 
-	/*UPROPERTY()
-	UAudioComponent* AudioComponent;
-	
-	UPROPERTY(EditAnywhere)
-	USoundCue* MouseClickSound;*/
+	UPROPERTY()
+	AAberrationGameState* State;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D CorrectTexture;
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D HalfTexture;
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D WrongTexture;
+
 };

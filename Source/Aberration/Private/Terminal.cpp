@@ -6,8 +6,11 @@
 #include "AberrationManager.h"
 #include "UI/TerminalWidget.h"
 #include "AberrationCharacter.h"
+#include "AberrationGameState.h"
 #include "AberrationPlayerController.h"
 #include "DebugMacros.h"
+#include "FAnswerData.h"
+#include "Helper.h"
 #include "MVVMGameSubsystem.h"
 #include "Components/AudioComponent.h"
 #include "Components/WidgetComponent.h"
@@ -96,7 +99,9 @@ void ATerminal::BeginPlay()
 			//ScreenWidget->Inject(AberrationManager);
 		}
 	}
-
+	
+	State = GetWorld()->GetGameState<AAberrationGameState>();
+	
 	if (ScreenWidget)
 	{
 		//ScreenWidget->Inject(ScreenWidgetComponent);
@@ -157,9 +162,41 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 		}
 	}
 	
-	if (ScreenWidget)
+	if (State)
 	{
-		//ScreenWidget->ShowReport();
+		QuestionNumber++;
+		TerminalVM->SetCurrentQuestionNumber(QuestionNumber);
+		TerminalVM->SetSeed(State->GetSeed());
+		
+		Stream = State->GetRandomStream();
+
+		Answers.Empty();
+		
+		TArray<FString> OtherAberrations = GetPreviousOtherThanActiveAberrationsNames();
+		TArray<FString> CurrentAberrations = GetPreviousActiveAberrationsNames();
+
+		TerminalVM->SetQuestionText(FText::FromString(TEXT("Which of these aberrations was present in the coach?")));
+		ScreenWidget->bHasMultipleChoices = false;
+
+		for (int i = 0; i < CurrentAberrations.Num(); i++)
+		{
+			Answers.Add(FAnswerData(CurrentAberrations[i], true));
+		}
+			
+		for (int i = Answers.Num(); i <= 3; i++)
+		{
+			const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
+			OtherAberrations.Remove(RandomAberration);
+
+			Answers.AddUnique(FAnswerData(RandomAberration, false));
+		}
+		
+		Answers = ShuffleArray(Answers, Stream);
+
+		for (int i = 0; i < 3; i++)
+		{
+			TerminalVM->SetAnswerText(i, FText::FromString(Answers[i].Text));
+		}
 	}
 }
 

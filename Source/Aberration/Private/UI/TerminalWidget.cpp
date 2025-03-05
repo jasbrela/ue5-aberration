@@ -15,7 +15,6 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
-#include "UI/QuestionnaireWidget.h"
 
 UTerminalWidget::UTerminalWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
@@ -23,7 +22,6 @@ void UTerminalWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	//AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
 	AudioComponent = NewObject<UAudioComponent>(this);
 	if (AudioComponent)
 	{
@@ -53,42 +51,6 @@ FReply UTerminalWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 }
 
 /*
-FReply UTerminalWidget::NativeOnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-{
-	if (CursorImage)
-	{
-		const FVector2D MousePosition = MouseEvent.GetScreenSpacePosition();
-		const FVector2D LocalMousePosition = MyGeometry.AbsoluteToLocal(MousePosition);
-
-		// Update the image position
-		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(CursorImage->Slot))
-		{
-			CanvasSlot->SetPosition(LocalMousePosition);
-		}
-	}
-
-	return Super::NativeOnMouseMove(MyGeometry, MouseEvent);
-}
-
-#pragma region INJECTIONS
-void UTerminalWidget::Inject(UWidgetComponent* Component)
-{
-	WidgetComponent = Component;
-	Questionnaire->Inject(WidgetComponent);
-}
-
-void UTerminalWidget::Inject(AAberrationManager* Manager)
-{
-	AberrationManager = Manager;
-	Questionnaire->Inject(Manager);
-}
-
-void UTerminalWidget::Inject(ATerminal* TerminalParent)
-{
-	Terminal = TerminalParent;
-	Questionnaire->Inject(TerminalParent);
-}
-#pragma endregion
 
 void UTerminalWidget::InitializeTerminal()
 {

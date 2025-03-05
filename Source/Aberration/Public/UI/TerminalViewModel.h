@@ -29,7 +29,7 @@ public:
 	
 	void SetSeed(const int32 Value);
 	
-	void SetQuestionTexture(int Index, UTexture2D* Texture);
+	void SetQuestionResultTexture(int Index, UTexture2D* Texture);
 	void SetCurrentQuestionNumber(int32 Value);
 
 	void SetQuestionText(const FText& Value);
