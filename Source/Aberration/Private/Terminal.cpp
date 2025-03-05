@@ -8,8 +8,13 @@
 #include "AberrationCharacter.h"
 #include "AberrationPlayerController.h"
 #include "DebugMacros.h"
+#include "MVVMGameSubsystem.h"
+#include "Components/AudioComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
+#include "Types/MVVMViewModelContext.h"
+#include "UI/TerminalViewModel.h"
 
 class AAberrationManager;
 
@@ -19,7 +24,15 @@ ATerminal::ATerminal()
 
 	TerminalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TerminalMesh"));
 	ScreenWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScreenWidget"));
-
+	
+	/*AudioComponent = NewObject<UAudioComponent>(this);
+	if (AudioComponent)
+	{
+		AudioComponent->RegisterComponentWithWorld(GetWorld());
+		AudioComponent->SetSound(MouseClickSound);
+		AudioComponent->SetAutoActivate(false);
+	}*/
+	
 	Tooltip = TEXT("Fill Report");
 	
 	SetRootComponent(TerminalMesh);
@@ -44,6 +57,15 @@ void ATerminal::OnEnterRange()
 void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TerminalVM = NewObject<UTerminalViewModel>(UTerminalViewModel::StaticClass());
+	
+	FMVVMViewModelContext Context;
+	Context.ContextClass = UTerminalViewModel::StaticClass();
+	Context.ContextName = TEXT("TerminalVM");
+
+	const UMVVMGameSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>();
+	Subsystem->GetViewModelCollection()->AddViewModelInstance(Context, TerminalVM);
 	
 	if (bDisable)
 	{

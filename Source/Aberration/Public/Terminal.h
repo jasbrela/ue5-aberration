@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Terminal.generated.h"
 
+class UTerminalViewModel;
 struct FActiveAberrations;
 class AAberrationManager;
 class UTerminalWidget;
@@ -45,6 +46,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY()
+	UTerminalViewModel* TerminalVM;
+	
 	UPROPERTY(VisibleInstanceOnly)
 	TArray<FString> PreviousAberrationsNames;
 
@@ -73,4 +77,10 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AAberrationManager* AberrationManager;
+
+	/*UPROPERTY()
+	UAudioComponent* AudioComponent;
+	
+	UPROPERTY(EditAnywhere)
+	USoundCue* MouseClickSound;*/
 };

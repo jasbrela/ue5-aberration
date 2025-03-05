@@ -4,6 +4,7 @@
 #include "UI/TerminalWidget.h"
 
 #include "AberrationGameState.h"
+#include "AberrationPlayerController.h"
 #include "DebugMacros.h"
 #include "FAnswerData.h"
 #include "Helper.h"
@@ -12,16 +13,17 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "UI/QuestionnaireWidget.h"
 
-/*
 UTerminalWidget::UTerminalWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
 void UTerminalWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
+
+	//AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
 	AudioComponent = NewObject<UAudioComponent>(this);
 	if (AudioComponent)
 	{
@@ -29,31 +31,28 @@ void UTerminalWidget::NativeConstruct()
 		AudioComponent->SetSound(MouseClickSound);
 		AudioComponent->SetAutoActivate(false);
 	}
-	//Background->SetBrushFromTexture(AttentionTexture, true);
 
-	State = GetWorld()->GetGameState<AAberrationGameState>();
-	//SeedText->SetText(FText::FromString(FString::Printf(TEXT("OS-%i"), State->GetSeed())));
-
-	QuizIcon->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UTerminalWidget::OnClickQuiz));
-	NotesIcon->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UTerminalWidget::OnClickNotes));
-
-	Questionnaire->InitializeWindow();
-	//Notes->InitializeWindow();
+	if (ACharacter* BaseCharacter = UGameplayStatics::GetPlayerCharacter(this, 0))
+	{
+		if (AAberrationCharacter* Character = Cast<AAberrationCharacter>(BaseCharacter))
+		{
+			AController* BaseController = Character->GetController();
+			Controller = Cast<AAberrationPlayerController>(BaseController);
+		}
+	}
 }
 
 FReply UTerminalWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		OnClickAnywhere();
-
 		AudioComponent->Play();
+		Controller->bShowMouseCursor = false;
 	}
-	
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-
 }
 
+/*
 FReply UTerminalWidget::NativeOnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	if (CursorImage)

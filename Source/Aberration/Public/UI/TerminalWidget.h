@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "CommonActivatableWidget.h"
 #include "TerminalWidget.generated.h"
 
+class AAberrationPlayerController;
 class UDesktopIcon;
 class AAberrationManager;
 class UQuestionnaireWidget;
@@ -25,13 +26,14 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class ABERRATION_API UTerminalWidget : public UUserWidget
+class ABERRATION_API UTerminalWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 public:
-    /*UTerminalWidget(const FObjectInitializer& ObjectInitializer);
+    UTerminalWidget(const FObjectInitializer& ObjectInitializer);
     virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	/*
 	virtual FReply NativeOnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent) override;
 
 	void InitializeTerminal();
@@ -46,6 +48,15 @@ public:
 	void Inject(ATerminal* TerminalParent);*/
 	
 private:
+	UPROPERTY()
+	UAudioComponent* AudioComponent;
+
+	UPROPERTY(EditAnywhere)
+	USoundCue* MouseClickSound;
+
+	UPROPERTY()
+	AAberrationPlayerController* Controller;
+	
 	/*void SetAnswersText();
 	void GenerateYesNoQuestion() const;
 	void GenerateQuestion();
@@ -54,11 +65,6 @@ private:
 	FRandomStream Stream;
 	TArray<FAnswerData> Answers;
 	
-	UPROPERTY()
-	UAudioComponent* AudioComponent;
-
-	UPROPERTY(EditAnywhere)
-	USoundCue* MouseClickSound;
 	
 	UPROPERTY()
 	AAberrationGameState* State;
