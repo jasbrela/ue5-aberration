@@ -14,6 +14,11 @@ FText UTerminalViewModel::GetSeedText() const
 	return FText::FromString(FString::Printf(TEXT("OS-%i"), Seed));
 }
 
+void UTerminalViewModel::SetLocalMousePosition(FVector2D Position)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(LocalMousePosition, Position);
+}
+
 void UTerminalViewModel::SetSeed(const int32 Value)
 {
 	UE_MVVM_SET_PROPERTY_VALUE(Seed, Value);

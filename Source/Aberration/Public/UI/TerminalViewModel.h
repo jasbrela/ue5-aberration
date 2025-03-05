@@ -23,6 +23,9 @@ public:
 
 	UFUNCTION(BlueprintPure, FieldNotify)
 	FText GetSeedText() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetLocalMousePosition(FVector2D Position);
 	
 	void SetSeed(const int32 Value);
 	
@@ -71,6 +74,9 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	UTexture2D* QuestionTexture8;	
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
-	UTexture2D* QuestionTexture9;	
+	UTexture2D* QuestionTexture9;
+	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	FVector2D LocalMousePosition;
 #pragma endregion QuestionTextures
 };
