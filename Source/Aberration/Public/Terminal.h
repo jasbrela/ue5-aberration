@@ -39,11 +39,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnConfirmReport(int SelectedAnswerIndex);
 	
-	FOnPlayerFillReportDelegate PlayerFillReportDelegate;
+	FOnPlayerFillReportDelegate OnReportHandled;
 
 	UFUNCTION()
 	void UpdateReport(FActiveAberrations Aberrations);
-	void ConfirmReport() const;
 	TArray<FString> GetPreviousActiveAberrationsNames();
 	TArray<FString> GetPreviousOtherThanActiveAberrationsNames() const;
 
@@ -53,7 +52,7 @@ protected:
 private:
 	FRandomStream Stream;
 	bool bIsFocused = false;
-	int QuestionNumber = 1;
+	int QuestionNumber = 0;
 	TArray<FAnswerData> Answers;
 
 	UPROPERTY()
@@ -89,6 +88,8 @@ private:
 	UPROPERTY()
 	AAberrationGameState* State;
 
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* DefaultTexture;
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* CorrectTexture;
 	UPROPERTY(EditDefaultsOnly)

@@ -18,8 +18,6 @@ class UTextBlock;
 class ATerminal;
 class UWidgetComponent;
 
-DECLARE_DELEGATE(FOnSubmitYesNoQuestionDelegate)
-
 /**
  * 
  */
@@ -32,17 +30,6 @@ public:
 	UQuestionnaireWidget(const FObjectInitializer& ObjectInitializer);
 
 	virtual void InitializeWindow();
-	
-	void ResetButtons() const;
-
-	void IncreaseQuestionNumber();
-	void SetAnswerText(int Index, const FString& Text);
-	void SetAnswerStatus(int Index, bool bIsCorrect);
-	void SetMultipleAnswers(bool bValue);
-	void SetCanFinishQuestion(bool bValue);
-	void SetQuestionTitle(const FString& Text) const;
-	void SetOnSubmitQuestion(const FOnSubmitYesNoQuestionDelegate& Callback);
-	
 	void ShowResults();
 
 	void Inject(AAberrationManager* Manager);
@@ -50,15 +37,12 @@ public:
 	void Inject(ATerminal* TerminalParent);
 
 private:
-	void ToggleConfirmButton(bool bEnable) const;
 	void ConfirmReport();
-	void OnClickOption(int ID, bool bIsPressed) const;
 	bool bShowedResults = false;
 	bool bHasMultipleAnswers = false;
 	bool bCanFinishQuestion = false;
 	int QuestionNumber = 1;
 	int MaxQuestions = 10;
-	FOnSubmitYesNoQuestionDelegate OnSubmitYesNoQuestion;
 	FTimerHandle LoadingTimerHandle;
 	TArray<UQuestionButton*> Buttons;
 

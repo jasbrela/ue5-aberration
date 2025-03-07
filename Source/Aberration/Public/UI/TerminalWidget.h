@@ -49,7 +49,12 @@ public:
 	*/
 	UPROPERTY(BlueprintReadOnly)
 	bool bHasMultipleChoices;
+
+	UFUNCTION(BlueprintCallable)
+	void ConfirmReport(int SelectedAnswerIndex);
 	
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void UnlockButtons();
 private:
 	UPROPERTY()
 	UAudioComponent* AudioComponent;

@@ -37,7 +37,7 @@ void ATrainDoor::BeginPlay()
 	{
 		if (ATerminal* Terminal = Cast<ATerminal>(Actor))
 		{
-			Terminal->PlayerFillReportDelegate.AddDynamic(this, &ATrainDoor::ReleaseAccess);
+			Terminal->OnReportHandled.AddDynamic(this, &ATrainDoor::ReleaseAccess);
 		}
 	}
 }

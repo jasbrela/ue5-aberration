@@ -66,6 +66,15 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 	{
 		TerminalVM->SetQuestionResultTexture(QuestionNumber-1, WrongTexture);
 	}
+
+	if (AberrationManager->WasLastCoach())
+	{
+		Character->DisableInput(Controller);
+		// TODO: Show score result
+		// Check QuestionnaireWidget::ConfirmReport for reference
+	}
+
+	OnReportHandled.Broadcast();
 }
 
 void ATerminal::BeginPlay()
@@ -73,6 +82,11 @@ void ATerminal::BeginPlay()
 	Super::BeginPlay();
 
 	TerminalVM = NewObject<UTerminalViewModel>(UTerminalViewModel::StaticClass());
+
+	for (int i = 0; i < 10; i++)
+	{
+		TerminalVM->SetQuestionResultTexture(i, DefaultTexture);
+	}
 	
 	FMVVMViewModelContext Context;
 	Context.ContextClass = UTerminalViewModel::StaticClass();
@@ -127,7 +141,7 @@ void ATerminal::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
 
 void ATerminal::Interact()
 {
-	LOG("[%s] Interact", *GetActorLabel());
+	//LOG("[%s] Interact", *GetActorLabel());
 
 	bIsFocused = !bIsFocused;
 
@@ -158,9 +172,11 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	
 	if (AberrationManager->GetCurrentCoach() <= 1)
 	{
-		ConfirmReport();
+		OnReportHandled.Broadcast();
 		return;
 	}
+
+	ScreenWidget->UnlockButtons();
 	
 	const FActiveAberrations Previous = AberrationManager->GetPreviousActiveAberrations();
 	PreviousAberrationsNames.Empty();
@@ -211,17 +227,6 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 			TerminalVM->SetAnswerText(i, FText::FromString(Answers[i].Text));
 		}
 	}
-}
-
-void ATerminal::ConfirmReport() const
-{
-	if (AberrationManager->WasLastCoach())
-	{
-		Character->DisableInput(Controller);
-		return;
-	}
-
-	PlayerFillReportDelegate.Broadcast();
 }
 
 TArray<FString> ATerminal::GetPreviousActiveAberrationsNames()

@@ -50,6 +50,13 @@ FReply UTerminalWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }
 
+void UTerminalWidget::ConfirmReport(int SelectedAnswerIndex)
+{
+	if (OnConfirmReport.IsBound())
+	{
+		OnConfirmReport.Execute(SelectedAnswerIndex);
+	}
+}
 /*
 
 void UTerminalWidget::InitializeTerminal()

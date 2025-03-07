@@ -8,15 +8,13 @@
 #include "AberrationGameState.h"
 #include "AberrationManager.h"
 #include "UI/QuestionButton.h"
-#include "Terminal.h"
-#include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 
 UQuestionnaireWidget::UQuestionnaireWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
 void UQuestionnaireWidget::InitializeWindow()
 {
-	Confirm->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::NextPage));
+	/*Confirm->SetOnClick(FOnClickButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::NextPage));
 	Option1->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
 	Option2->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
 	Option3->SetOnClickQuestion(FOnClickQuestionButtonDelegate::CreateUObject(this, &UQuestionnaireWidget::OnClickOption));
@@ -25,49 +23,11 @@ void UQuestionnaireWidget::InitializeWindow()
 	Buttons.Add(Option2);
 	Buttons.Add(Option3);
 	
-	State = GetWorld()->GetGameState<AAberrationGameState>();
-}
-
-void UQuestionnaireWidget::OnClickOption(const int ID, const bool bIsPressed) const
-{
-	if (!bHasMultipleAnswers && bIsPressed)
-	{
-		for (int i = 0; i < Buttons.Num(); i++)
-		{
-			if (ID == i) continue;
-			
-			if (Buttons[i]->IsPressed())
-			{
-				Buttons[i]->Reset(); 
-			}
-		}
-		ToggleConfirmButton(bIsPressed);
-	} else
-	{
-		const bool AnySelected = Buttons.ContainsByPredicate([](const UQuestionButton* Button) { return Button->IsPressed(); });
-		ToggleConfirmButton(AnySelected);
-	}
-}
-
-void UQuestionnaireWidget::ToggleConfirmButton(const bool bEnable) const
-{
-	Confirm->SetIsEnabled(bEnable);
-	Confirm->SetRenderOpacity(bEnable ? 1.0 : 0.2);
+	State = GetWorld()->GetGameState<AAberrationGameState>();*/
 }
 
 void UQuestionnaireWidget::ConfirmReport()
 {
-	Terminal->ConfirmReport();
-
-	ToggleConfirmButton(false);
-
-	Option1->SetVisibility(ESlateVisibility::Hidden);
-	Option2->SetVisibility(ESlateVisibility::Hidden);
-	Option3->SetVisibility(ESlateVisibility::Hidden);
-	Confirm->SetVisibility(ESlateVisibility::Hidden);
-
-	// TODO: Show popup success
-	
 	if (AberrationManager != nullptr && AberrationManager->WasLastCoach())
 	{
 		Background->SetBrushFromTexture(LoadingTexture, true);
@@ -99,62 +59,6 @@ void UQuestionnaireWidget::ConfirmReport()
 	State->RegisterScoreEntry(ScoreEntry);
 
 	WidgetComponent->RequestRedraw();
-}
-
-void UQuestionnaireWidget::ResetButtons() const
-{
-	Option1->Reset();
-	Option2->Reset();
-	Option3->Reset();
-
-	ToggleConfirmButton(false);
-	WidgetComponent->RequestRedraw();
-}
-
-void UQuestionnaireWidget::IncreaseQuestionNumber()
-{
-	QuestionNumber++;
-
-	QuestionNumberText->SetText(FText::AsNumber(QuestionNumber));
-	QuestionNumberText->SetText(FText::FromString(FString::Printf(TEXT("%i out of %i"), QuestionNumber, MaxQuestions)));
-}
-
-void UQuestionnaireWidget::SetAnswerText(const int Index, const FString& Text)
-{
-	if (Index == 2)
-	{
-		Buttons[Index]->SetVisibility(Text.IsEmpty() ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
-	}
-	Buttons[Index]->SetText(Text);
-	Buttons[Index]->Reset();
-}
-
-void UQuestionnaireWidget::SetAnswerStatus(int Index, bool bIsCorrect)
-{
-	if (bIsCorrect)
-	{
-		Buttons[Index]->SetIsCorrect(bIsCorrect);
-	}
-}
-
-void UQuestionnaireWidget::SetMultipleAnswers(const bool bValue)
-{
-	bHasMultipleAnswers = bValue;
-}
-
-void UQuestionnaireWidget::SetCanFinishQuestion(bool bValue)
-{
-	bCanFinishQuestion = bValue;
-}
-
-void UQuestionnaireWidget::SetQuestionTitle(const FString& Text) const
-{
-	QuestionText->SetText(FText::FromString(Text));
-}
-
-void UQuestionnaireWidget::SetOnSubmitQuestion(const FOnSubmitYesNoQuestionDelegate& Callback)
-{
-	OnSubmitYesNoQuestion = Callback;
 }
 
 void UQuestionnaireWidget::ShowResults()
@@ -202,10 +106,10 @@ void UQuestionnaireWidget::NextPage()
 		return;
 	}
 	
-	if (OnSubmitYesNoQuestion.IsBound())
+	/*if (OnSubmitYesNoQuestion.IsBound())
     {
     	OnSubmitYesNoQuestion.Execute();
-    }
+    }*/
 	
 	WidgetComponent->RequestRedraw();
 }
