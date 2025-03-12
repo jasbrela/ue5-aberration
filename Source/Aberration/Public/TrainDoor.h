@@ -53,7 +53,10 @@ private:
 	float Speed = 200;
 
 	UPROPERTY(EditInstanceOnly, Category="Door")
-	UStaticMeshComponent* DoorMesh;
+	UStaticMeshComponent* DoorMeshL;
+
+	UPROPERTY(EditInstanceOnly, Category="Door")
+	UStaticMeshComponent* DoorMeshR;
 
 	UPROPERTY(EditInstanceOnly, Category="Door")
 	UBoxComponent* ForceCloseTrigger;

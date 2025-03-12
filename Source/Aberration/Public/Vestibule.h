@@ -26,6 +26,9 @@ private:
 	UPROPERTY(VisibleDefaultsOnly)
 	UBoxComponent* BoxCollision;
 
+	/*UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* Mesh;*/
+
 	UPROPERTY(EditInstanceOnly)
 	ATrainDoor* Door;
 

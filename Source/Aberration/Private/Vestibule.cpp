@@ -14,7 +14,12 @@ AVestibule::AVestibule()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
+	BoxCollision->SetBoxExtent(FVector(100, 200, 150));
+	
+	//Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	
 	SetRootComponent(BoxCollision);
+	//BoxCollision->SetupAttachment(RootComponent);
 }
 
 void AVestibule::BeginPlay()
