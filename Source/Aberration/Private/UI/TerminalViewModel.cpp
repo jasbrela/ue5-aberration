@@ -68,7 +68,16 @@ void UTerminalViewModel::SetQuestionResultTexture(const int Index, UTexture2D* T
 	}
 }
 
-void UTerminalViewModel::SetCurrentQuestionNumber(int32 Value) { UE_MVVM_SET_PROPERTY_VALUE(CurrentQuestionNumber, Value); }
+void UTerminalViewModel::SetCurrentQuestionNumber(int32 Value)
+{
+	if (UE_MVVM_SET_PROPERTY_VALUE(CurrentQuestionNumber, Value))
+	{
+		if (CurrentQuestionNumber == 1)
+		{
+			SetShowOSUpdateScreen(false);
+		}
+	}
+}
 
 void UTerminalViewModel::SetQuestionText(const FText& Value) { UE_MVVM_SET_PROPERTY_VALUE(QuestionText, Value); }
 
@@ -84,6 +93,11 @@ void UTerminalViewModel::SetAnswerText(int Index, const FText& Value)
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(AnswerText3, Value);
 	}
+}
+
+void UTerminalViewModel::SetShowOSUpdateScreen(const bool Value)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(ShowOSUpdateScreen, Value);
 }
 
 void UTerminalViewModel::SetOSUpdateTitle(const FText& Value)

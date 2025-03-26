@@ -40,6 +40,7 @@ public:
 	void SetQuestionText(const FText& Value);
 	void SetAnswerText(int Index, const FText& Value);
 
+	void SetShowOSUpdateScreen(bool Value);
 	void SetOSUpdateTitle(const FText& Value);
 	void SetOSUpdateBodyText(const FText& Value);
 	void SetOSUpdateImage(UTexture2D* Value);
@@ -75,6 +76,9 @@ private:
 	
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
 	float OSUpdatePercentage;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	bool ShowOSUpdateScreen = true;
 	
 #pragma region QuestionTextures
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
