@@ -9,12 +9,17 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRequireUpdateOSScreen, int, QuestionNumber);
+
 UCLASS()
 class ABERRATION_API UTerminalViewModel : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
 
 public:
+	FOnRequireUpdateOSScreen OnRequireUpdateOSScreen;
+
 	int32 GetCurrentQuestionNumber() const;
 	FText GetQuestionText() const;
 	FText GetAnswerText1() const;
@@ -35,6 +40,11 @@ public:
 	void SetQuestionText(const FText& Value);
 	void SetAnswerText(int Index, const FText& Value);
 
+	void SetOSUpdateTitle(const FText& Value);
+	void SetOSUpdateBodyText(const FText& Value);
+	void SetOSUpdateImage(UTexture2D* Value);
+	void SetOSUpdatePercentage(float Value);
+
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)
 	int32 CurrentQuestionNumber;
@@ -53,6 +63,18 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
 	int32 Seed;
+	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	FText OSUpdateTitle;
+	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	FText OSUpdateBodyText;
+	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	UTexture2D* OSUpdateImage;
+	
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	float OSUpdatePercentage;
 	
 #pragma region QuestionTextures
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))

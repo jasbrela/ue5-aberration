@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonActivatableWidget.h"
+#include "FOSNotificationStateData.h"
 #include "TerminalWidget.generated.h"
 
 class AAberrationPlayerController;
@@ -22,7 +23,8 @@ class UImage;
 class UButton;
 class UTextBlock;
 
-DECLARE_DELEGATE_OneParam(FOnConfirmReport, int)
+DECLARE_DELEGATE_OneParam(FOnConfirmReport, int);
+
 
 /**
  * 
@@ -37,6 +39,10 @@ public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	FOnConfirmReport OnConfirmReport;
 
+	FText GetOSBodyText(int CurrentCoach);
+	FText GetOSTitle(int CurrentCoach);
+	UTexture2D* GetOSImage(int CurrentCoach) const;
+	float GetOSUpdatePercentage(int CurrentCoach) const;
 	/*
 
 	void InitializeTerminal();
@@ -58,13 +64,18 @@ public:
 private:
 	UPROPERTY()
 	UAudioComponent* AudioComponent;
-
 	
 	UPROPERTY(EditAnywhere)
 	USoundCue* MouseClickSound;
 
 	UPROPERTY()
 	AAberrationPlayerController* Controller;
+
+	UPROPERTY(EditDefaultsOnly)
+	FOSNotificationStateData OSStateDataOne;
+
+	UPROPERTY(EditDefaultsOnly)
+	FOSNotificationStateData OSStateDataTwo;
 	
 	/*void SetAnswersText();
 	void GenerateYesNoQuestion() const;

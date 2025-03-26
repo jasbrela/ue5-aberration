@@ -28,7 +28,7 @@ void UTerminalViewModel::SetSeed(const int32 Value)
 }
 
 
-void UTerminalViewModel::SetQuestionResultTexture(int Index, UTexture2D* Texture)
+void UTerminalViewModel::SetQuestionResultTexture(const int Index, UTexture2D* Texture)
 {
 	switch (Index)
 	{
@@ -84,4 +84,24 @@ void UTerminalViewModel::SetAnswerText(int Index, const FText& Value)
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(AnswerText3, Value);
 	}
+}
+
+void UTerminalViewModel::SetOSUpdateTitle(const FText& Value)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateTitle, Value);
+}
+
+void UTerminalViewModel::SetOSUpdateBodyText(const FText& Value)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateBodyText, Value);
+}
+
+void UTerminalViewModel::SetOSUpdateImage(UTexture2D* Value)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateImage, Value);
+}
+
+void UTerminalViewModel::SetOSUpdatePercentage(const float Value)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdatePercentage, Value);
 }

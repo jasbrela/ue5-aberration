@@ -165,13 +165,20 @@ void ATerminal::Interact()
 
 void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 {
+	int CoachIndex = AberrationManager->GetCurrentCoach();
+	LOG("Current Coach: %d", CoachIndex);
+	
 	if (!AberrationManager)
 	{
 		LOG("Aberration Manager is null");
 	}
 	
-	if (AberrationManager->GetCurrentCoach() <= 1)
+	if (CoachIndex <= 1)
 	{
+		TerminalVM->SetOSUpdateImage(ScreenWidget->GetOSImage(CoachIndex));
+		TerminalVM->SetOSUpdateTitle(ScreenWidget->GetOSTitle(CoachIndex));
+		TerminalVM->SetOSUpdatePercentage(ScreenWidget->GetOSUpdatePercentage(CoachIndex));
+		TerminalVM->SetOSUpdateBodyText(ScreenWidget->GetOSBodyText(CoachIndex));
 		OnReportHandled.Broadcast();
 		return;
 	}
@@ -196,6 +203,8 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	{
 		QuestionNumber++;
 		TerminalVM->SetCurrentQuestionNumber(QuestionNumber);
+
+		if (AberrationManager->GetCurrentCoach())
 		
 		Stream = State->GetRandomStream();
 
