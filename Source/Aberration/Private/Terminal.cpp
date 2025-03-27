@@ -57,6 +57,23 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 		TerminalVM->SetQuestionResultTexture(QuestionNumber-1, WrongTexture);
 	}
 
+	float Score = 0.f;
+
+	for (int i = 0; i < Answers.Num(); i++)
+	{
+		if (Answers[i].bIsCorrect)
+		{
+			Score += 1.f;
+			
+			//if (!bHasMultipleAnswers)
+			//{
+				break;
+			//}
+		}
+	}
+	
+	State->RegisterScoreEntry(Score);	
+
 	if (AberrationManager->WasLastCoach())
 	{
 		Character->DisableInput(Controller);

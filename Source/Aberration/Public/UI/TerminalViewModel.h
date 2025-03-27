@@ -84,10 +84,10 @@ private:
 	bool ShowResultsScreen = false;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
-	FText AccuracyScore;
+	FText AccuracyScore = FText::FromString(TEXT("0%"));
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
-	FText ResultsDescription;
+	FText ResultsDescription = FText::FromString(TEXT("A REALLY LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG TEXT"));;
 	
 #pragma region QuestionTextures
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))

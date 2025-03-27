@@ -23,8 +23,14 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	FTimerHandle DelayBeforeClosingDoor;
+	void ForceCloseDoor();
+	
 	UPROPERTY(VisibleDefaultsOnly)
 	UBoxComponent* BoxCollision;
+	
+	UPROPERTY(EditInstanceOnly)
+	AActor* TeleportTo;
 
 	/*UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;*/

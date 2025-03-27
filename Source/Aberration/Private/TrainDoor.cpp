@@ -82,7 +82,7 @@ void ATrainDoor::Tick(float DeltaTime)
 
 	if (bIsMoving)
 	{
-		DoorMovement(DeltaTime);
+		DoorMovement(FMath::Clamp(DeltaTime, 0.0f, 0.033f));
 	}
 }
 

@@ -80,9 +80,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FOSNotificationStateData OSStateDataTwo;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta = (MultiLine = true))
 	FText PositiveResultsDescription;
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta = (MultiLine = true))
 	FText NegativeResultsDescription;
 };

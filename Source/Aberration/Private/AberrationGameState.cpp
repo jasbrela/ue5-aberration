@@ -139,8 +139,8 @@ FRandomStream AAberrationGameState::GetRandomStream() const
 
 void AAberrationGameState::RegisterScoreEntry(const float Percentage)
 {
+	LOG_SUCCESS("New score entry registered: %f", Percentage);
 	Percentages.Add(Percentage);
-	//LOG_SUCCESS("New score entry registered: %f", Percentage);
 }
 
 void AAberrationGameState::ExcludeAberration(const int ID, const bool bSave)
@@ -183,7 +183,7 @@ float AAberrationGameState::GetFinalScore()
 int AAberrationGameState::GetFinalScorePercentage()
 {
 	const float Result = GetFinalScore()/static_cast<float>(Percentages.Num());
-	//LOG("%f / %i = %i", GetFinalScore(), Percentages.Num(), FMath::RoundToInt(Result * 100.f));	
+	LOG("%f / %i = %i", GetFinalScore(), Percentages.Num(), FMath::RoundToInt(Result * 100.f));	
 	return FMath::RoundToInt(Result * 100.f);
 }
 
