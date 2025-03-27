@@ -27,6 +27,13 @@ void UTerminalViewModel::SetSeed(const int32 Value)
 	}
 }
 
+void UTerminalViewModel::SetupResultsScreen(const int32 Accuracy, const FText& Description)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(AccuracyScore, FText::FromString(FString::Printf(TEXT("%d%%"), Accuracy)));
+	UE_MVVM_SET_PROPERTY_VALUE(ResultsDescription, Description);
+	UE_MVVM_SET_PROPERTY_VALUE(ShowResultsScreen, true);
+}
+
 
 void UTerminalViewModel::SetQuestionResultTexture(const int Index, UTexture2D* Texture)
 {
@@ -74,7 +81,7 @@ void UTerminalViewModel::SetCurrentQuestionNumber(int32 Value)
 	{
 		if (CurrentQuestionNumber == 1)
 		{
-			SetShowOSUpdateScreen(false);
+			UE_MVVM_SET_PROPERTY_VALUE(ShowOSUpdateScreen, false);
 		}
 	}
 }
@@ -93,11 +100,6 @@ void UTerminalViewModel::SetAnswerText(int Index, const FText& Value)
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(AnswerText3, Value);
 	}
-}
-
-void UTerminalViewModel::SetShowOSUpdateScreen(const bool Value)
-{
-	UE_MVVM_SET_PROPERTY_VALUE(ShowOSUpdateScreen, Value);
 }
 
 void UTerminalViewModel::SetOSUpdateTitle(const FText& Value)

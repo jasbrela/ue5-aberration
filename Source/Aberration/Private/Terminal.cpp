@@ -12,10 +12,8 @@
 #include "FAnswerData.h"
 #include "Helper.h"
 #include "MVVMGameSubsystem.h"
-#include "Components/AudioComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Sound/SoundCue.h"
 #include "Types/MVVMViewModelContext.h"
 #include "UI/TerminalViewModel.h"
 
@@ -27,14 +25,6 @@ ATerminal::ATerminal()
 
 	TerminalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TerminalMesh"));
 	ScreenWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScreenWidget"));
-	
-	/*AudioComponent = NewObject<UAudioComponent>(this);
-	if (AudioComponent)
-	{
-		AudioComponent->RegisterComponentWithWorld(GetWorld());
-		AudioComponent->SetSound(MouseClickSound);
-		AudioComponent->SetAutoActivate(false);
-	}*/
 	
 	Tooltip = TEXT("Fill Report");
 	
@@ -71,10 +61,25 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 	{
 		Character->DisableInput(Controller);
 		// TODO: Show score result
+
+		GetWorld()->GetTimerManager().SetTimer(LoadingTimerHandle, this, &ThisClass::ShowResults, 2.f, false);
+		
+		if (State)
+		{
+			State->SaveGame();
+		}
 		// Check QuestionnaireWidget::ConfirmReport for reference
 	}
 
 	OnReportHandled.Broadcast();
+}
+
+void ATerminal::ShowResults()
+{
+	if (State)
+	{
+		TerminalVM->SetupResultsScreen(State->GetFinalScorePercentage(), ScreenWidget->GetResultsDescription(State->GetPassed()));
+	}
 }
 
 void ATerminal::BeginPlay()
@@ -120,21 +125,13 @@ void ATerminal::BeginPlay()
 	{
 		if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
 		{
-			//LOG("%s   SET MANAGER", *GetActorLabel());
 			AberrationManager = Manager;
 			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ATerminal::UpdateReport);
-			//ScreenWidget->Inject(AberrationManager);
 		}
 	}
 	
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 	State->SetTerminalVM(TerminalVM);
-	
-	if (ScreenWidget)
-	{
-		//ScreenWidget->Inject(ScreenWidgetComponent);
-		//ScreenWidget->Inject(this);
-	}
 }
 
 void ATerminal::Tick(float DeltaTime) { Super::Tick(DeltaTime); }

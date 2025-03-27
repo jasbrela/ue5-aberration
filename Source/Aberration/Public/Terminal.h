@@ -50,10 +50,14 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	void ShowResults();
+	
 	FRandomStream Stream;
 	bool bIsFocused = false;
 	int QuestionNumber = 0;
 	TArray<FAnswerData> Answers;
+	FTimerHandle LoadingTimerHandle;
+
 
 	UPROPERTY()
 	UTerminalViewModel* TerminalVM;

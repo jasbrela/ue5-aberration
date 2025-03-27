@@ -74,6 +74,12 @@ float UTerminalWidget::GetOSUpdatePercentage(int CurrentCoach) const
 	return OSStateDataTwo.UpdatePercentage;
 }
 
+FText UTerminalWidget::GetResultsDescription(const bool Passed) const
+{
+	if (Passed) return PositiveResultsDescription;
+	return NegativeResultsDescription;
+}
+
 void UTerminalWidget::ConfirmReport(int SelectedAnswerIndex)
 {
 	if (OnConfirmReport.IsBound())

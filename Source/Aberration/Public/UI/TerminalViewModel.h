@@ -33,6 +33,7 @@ public:
 	void SetLocalMousePosition(FVector2D Position);
 	
 	void SetSeed(const int32 Value);
+	void SetupResultsScreen(const int32 Accuracy, const FText& Description);
 	
 	void SetQuestionResultTexture(int Index, UTexture2D* Texture);
 	void SetCurrentQuestionNumber(int32 Value);
@@ -40,7 +41,6 @@ public:
 	void SetQuestionText(const FText& Value);
 	void SetAnswerText(int Index, const FText& Value);
 
-	void SetShowOSUpdateScreen(bool Value);
 	void SetOSUpdateTitle(const FText& Value);
 	void SetOSUpdateBodyText(const FText& Value);
 	void SetOSUpdateImage(UTexture2D* Value);
@@ -77,8 +77,17 @@ private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
 	float OSUpdatePercentage;
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	bool ShowOSUpdateScreen = true;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
+	bool ShowResultsScreen = false;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
+	FText AccuracyScore;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
+	FText ResultsDescription;
 	
 #pragma region QuestionTextures
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))

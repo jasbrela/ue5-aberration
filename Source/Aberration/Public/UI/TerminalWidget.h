@@ -43,6 +43,9 @@ public:
 	FText GetOSTitle(int CurrentCoach);
 	UTexture2D* GetOSImage(int CurrentCoach) const;
 	float GetOSUpdatePercentage(int CurrentCoach) const;
+
+	FText GetResultsDescription(bool Passed) const;
+	
 	/*
 
 	void InitializeTerminal();
@@ -76,39 +79,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	FOSNotificationStateData OSStateDataTwo;
-	
-	/*void SetAnswersText();
-	void GenerateYesNoQuestion() const;
-	void GenerateQuestion();
-	bool bFinished = false;
-	
-	FRandomStream Stream;
-	TArray<FAnswerData> Answers;
-	
-	
-	UPROPERTY()
-	AAberrationGameState* State;
-	UPROPERTY()
-	ATerminal* Terminal;
-	UPROPERTY()
-	UWidgetComponent* WidgetComponent;
-	UPROPERTY()
-	AAberrationManager* AberrationManager;
 
-	UPROPERTY(meta = (BindWidget))
-	UImage* CursorImage;
+	UPROPERTY(EditDefaultsOnly)
+	FText PositiveResultsDescription;
 	
-	UPROPERTY(meta = (BindWidget))
-	UImage* Background;*/
-	
-	/*
-	UPROPERTY(meta = (BindWidget))
-	UQuestionnaireWidget* Questionnaire;
-	
-	UPROPERTY(meta = (BindWidget))
-	UDesktopIcon* QuizIcon;
-
-	UPROPERTY(meta = (BindWidget))
-	UDesktopIcon* NotesIcon;*/
-	
+	UPROPERTY(EditDefaultsOnly)
+	FText NegativeResultsDescription;
 };
