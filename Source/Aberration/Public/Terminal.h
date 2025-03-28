@@ -52,6 +52,10 @@ protected:
 private:
 	void ShowResults();
 	void GenerateQuestion();
+	void GenerateBinaryQuestion();
+	void SetAnswersText();
+
+	bool bIsBinaryQuestionActive = false;
 	
 	FRandomStream Stream;
 	bool bIsFocused = false;

@@ -93,7 +93,7 @@ void UTerminalViewModel::SetAnswerText(int Index, const FText& Value)
 	} else
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(AnswerText3, Value);
-		UE_MVVM_SET_PROPERTY_VALUE(ShowThirdAnswerButton, Value.IsEmpty());
+		UE_MVVM_SET_PROPERTY_VALUE(ShowThirdAnswerButton, !Value.IsEmpty());
 	}
 }
 

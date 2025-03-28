@@ -37,9 +37,6 @@ public:
 	void SetAnswerText(int Index, const FText& Value);
 
 	void SetupOSUpdateScreen(const FOSNotificationStateData& Data);
-	void SetOSUpdateBodyText(const FText& Value);
-	void SetOSUpdateImage(UTexture2D* Value);
-	void SetOSUpdatePercentage(float Value);
 
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)

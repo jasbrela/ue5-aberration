@@ -49,6 +49,13 @@ void ATerminal::OnEnterRange()
 
 void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 {
+	if (bIsBinaryQuestionActive && SelectedAnswerIndex == 0)
+	{
+		bIsBinaryQuestionActive = false;
+		GenerateQuestion();
+		return;
+	}
+	
 	if (Answers[SelectedAnswerIndex].bIsCorrect)
 	{
 		TerminalVM->SetQuestionResultTexture(QuestionNumber-1, CorrectTexture);
@@ -57,12 +64,15 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 		TerminalVM->SetQuestionResultTexture(QuestionNumber-1, WrongTexture);
 	}
 
-	float Score = 0.f;
+	float Score = Answers[SelectedAnswerIndex].bIsCorrect ? 1.f : 0.f;
 
-	for (int i = 0; i < Answers.Num(); i++)
+	/*for (int i = 0; i < Answers.Num(); i++)
 	{
+		LOG("Answer[%i].bIsCorrect: %hs", i, Answers[i].bIsCorrect ? "true" : "false");
+		
 		if (Answers[i].bIsCorrect)
 		{
+			LOG("Found Correct Answer: %i", i);
 			Score += 1.f;
 			
 			//if (!bHasMultipleAnswers)
@@ -70,7 +80,7 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 				break;
 			//}
 		}
-	}
+	}*/
 	
 	State->RegisterScoreEntry(Score);	
 
@@ -147,8 +157,6 @@ void ATerminal::BeginPlay()
 		}
 	}
 	
-	Stream = State->GetRandomStream();
-	
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 	State->SetTerminalVM(TerminalVM);
 }
@@ -215,11 +223,12 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	
 	if (State)
 	{
+		Stream = State->GetRandomStream();
+
 		QuestionNumber++;
 		TerminalVM->SetCurrentQuestionNumber(QuestionNumber);
 
-		GenerateQuestion();
-			
+		GenerateBinaryQuestion();
 	}
 }
 
@@ -249,6 +258,28 @@ void ATerminal::GenerateQuestion()
 		
 	Answers = ShuffleArray(Answers, Stream);
 
+	SetAnswersText();
+}
+
+void ATerminal::GenerateBinaryQuestion()
+{
+	Answers.Empty();
+
+	const bool WasAnyAberrationGenerated = AberrationManager->WasAnyAberrationGenerated();
+	
+	Answers.AddUnique(FAnswerData(TEXT("Yes"), WasAnyAberrationGenerated));
+	Answers.AddUnique(FAnswerData(TEXT("No"), !WasAnyAberrationGenerated));
+	Answers.AddUnique(FAnswerData(TEXT(""), false));
+	
+	TerminalVM->SetQuestionText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
+
+	SetAnswersText();
+
+	bIsBinaryQuestionActive = true;
+}
+
+void ATerminal::SetAnswersText()
+{
 	for (int i = 0; i < 3; i++)
 	{
 		TerminalVM->SetAnswerText(i, FText::FromString(Answers[i].Text));

@@ -104,7 +104,7 @@ void AAberrationGameState::SaveGame()
 	Character->SetSensY(LoadedGame->SensY);
 	UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(SettingsVM->GetVolume(), 0, 1));
 	
-	LOG("Volume set to %f / Sens X set to %f / Sens Y set to %f", Save->Volume, Save->SensX, Save->SensY);
+	//LOG("Volume set to %f / Sens X set to %f / Sens Y set to %f", Save->Volume, Save->SensX, Save->SensY);
 
 	/*Save->ExcludedAberrations.Empty();
 

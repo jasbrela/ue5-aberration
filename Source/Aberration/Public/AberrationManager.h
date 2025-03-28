@@ -23,6 +23,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	FActiveAberrations GetActiveAberrations();
+	bool WasAnyAberrationGenerated() const;
 	FActiveAberrations GetPreviousActiveAberrations();
 	TArray<FAberrationData*> GetPreviousOtherThanActiveAberrations();
 	int GetCurrentCoach() const;

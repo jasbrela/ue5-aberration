@@ -20,6 +20,11 @@ FActiveAberrations AAberrationManager::GetActiveAberrations()
 	return CoachAberrations[CurrentCoach];
 }
 
+bool AAberrationManager::WasAnyAberrationGenerated() const
+{
+	return CoachAberrations[CurrentCoach-1].Array.Num() > 0;
+}
+
 FActiveAberrations AAberrationManager::GetPreviousActiveAberrations()
 {
 	const int PreviousCoach = CurrentCoach - 1;
@@ -78,7 +83,7 @@ void AAberrationManager::ChangeCoach(int Change)
 	if (CurrentCoach < CoachAberrations.Num() && !CoachAberrations[CurrentCoach].Array.IsEmpty())
 	{
 		//LOG("ID: %i", CoachAberrations[CurrentCoach].Array[0]);
-		LOG("From Manager");
+		//LOG("From Manager");
 		AberrationState->ExcludeAberration(CoachAberrations[CurrentCoach].Array[0]);
 	}
 	
