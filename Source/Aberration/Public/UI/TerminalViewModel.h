@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FOSNotificationStateData.h"
 #include "MVVMViewModelBase.h"
 #include "TerminalViewModel.generated.h"
 
@@ -20,12 +21,6 @@ class ABERRATION_API UTerminalViewModel : public UMVVMViewModelBase
 public:
 	FOnRequireUpdateOSScreen OnRequireUpdateOSScreen;
 
-	int32 GetCurrentQuestionNumber() const;
-	FText GetQuestionText() const;
-	FText GetAnswerText1() const;
-	FText GetAnswerText2() const;
-	FText GetAnswerText3() const;
-
 	UFUNCTION(BlueprintPure, FieldNotify)
 	FText GetSeedText() const;
 
@@ -41,40 +36,43 @@ public:
 	void SetQuestionText(const FText& Value);
 	void SetAnswerText(int Index, const FText& Value);
 
-	void SetOSUpdateTitle(const FText& Value);
+	void SetupOSUpdateScreen(const FOSNotificationStateData& Data);
 	void SetOSUpdateBodyText(const FText& Value);
 	void SetOSUpdateImage(UTexture2D* Value);
 	void SetOSUpdatePercentage(float Value);
 
 private:
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
 	int32 CurrentQuestionNumber;
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
 	FText QuestionText;
 	
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Getter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	FText AnswerText1;
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Getter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	FText AnswerText2;
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Getter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	FText AnswerText3;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
+	bool ShowThirdAnswerButton;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
 	int32 Seed;
 	
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	FText OSUpdateTitle;
 	
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	FText OSUpdateBodyText;
 	
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	UTexture2D* OSUpdateImage;
 	
-	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter)
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	float OSUpdatePercentage;
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
@@ -87,7 +85,7 @@ private:
 	FText AccuracyScore = FText::FromString(TEXT("0%"));
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
-	FText ResultsDescription = FText::FromString(TEXT("A REALLY LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG TEXT"));;
+	FText ResultsDescription = FText::FromString(TEXT("A REALLY LONG TEXT"));
 	
 #pragma region QuestionTextures
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))

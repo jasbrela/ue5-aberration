@@ -50,28 +50,10 @@ FReply UTerminalWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, con
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }
 
-FText UTerminalWidget::GetOSBodyText(int CurrentCoach)
+FOSNotificationStateData UTerminalWidget::GetOSScreenData(int CurrentCoach)
 {
-	if (CurrentCoach == 0) return OSStateDataOne.BodyText;
-	return OSStateDataTwo.BodyText;
-}
-
-FText UTerminalWidget::GetOSTitle(int CurrentCoach)
-{
-	if (CurrentCoach == 0) return OSStateDataOne.TitleText;
-	return OSStateDataTwo.TitleText;
-}
-
-UTexture2D* UTerminalWidget::GetOSImage(int CurrentCoach) const
-{
-	if (CurrentCoach == 0) return OSStateDataOne.ImageTexture;
-	return OSStateDataTwo.ImageTexture;
-}
-
-float UTerminalWidget::GetOSUpdatePercentage(int CurrentCoach) const
-{
-	if (CurrentCoach == 0) return OSStateDataOne.UpdatePercentage;
-	return OSStateDataTwo.UpdatePercentage;
+	if (CurrentCoach == 0) return OSStateDataOne;
+	return OSStateDataTwo;
 }
 
 FText UTerminalWidget::GetResultsDescription(const bool Passed) const

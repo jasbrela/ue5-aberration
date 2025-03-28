@@ -3,12 +3,6 @@
 
 #include "UI/TerminalViewModel.h"
 
-int32 UTerminalViewModel::GetCurrentQuestionNumber() const { return CurrentQuestionNumber; }
-FText UTerminalViewModel::GetQuestionText() const { return QuestionText; }
-FText UTerminalViewModel::GetAnswerText1() const { return AnswerText1; }
-FText UTerminalViewModel::GetAnswerText2() const { return AnswerText2; }
-FText UTerminalViewModel::GetAnswerText3() const { return AnswerText3; }
-
 FText UTerminalViewModel::GetSeedText() const
 {
 	return FText::FromString(FString::Printf(TEXT("OS-%i"), Seed));
@@ -86,7 +80,7 @@ void UTerminalViewModel::SetCurrentQuestionNumber(int32 Value)
 	}
 }
 
-void UTerminalViewModel::SetQuestionText(const FText& Value) { UE_MVVM_SET_PROPERTY_VALUE(QuestionText, Value); }
+void UTerminalViewModel::SetQuestionText(const FText& Value) {UE_MVVM_SET_PROPERTY_VALUE(QuestionText, Value); }
 
 void UTerminalViewModel::SetAnswerText(int Index, const FText& Value)
 {
@@ -99,25 +93,14 @@ void UTerminalViewModel::SetAnswerText(int Index, const FText& Value)
 	} else
 	{
 		UE_MVVM_SET_PROPERTY_VALUE(AnswerText3, Value);
+		UE_MVVM_SET_PROPERTY_VALUE(ShowThirdAnswerButton, Value.IsEmpty());
 	}
 }
 
-void UTerminalViewModel::SetOSUpdateTitle(const FText& Value)
+void UTerminalViewModel::SetupOSUpdateScreen(const FOSNotificationStateData& Data)
 {
-	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateTitle, Value);
-}
-
-void UTerminalViewModel::SetOSUpdateBodyText(const FText& Value)
-{
-	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateBodyText, Value);
-}
-
-void UTerminalViewModel::SetOSUpdateImage(UTexture2D* Value)
-{
-	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateImage, Value);
-}
-
-void UTerminalViewModel::SetOSUpdatePercentage(const float Value)
-{
-	UE_MVVM_SET_PROPERTY_VALUE(OSUpdatePercentage, Value);
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateTitle, Data.TitleText);
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateBodyText, Data.BodyText);
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdateImage, Data.ImageTexture);
+	UE_MVVM_SET_PROPERTY_VALUE(OSUpdatePercentage, Data.UpdatePercentage);
 }

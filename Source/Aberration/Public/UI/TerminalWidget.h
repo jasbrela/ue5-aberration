@@ -39,23 +39,10 @@ public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	FOnConfirmReport OnConfirmReport;
 
-	FText GetOSBodyText(int CurrentCoach);
-	FText GetOSTitle(int CurrentCoach);
-	UTexture2D* GetOSImage(int CurrentCoach) const;
-	float GetOSUpdatePercentage(int CurrentCoach) const;
-
+	FOSNotificationStateData GetOSScreenData(int CurrentCoach);
+	
 	FText GetResultsDescription(bool Passed) const;
-	
-	/*
 
-	void InitializeTerminal();
-	void ShowReport() const;
-	void OnClickAnywhere() const;
-	void OnClickDesktopIcon() const;
-	void OnClickQuiz() const;
-	void OnClickNotes() const;
-	
-	*/
 	UPROPERTY(BlueprintReadOnly)
 	bool bHasMultipleChoices;
 

@@ -147,6 +147,8 @@ void ATerminal::BeginPlay()
 		}
 	}
 	
+	Stream = State->GetRandomStream();
+	
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 	State->SetTerminalVM(TerminalVM);
 }
@@ -189,10 +191,8 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	
 	if (CoachIndex <= 1)
 	{
-		TerminalVM->SetOSUpdateImage(ScreenWidget->GetOSImage(CoachIndex));
-		TerminalVM->SetOSUpdateTitle(ScreenWidget->GetOSTitle(CoachIndex));
-		TerminalVM->SetOSUpdatePercentage(ScreenWidget->GetOSUpdatePercentage(CoachIndex));
-		TerminalVM->SetOSUpdateBodyText(ScreenWidget->GetOSBodyText(CoachIndex));
+		TerminalVM->SetupOSUpdateScreen(ScreenWidget->GetOSScreenData(CoachIndex));
+
 		OnReportHandled.Broadcast();
 		return;
 	}
@@ -218,37 +218,40 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 		QuestionNumber++;
 		TerminalVM->SetCurrentQuestionNumber(QuestionNumber);
 
-		if (AberrationManager->GetCurrentCoach())
-		
-		Stream = State->GetRandomStream();
-
-		Answers.Empty();
-		
-		TArray<FString> OtherAberrations = GetPreviousOtherThanActiveAberrationsNames();
-		TArray<FString> CurrentAberrations = GetPreviousActiveAberrationsNames();
-
-		TerminalVM->SetQuestionText(FText::FromString(TEXT("Which of these aberrations was present in the coach?")));
-		ScreenWidget->bHasMultipleChoices = false;
-
-		for (int i = 0; i < CurrentAberrations.Num(); i++)
-		{
-			Answers.Add(FAnswerData(CurrentAberrations[i], true));
-		}
+		GenerateQuestion();
 			
-		for (int i = Answers.Num(); i <= 3; i++)
-		{
-			const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
-			OtherAberrations.Remove(RandomAberration);
+	}
+}
 
-			Answers.AddUnique(FAnswerData(RandomAberration, false));
-		}
+
+void ATerminal::GenerateQuestion()
+{
+	Answers.Empty();
 		
-		Answers = ShuffleArray(Answers, Stream);
+	TArray<FString> OtherAberrations = GetPreviousOtherThanActiveAberrationsNames();
+	TArray<FString> CurrentAberrations = GetPreviousActiveAberrationsNames();
 
-		for (int i = 0; i < 3; i++)
-		{
-			TerminalVM->SetAnswerText(i, FText::FromString(Answers[i].Text));
-		}
+	TerminalVM->SetQuestionText(FText::FromString(TEXT("Which of these aberrations was present in the coach?")));
+	ScreenWidget->bHasMultipleChoices = false;
+
+	for (int i = 0; i < CurrentAberrations.Num(); i++)
+	{
+		Answers.Add(FAnswerData(CurrentAberrations[i], true));
+	}
+			
+	for (int i = Answers.Num(); i <= 3; i++)
+	{
+		const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
+		OtherAberrations.Remove(RandomAberration);
+
+		Answers.AddUnique(FAnswerData(RandomAberration, false));
+	}
+		
+	Answers = ShuffleArray(Answers, Stream);
+
+	for (int i = 0; i < 3; i++)
+	{
+		TerminalVM->SetAnswerText(i, FText::FromString(Answers[i].Text));
 	}
 }
 

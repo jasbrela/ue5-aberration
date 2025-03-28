@@ -51,6 +51,7 @@ protected:
 
 private:
 	void ShowResults();
+	void GenerateQuestion();
 	
 	FRandomStream Stream;
 	bool bIsFocused = false;
