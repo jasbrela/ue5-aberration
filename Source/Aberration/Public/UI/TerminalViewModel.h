@@ -83,6 +83,9 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
 	FText ResultsDescription = FText::FromString(TEXT("A REALLY LONG TEXT"));
+
+//	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))
+//	FOSNotificationStateData OSNotificationStateData;
 	
 #pragma region QuestionTextures
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess))

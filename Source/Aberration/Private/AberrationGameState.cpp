@@ -96,13 +96,15 @@ void AAberrationGameState::SaveGame()
 {
 	UAberrationSaveGame* Save = Cast<UAberrationSaveGame>(UGameplayStatics::CreateSaveGameObject(UAberrationSaveGame::StaticClass()));
 
-	Save->Volume = SettingsVM->GetVolume();
-	Save->SensX = SettingsVM->GetSensX();
-	Save->SensY = SettingsVM->GetSensY();
-	
-	Character->SetSensX(LoadedGame->SensX);
-	Character->SetSensY(LoadedGame->SensY);
-	UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(SettingsVM->GetVolume(), 0, 1));
+	if (SettingsVM != nullptr)
+	{
+		Save->Volume = SettingsVM->GetVolume();
+		Save->SensX = SettingsVM->GetSensX();
+		Save->SensY = SettingsVM->GetSensY();
+		Character->SetSensX(Save->SensX);
+		Character->SetSensY(Save->SensY);
+		UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(Save->Volume, 0, 1));
+	}
 	
 	//LOG("Volume set to %f / Sens X set to %f / Sens Y set to %f", Save->Volume, Save->SensX, Save->SensY);
 
