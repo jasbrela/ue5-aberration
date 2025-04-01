@@ -19,11 +19,6 @@ UMenuWidget::UMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(Ob
 void UMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	QuitButton->OnClicked.AddDynamic(this, &UMenuWidget::OnClickQuitButton);
-	ResumeButton->OnClicked.AddDynamic(this, &UMenuWidget::OnClickResumeButton);
-	
-	UE_LOG(LogTemp, Warning, TEXT("NativeConstruct"));
 }
 
 void UMenuWidget::OnClickQuitButton()

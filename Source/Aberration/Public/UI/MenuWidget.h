@@ -29,20 +29,14 @@ public:
 private:
 	bool bCanSave = false;
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnClickQuitButton();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnClickResumeButton();
 
 	UPROPERTY()
 	AAberrationCharacter* AberrationCharacter;
 	UPROPERTY()
 	AAberrationGameState* AberrationState;
-		
-	UPROPERTY(meta = (BindWidget))
-	UButton* ResumeButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* QuitButton;
 };
