@@ -22,6 +22,7 @@ public:
 
 	void IncreaseCompletedRuns();
 	UAberrationSaveGame* LoadGame();
+	void SaveSettings();
 	void SaveGame();
 
 	void SetTerminalVM(UTerminalViewModel* VM);

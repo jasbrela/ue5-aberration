@@ -63,8 +63,6 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 				
 	const UMVVMGameSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>();
 	Subsystem->GetViewModelCollection()->AddViewModelInstance(Context, SettingsVM);
-
-	UE_LOG(LogTemp, Warning, TEXT("Set up Settings MV"));
 	
 	if (LoadedGame == nullptr)
 	{
@@ -92,7 +90,7 @@ int AAberrationGameState::GetSeed() const
 	return GetRandomStream().GetCurrentSeed();
 }
 
-void AAberrationGameState::SaveGame()
+void AAberrationGameState::SaveSettings()
 {
 	UAberrationSaveGame* Save = Cast<UAberrationSaveGame>(UGameplayStatics::CreateSaveGameObject(UAberrationSaveGame::StaticClass()));
 
@@ -105,28 +103,31 @@ void AAberrationGameState::SaveGame()
 		Character->SetSensY(Save->SensY);
 		UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(Save->Volume, 0, 1));
 	}
+
+	const bool Success = UGameplayStatics::SaveGameToSlot(Save, TEXT("AberrationExpress"), 0);
 	
+	if (Success)
+	{
+		LOG_SUCCESS("Settings saved.");
+	} else
+	{
+		LOG_ERROR("Failed to save settings.");
+	}
+}
+
+/*void AAberrationGameState::SaveGame()
+{
 	//LOG("Volume set to %f / Sens X set to %f / Sens Y set to %f", Save->Volume, Save->SensX, Save->SensY);
 
-	/*Save->ExcludedAberrations.Empty();
+	Save->ExcludedAberrations.Empty();
 
 	for (int i = 0; i < ExcludedAberrations.Num(); i++)
 	{
 		Save->ExcludedAberrations.AddUnique(ExcludedAberrations[i]);
 	}
 	
-	Save->CompletedRuns = CompletedRuns;*/
-
-	const bool Success = UGameplayStatics::SaveGameToSlot(Save, TEXT("AberrationExpress"), 0);
-	
-	if (Success)
-	{
-		LOG_SUCCESS("Saved. %i", ExcludedAberrations.Num());
-	} else
-	{
-		LOG_ERROR("Failed to save game.");
-	}
-}
+	Save->CompletedRuns = CompletedRuns;
+}*/
 
 void AAberrationGameState::SetTerminalVM(UTerminalViewModel* VM)
 {
@@ -157,7 +158,7 @@ void AAberrationGameState::ExcludeAberration(const int ID, const bool bSave)
 	}
 
 	//LOG("Push new aberration: %i (%i), %s", ID, ExcludedAberrations.Num(), bSave ? TEXT("true") : TEXT("false"));
-	if (bSave) SaveGame();
+	//if (bSave) SaveGame();
 }
 
 void AAberrationGameState::ResetExcludedAberrations()
@@ -189,7 +190,7 @@ int AAberrationGameState::GetFinalScorePercentage()
 	return FMath::RoundToInt(Result * 100.f);
 }
 
-int AAberrationGameState::GetIncorrectAnswers()
+/*int AAberrationGameState::GetIncorrectAnswers()
 {
 	int Incorrect = 0;
 	
@@ -213,7 +214,7 @@ int AAberrationGameState::GetIncorrectAnswers()
 int AAberrationGameState::GetMaxPoints() const
 {
 	return Percentages.Num();
-}
+}*/
 
 void AAberrationGameState::SetCharacter(AAberrationCharacter* AberrationCharacter)
 {

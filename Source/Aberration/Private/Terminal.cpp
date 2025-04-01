@@ -91,10 +91,10 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 
 		GetWorld()->GetTimerManager().SetTimer(LoadingTimerHandle, this, &ThisClass::ShowResults, 2.f, false);
 		
-		if (State)
+		/*if (State)
 		{
 			State->SaveGame();
-		}
+		}*/
 		// Check QuestionnaireWidget::ConfirmReport for reference
 	}
 

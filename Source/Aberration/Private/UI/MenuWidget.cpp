@@ -32,7 +32,7 @@ void UMenuWidget::OnClickResumeButton()
 	{
 		if (bCanSave && AberrationState)
 		{
-			AberrationState->SaveGame();
+			AberrationState->SaveSettings();
 		}
 		// SAVE SETTINGS
 		AberrationCharacter->Pause(FInputActionValue(true));

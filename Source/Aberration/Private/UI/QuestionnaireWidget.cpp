@@ -68,7 +68,7 @@ void UQuestionnaireWidget::ShowResults()
 	if (State)
 	{
 		Confirm->SetText(State->GetPassed() ? TEXT("OK") : TEXT("Retry"));
-		State->SaveGame();
+		//State->SaveGame();
 	}
 	
 	WidgetComponent->RequestRedraw();
