@@ -49,6 +49,7 @@ void ATerminal::OnEnterRange()
 
 void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 {
+	LOG("OnConfirmReport %hs , %i", bIsBinaryQuestionActive ? "- binary -" : " - not binary -", SelectedAnswerIndex);
 	if (bIsBinaryQuestionActive && SelectedAnswerIndex == 0)
 	{
 		bIsBinaryQuestionActive = false;
