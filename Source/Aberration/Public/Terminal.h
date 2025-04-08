@@ -32,6 +32,7 @@ public:
 	ATerminal();
 	virtual void Tick(float DeltaTime) override;
 
+	void Unfocus();
 	virtual void Interact() override;
 	virtual void OnExitRange() override;
 	virtual void OnEnterRange() override;

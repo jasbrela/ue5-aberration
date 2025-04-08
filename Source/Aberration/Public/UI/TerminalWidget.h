@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommonActivatableWidget.h"
 #include "FOSNotificationStateData.h"
+#include "Sound/SoundCue.h"
 #include "TerminalWidget.generated.h"
 
 class AAberrationPlayerController;

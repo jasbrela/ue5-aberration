@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "AberrationManager.generated.h"
 
+class AVestibule;
 class ACoachID;
 class AAberrationGameState;
 
@@ -30,6 +31,9 @@ public:
 	void ChangeCoach(int Change);
 	bool WasLastCoach() const;
 	int GetNumberOfCoaches() const;
+	void SetFrontVestibule(AVestibule* Vestibule);
+	UFUNCTION()
+	void OnConfirmReport();
 
 	FOnManagerUpdateAberrationsDelegate ManagerUpdateAberrationsDelegate;
 	
@@ -40,6 +44,10 @@ protected:
 
 private:
 	void GenerateSeed();
+	
+	UPROPERTY()
+	AVestibule* FrontVestibule;
+	
 	UPROPERTY(EditAnywhere)
 	bool bOverrideSeed = false;
 	UPROPERTY(EditAnywhere)

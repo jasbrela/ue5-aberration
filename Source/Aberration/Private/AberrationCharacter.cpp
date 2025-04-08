@@ -12,6 +12,7 @@
 #include "UI/InteractionWidget.h"
 #include "Interactive.h"
 #include "AberrationGameState.h"
+#include "Terminal.h"
 #include "UI/MenuWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
@@ -126,6 +127,21 @@ void AAberrationCharacter::Interact(const FInputActionValue& Value)
 	}
 }
 
+void AAberrationCharacter::Unfocus(const FInputActionValue& Value)
+{
+	//if (!Value.Get<bool>()) return;
+	if (CurrentInteractiveActor)
+	{
+		if (Terminal == nullptr)
+		{
+			ATerminal* Interactive = Cast<ATerminal>(CurrentInteractiveActor);
+			Terminal = Interactive;
+		}
+		
+		if (Terminal && Terminal == CurrentInteractiveActor) Terminal->Unfocus();
+	}
+}
+
 void AAberrationCharacter::Sprint(const FInputActionValue& Value)
 {
 
@@ -233,12 +249,13 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	{
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAberrationCharacter::Move);
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAberrationCharacter::Look);
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AAberrationCharacter::Interact);
-		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AAberrationCharacter::Pause);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AAberrationCharacter::Sprint);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AAberrationCharacter::StopSprinting);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
+		EnhancedInputComponent->BindAction(UnfocusAction, ETriggerEvent::Started, this, &ThisClass::Unfocus);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ThisClass::Interact);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ThisClass::Pause);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::Sprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprinting);
 	}
 	else
 	{
@@ -249,7 +266,11 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void AAberrationCharacter::Pause(const FInputActionValue& Value)
 {
-	if (!bCanPause) return;
+	if (!bCanPause)
+	{
+		Unfocus(true);
+		return;
+	}
 	//if (!Value.Get<bool>()) return;
 	
 	bIsMenuOpen = !bIsMenuOpen;
@@ -270,7 +291,11 @@ void AAberrationCharacter::TogglePauseInput(bool bEnable)
 
 void AAberrationCharacter::Move(const FInputActionValue& Value)
 {
-	if (!bCanMoveAndLook) return;
+	if (!bCanMoveAndLook)
+	{
+		Unfocus(true);
+		return;
+	}
 	
 	FVector2D MovementVector = Value.Get<FVector2D>();
 

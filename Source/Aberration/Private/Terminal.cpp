@@ -97,7 +97,8 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 		}*/
 		// Check QuestionnaireWidget::ConfirmReport for reference
 	}
-
+	
+	//AberrationManager->OnConfirmReport();
 	OnReportHandled.Broadcast();
 }
 
@@ -154,11 +155,17 @@ void ATerminal::BeginPlay()
 		{
 			AberrationManager = Manager;
 			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ATerminal::UpdateReport);
+			OnReportHandled.AddDynamic(AberrationManager, &AAberrationManager::OnConfirmReport);
 		}
 	}
 	
 	State = GetWorld()->GetGameState<AAberrationGameState>();
 	State->SetTerminalVM(TerminalVM);
+}
+
+void ATerminal::Unfocus()
+{
+	if (bIsFocused) Interact();
 }
 
 void ATerminal::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
@@ -173,6 +180,13 @@ void ATerminal::Interact()
 	Character->TogglePauseInput(!bIsFocused);
 	
 	//Controller->bShowMouseCursor = bIsFocused;
+
+	int CoachIndex = AberrationManager->GetCurrentCoach();
+
+	if (CoachIndex <= 1)
+	{
+		OnReportHandled.Broadcast();
+	}
 	
 	if (bIsFocused)
 	{
@@ -201,7 +215,7 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 	{
 		TerminalVM->SetupOSUpdateScreen(ScreenWidget->GetOSScreenData(CoachIndex));
 
-		OnReportHandled.Broadcast();
+		//OnReportHandled.Broadcast();
 		return;
 	}
 

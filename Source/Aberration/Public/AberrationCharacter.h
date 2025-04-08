@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "AberrationCharacter.generated.h"
 
+class ATerminal;
 class UMenuWidget;
 class UInteractionWidget;
 class IInteractive;
@@ -43,6 +44,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Unfocus(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
 	void Sprint(const FInputActionValue& Value);
 	void StopSprinting(const FInputActionValue& Value);
@@ -52,6 +54,9 @@ private:
 	bool bCanMoveAndLook = true;
 	bool bIsMenuOpen = false;
 	bool bCanPause = true;
+
+	UPROPERTY()
+	ATerminal* Terminal;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	float SprintSpeedMultiplier = 1.f;
@@ -91,6 +96,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* UnfocusAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;

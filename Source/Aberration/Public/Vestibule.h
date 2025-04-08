@@ -18,11 +18,14 @@ class ABERRATION_API AVestibule : public AActor
 public:	
 	AVestibule();
 	virtual void Tick(float DeltaTime) override;
+	void ToggleTrigger(bool Enable);
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	bool bCanTrigger = true;
+	
 	FTimerHandle DelayBeforeClosingDoor;
 	void ForceCloseDoor();
 	

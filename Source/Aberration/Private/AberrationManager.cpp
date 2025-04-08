@@ -7,6 +7,7 @@
 #include "CoachID.h"
 #include "FActiveAberrations.h"
 #include "DebugMacros.h"
+#include "Vestibule.h"
 
 
 AAberrationManager::AAberrationManager()
@@ -71,7 +72,6 @@ void AAberrationManager::GenerateSeed()
 	{
 		RandomStream = FRandomStream(0);
 	}
-	
 }
 
 void AAberrationManager::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
@@ -114,6 +114,16 @@ bool AAberrationManager::WasLastCoach() const
 int AAberrationManager::GetNumberOfCoaches() const
 {
 	return NumberOfCoaches;
+}
+
+void AAberrationManager::SetFrontVestibule(AVestibule* Vestibule)
+{
+	FrontVestibule = Vestibule;
+}
+
+void AAberrationManager::OnConfirmReport()
+{
+	FrontVestibule->ToggleTrigger(true);
 }
 
 void AAberrationManager::UpdateUnlockedAberrations()

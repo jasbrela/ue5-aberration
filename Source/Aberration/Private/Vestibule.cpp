@@ -22,30 +22,37 @@ AVestibule::AVestibule()
 	//BoxCollision->SetupAttachment(RootComponent);
 }
 
+void AVestibule::ToggleTrigger(bool Enable)
+{
+	LOG("CanTrigger: %hs", Enable ? "true" : "false");
+	bCanTrigger = Enable;
+}
+
 void AVestibule::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), AAberrationManager::StaticClass()); Actor != nullptr)
-	{
-		if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
-		{
-			AberrationManager = Manager;
-		}
-	}
-	
-	if (TeleportValue == 0)
-	{
-		LOG_WARNING("TeleportValue is set to 0. This may cause errors.");
-	}
-	
+	Location = GetActorLocation();
+
 	if (bCanTeleport)
 	{
+		if (TeleportValue == 0)
+		{
+			LOG_WARNING("TeleportValue is set to 0. This may cause errors.");
+		}
+		if (AActor* Actor = UGameplayStatics::GetActorOfClass(GetWorld(), AAberrationManager::StaticClass()); Actor != nullptr)
+		{
+			if (AAberrationManager* Manager = Cast<AAberrationManager>(Actor))
+			{
+				AberrationManager = Manager;
+				Manager->SetFrontVestibule(this);
+			}
+		}
+		
 		BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
 		//LOG("Registered OnBeginOverlap");
 	}
 
-	Location = GetActorLocation();
 }
 
 void AVestibule::ForceCloseDoor()
@@ -56,12 +63,22 @@ void AVestibule::ForceCloseDoor()
 void AVestibule::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                 int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!bCanTeleport) return;
+	
+	if (!bCanTrigger)
+	{
+		LOG_ERROR("CanTrigger is false");
+		return;
+	}
+	
 	if (!Cast<AAberrationCharacter>(OtherActor)) return;
+
+	ToggleTrigger(false);
 	
 	//LOG("Overlapped with %s", *OtherActor->GetActorLabel());
 
 	const FVector OtherLocation = OtherActor->GetActorLocation();
-	const FVector NewLocation = TeleportTo->GetActorLocation();//OtherVestibule->GetRelativePosition(GetOffset(OtherActor));
+	const FVector NewLocation = /*TeleportTo->GetActorLocation();*/OtherVestibule->GetRelativePosition(GetOffset(OtherActor));
 
 	if (AberrationManager)
 	{
