@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AberrationBase.h"
+#include "FAberrationMaterials.h"
 #include "AberrationMaterial.generated.h"
 
 /**
@@ -24,7 +25,13 @@ private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Aberration")
+	UPROPERTY(EditInstanceOnly)
+	AActor* Mesh;
+	
+	UPROPERTY(EditAnywhere, Category="Aberration")
+	TArray<FAberrationMaterials> Data;
+	
+	/*UPROPERTY(EditDefaultsOnly, Category="Aberration")
     int MaterialIndex;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
@@ -34,6 +41,6 @@ private:
 	UMaterialInterface* ChangedMaterial;
 
 	UPROPERTY(EditDefaultsOnly)
-	UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* Mesh;*/
 	
 };
