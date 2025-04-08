@@ -7,6 +7,7 @@
 #include "AberrationPlayerController.h"
 #include "DebugMacros.h"
 #include "FAnswerData.h"
+#include "FOSNotificationStateData.h"
 #include "Helper.h"
 #include "Terminal.h"
 #include "Components/AudioComponent.h"
