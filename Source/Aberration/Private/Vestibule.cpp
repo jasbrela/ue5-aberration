@@ -24,7 +24,7 @@ AVestibule::AVestibule()
 
 void AVestibule::ToggleTrigger(bool Enable)
 {
-	LOG("CanTrigger: %hs", Enable ? "true" : "false");
+	//LOG("CanTrigger: %hs", Enable ? "true" : "false");
 	bCanTrigger = Enable;
 }
 

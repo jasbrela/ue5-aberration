@@ -33,16 +33,17 @@ void AAberrationMaterial::BeginPlay()
 			
 			if (MeshComponent)
 			{
-				FString Name = MeshComponent->GetName();
 				FString ComponentName = Data[i].MeshComponentName.ToString();
+				FString Name = MeshComponent->GetReadableName().Right(ComponentName.Len());
 				
 				if (Name == ComponentName)
 				{
 					Data[i].MeshComponent = MeshComponent;
 					//LOG_SUCCESS("Found Mesh with name: %s", *ComponentName);
 					break;
-				}// else LOG("Not found. [%s] -> [%s]", *Name, *ComponentName);
-
+				}
+				
+				//LOG("Not found. [%s] -> [%s]", *Name, *ComponentName);
 			}
 		}
 	}
