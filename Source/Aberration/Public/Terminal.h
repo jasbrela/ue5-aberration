@@ -8,9 +8,9 @@
 #include "Terminal.generated.h"
 
 struct FAnswerData;
+struct FActiveAberrations;
 class AAberrationGameState;
 class UTerminalViewModel;
-struct FActiveAberrations;
 class AAberrationManager;
 class UTerminalWidget;
 class AAberrationPlayerController;
