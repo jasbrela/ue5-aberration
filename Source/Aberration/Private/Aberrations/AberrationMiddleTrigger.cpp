@@ -43,6 +43,7 @@ void AAberrationMiddleTrigger::OnBeginOverlap(UPrimitiveComponent* OverlappedCom
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!bIsActive) return;
+	bIsActive = false;
 	
 	Manager->PlayerReachedTrainMidpoint.Broadcast(Manager->GetActiveAberrations());
 }
