@@ -35,9 +35,14 @@ private:
 	// The ID of the aberration must match their ID in Aberrations' DataTable
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
 	int ID = 0;
+	UPROPERTY(EditDefaultsOnly, Category="Aberration")
+	bool bWaitUntilMidpointIsReached = false;
 	
 	UFUNCTION()
-	void Notify(FActiveAberrations Aberrations);
+	void NotifyMidpointReached(FActiveAberrations Aberrations);
+	UFUNCTION()
+	void NotifyAberrationChanged(FActiveAberrations Aberrations);
 
 	bool bIsActive = false;
 };
+

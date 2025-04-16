@@ -23,7 +23,8 @@ void AAberrationBase::BeginPlay()
 		{
 			AberrationManager = Manager;
 			//LOG("BeginPlay %s", *GetActorLabel());
-			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &AAberrationBase::Notify);
+			AberrationManager->ManagerUpdateAberrationsDelegate.AddDynamic(this, &ThisClass::NotifyAberrationChanged);
+			AberrationManager->PlayerReachedTrainMidpoint.AddDynamic(this, &ThisClass::NotifyMidpointReached);
 		}
     }
 }
@@ -37,21 +38,35 @@ void AAberrationBase::Tick(float DeltaTime)
 	AberrationTick(DeltaTime);
 }
 
-void AAberrationBase::Notify(FActiveAberrations Aberrations)
+void AAberrationBase::NotifyAberrationChanged(FActiveAberrations Aberrations)
 {
-	const bool Contains = Aberrations.Array.Contains(ID);
+	const bool bIsChosenAberration = Aberrations.Array.Contains(ID);
+
+	if (bIsActive == bIsChosenAberration) return;
 	
-	if (bIsActive == Contains) return;
-	
-	if (Contains)
+	if (bIsActive && !bIsChosenAberration)
+	{
+		bIsActive = false;
+		Deactivate();
+		return;
+	}
+
+	if (!bWaitUntilMidpointIsReached)
 	{
 		Activate();
-	} else
-	{
-		Deactivate();
 	}
+}
+
+void AAberrationBase::NotifyMidpointReached(FActiveAberrations Aberrations)
+{
+	const bool bIsChosenAberration = Aberrations.Array.Contains(ID);
+
+	if (!bIsChosenAberration) return;
 	
-	bIsActive = Contains;
+	if (bWaitUntilMidpointIsReached)
+	{
+		Activate();
+	}
 }
 
 void AAberrationBase::Activate() { }

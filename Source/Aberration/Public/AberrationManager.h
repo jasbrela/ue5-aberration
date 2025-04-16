@@ -13,6 +13,7 @@ class ACoachID;
 class AAberrationGameState;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManagerUpdateAberrationsDelegate, FActiveAberrations, ActiveAberrations);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerReachedTrainMidpoint, FActiveAberrations, ActiveAberrations);
 
 UCLASS()
 class ABERRATION_API AAberrationManager : public AActor
@@ -36,6 +37,7 @@ public:
 	void OnConfirmReport();
 
 	FOnManagerUpdateAberrationsDelegate ManagerUpdateAberrationsDelegate;
+	FOnPlayerReachedTrainMidpoint PlayerReachedTrainMidpoint;
 	
 	TArray<FAberrationData*> AberrationsData;
 	
