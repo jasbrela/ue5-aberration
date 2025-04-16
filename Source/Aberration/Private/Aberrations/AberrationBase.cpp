@@ -53,6 +53,7 @@ void AAberrationBase::NotifyAberrationChanged(FActiveAberrations Aberrations)
 
 	if (!bWaitUntilMidpointIsReached)
 	{
+		bIsActive = true;
 		Activate();
 	}
 }

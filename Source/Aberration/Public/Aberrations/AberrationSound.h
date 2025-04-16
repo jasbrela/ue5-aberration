@@ -13,12 +13,12 @@ class ABERRATION_API AAberrationSound : public AAberrationBase
 {
 	GENERATED_BODY()
 public:
-	virtual void BeginPlay() override;
 	AAberrationSound();
-private:
+	virtual void BeginPlay() override;
 	virtual void Activate() override;
 	virtual void Deactivate() override;
-
+	
+private:
 	UPROPERTY()
 	UAudioComponent* AudioComponent;
 	

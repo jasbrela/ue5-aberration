@@ -16,10 +16,10 @@ class ABERRATION_API AAberrationDoor : public AAberrationBase
 	GENERATED_BODY()
 public:
 	AAberrationDoor();
-private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
-
+	
+private:
 	UPROPERTY(EditInstanceOnly)
 	ATrainDoor* Door;
 };

@@ -15,26 +15,26 @@ class ABERRATION_API AAberrationBase : public AActor
 public:	
 	AAberrationBase();
 
+	UFUNCTION()
+	virtual void Activate();
+	
+	UFUNCTION()
+	virtual void Deactivate();
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	// The ID of the aberration must match their ID in Aberrations' DataTable
+	UPROPERTY(EditDefaultsOnly, Category="Aberration")
+	int ID = 0;
 	
 private:
 	UPROPERTY(VisibleInstanceOnly)
 	AAberrationManager* AberrationManager;
 	
 	UFUNCTION()
-	virtual void Activate();
-	
-	UFUNCTION()
-	virtual void Deactivate();
-
-	UFUNCTION()
 	virtual void AberrationTick(float DeltaTime);
 	
-	// The ID of the aberration must match their ID in Aberrations' DataTable
-	UPROPERTY(EditDefaultsOnly, Category="Aberration")
-	int ID = 0;
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
 	bool bWaitUntilMidpointIsReached = false;
 	

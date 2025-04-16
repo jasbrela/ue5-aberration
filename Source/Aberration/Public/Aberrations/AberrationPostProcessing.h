@@ -18,11 +18,10 @@ class ABERRATION_API AAberrationPostProcessing : public AAberrationBase
 	GENERATED_BODY()
 public:
 	AAberrationPostProcessing();
-	
-private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
-
+	
+private:
 	UPROPERTY(EditDefaultsOnly)
 	UPostProcessComponent* PostProcessComponent;
 

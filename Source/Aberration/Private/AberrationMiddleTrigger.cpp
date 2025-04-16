@@ -1,7 +1,7 @@
 // Copyright (c) 2024, Jasbrela. All rights reserved.
 
 
-#include "Aberrations/AberrationMiddleTrigger.h"
+#include "AberrationMiddleTrigger.h"
 
 #include "AberrationManager.h"
 #include "Components/BoxComponent.h"

@@ -13,12 +13,13 @@ UCLASS()
 class ABERRATION_API AAberrationVisibility : public AAberrationBase
 {
 	GENERATED_BODY()
+	
 public:
 	AAberrationVisibility();
-private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
 	
+private:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* Mesh;
 

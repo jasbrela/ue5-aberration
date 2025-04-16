@@ -16,14 +16,13 @@ class ABERRATION_API AAberrationScale : public AAberrationBase
 
 public:
 	AAberrationScale();
+	virtual void Activate() override;
+	virtual void Deactivate() override;
 	
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	virtual void Activate() override;
-	virtual void Deactivate() override;
-
 	UPROPERTY(EditDefaultsOnly, Category="Aberration")
 	float ScaleMultiplier = 1.f;
 

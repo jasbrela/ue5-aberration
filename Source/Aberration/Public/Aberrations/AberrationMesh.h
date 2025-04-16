@@ -15,10 +15,10 @@ class ABERRATION_API AAberrationMesh : public AAberrationBase
 	GENERATED_BODY()
 public:
 	AAberrationMesh();
-private:
 	virtual void Activate() override;
     virtual void Deactivate() override;
-	
+    
+private:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* Mesh;
 

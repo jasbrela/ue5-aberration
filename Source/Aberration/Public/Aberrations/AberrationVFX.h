@@ -18,9 +18,10 @@ class ABERRATION_API AAberrationVFX : public AAberrationBase
 
 public:
 	AAberrationVFX();
-private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
+
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Aberration")
 	UNiagaraComponent* VFX;
 };

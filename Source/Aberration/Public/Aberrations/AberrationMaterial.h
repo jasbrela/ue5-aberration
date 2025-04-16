@@ -17,14 +17,13 @@ class ABERRATION_API AAberrationMaterial : public AAberrationBase
 	
 public:
 	AAberrationMaterial();
-	
+	virtual void Activate() override;
+	virtual void Deactivate() override;
+
 protected:
 	virtual void BeginPlay() override;
 	
 private:
-	virtual void Activate() override;
-	virtual void Deactivate() override;
-	
 	UPROPERTY(EditInstanceOnly)
 	AActor* Mesh;
 	

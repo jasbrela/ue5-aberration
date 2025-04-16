@@ -15,11 +15,13 @@ class ABERRATION_API AAberrationMovement : public AAberrationBase
 	GENERATED_BODY()
 public:
 	AAberrationMovement();
-protected:
-	virtual void BeginPlay() override;
-private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
+
+protected:
+	virtual void BeginPlay() override;
+	
+private:
 	virtual void AberrationTick(float DeltaTime) override;
 
 	float Speed = 1.f;

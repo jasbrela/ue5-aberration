@@ -15,12 +15,14 @@ class ABERRATION_API AAberrationFloating : public AAberrationBase
 	GENERATED_BODY()
 public:
 	AAberrationFloating();
+	virtual void Activate() override;
+	virtual void Deactivate() override;
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void AberrationTick(float DeltaTime) override;
+	
 private:
-	virtual void Activate() override;
-	virtual void Deactivate() override;
 	float TransformedSin(float Alpha) const;
 	float TransformedCos(float Alpha) const;
 	

@@ -18,10 +18,10 @@ class ABERRATION_API AAberrationLight : public AAberrationBase
 public:
 	virtual void BeginPlay() override;
 	AAberrationLight();
-private:
 	virtual void Activate() override;
 	virtual void Deactivate() override;
-
+	
+private:
 	UPROPERTY(EditInstanceOnly, Category="Aberration")
 	ALight* Light;
 
