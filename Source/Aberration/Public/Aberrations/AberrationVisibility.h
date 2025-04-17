@@ -16,6 +16,7 @@ class ABERRATION_API AAberrationVisibility : public AAberrationBase
 	
 public:
 	AAberrationVisibility();
+	virtual void BeginPlay() override;
 	virtual void Activate() override;
 	virtual void Deactivate() override;
 	
@@ -25,4 +26,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Aberration")
 	bool bReversedBehaviour = false;
+	
+	UPROPERTY(EditInstanceOnly, Category="Aberration")
+	int OverrideID = -1;
+	
+	UPROPERTY(EditInstanceOnly, Category="Aberration")
+	AActor* OverrideActor;
 };

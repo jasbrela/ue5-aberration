@@ -157,6 +157,8 @@ void AAberrationCharacter::ToggleMoveAndLookInput(bool bEnable)
 {
 	bCanMoveAndLook = bEnable;
 
+	if (!PlayerController) return;
+	
 	if (bCanMoveAndLook)
 	{
 		PlayerController->SetInputMode(FInputModeGameOnly());

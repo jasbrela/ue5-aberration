@@ -35,7 +35,7 @@ private:
 	UFUNCTION()
 	virtual void AberrationTick(float DeltaTime);
 	
-	UPROPERTY(EditDefaultsOnly, Category="Aberration")
+	UPROPERTY(EditAnywhere, Category="Aberration")
 	bool bWaitUntilMidpointIsReached = false;
 	
 	UFUNCTION()

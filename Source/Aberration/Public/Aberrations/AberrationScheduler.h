@@ -24,6 +24,9 @@ private:
 	void Trigger();
 
 	UPROPERTY(EditInstanceOnly, Category="Aberration")
+	bool bScheduleActivation = true;
+
+	UPROPERTY(EditInstanceOnly, Category="Aberration")
 	int OverrideID = -1;
 	
 	UPROPERTY(EditInstanceOnly, Category= "Aberration")

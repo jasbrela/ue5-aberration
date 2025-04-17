@@ -89,7 +89,7 @@ void AAberrationManager::ChangeCoach(int Change)
 	
 	CurrentCoach += Change;
 
-	if (FrontID)
+	/*if (FrontID)
 	{
 		if (CurrentCoach >= NumberOfCoaches)
 		{
@@ -101,7 +101,7 @@ void AAberrationManager::ChangeCoach(int Change)
 		}
 	}
 	
-	if (BackID) BackID->UpdateMaterial(CurrentCoach);
+	if (BackID) BackID->UpdateMaterial(CurrentCoach);*/
 	
 	GenerateNextCoachAberrations();
 }

@@ -12,8 +12,8 @@ AAberrationScheduler::AAberrationScheduler()
 
 void AAberrationScheduler::BeginPlay()
 {
-	if (OverrideID >= 0) ID = OverrideID;
 	Super::BeginPlay();
+	if (OverrideID >= 0) ID = OverrideID;
 }
 
 void AAberrationScheduler::Trigger()
@@ -21,7 +21,10 @@ void AAberrationScheduler::Trigger()
 	//LOG_SUCCESS("Scheduler Triggered");
 	for (int i = 0; i < Aberrations.Num(); i++)
 	{
-		Aberrations[i]->Activate();
+		if (bScheduleActivation)
+		{
+			Aberrations[i]->Activate();
+		} else Aberrations[i]->Deactivate();
 	}
 }
 

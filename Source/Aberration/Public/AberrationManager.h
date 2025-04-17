@@ -55,11 +55,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	int Seed = 0;
 
-	UPROPERTY(EditInstanceOnly)
+	/*UPROPERTY(EditInstanceOnly)
 	ACoachID* BackID;
 
 	UPROPERTY(EditInstanceOnly)
-	ACoachID* FrontID;
+	ACoachID* FrontID;*/
 
 	UPROPERTY()
 	AAberrationGameState* AberrationState;
