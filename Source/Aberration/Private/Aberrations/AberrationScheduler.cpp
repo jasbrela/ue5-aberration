@@ -18,7 +18,7 @@ void AAberrationScheduler::BeginPlay()
 
 void AAberrationScheduler::Trigger()
 {
-	LOG_SUCCESS("Scheduler Triggered");
+	//LOG_SUCCESS("Scheduler Triggered");
 	for (int i = 0; i < Aberrations.Num(); i++)
 	{
 		Aberrations[i]->Activate();
@@ -27,14 +27,14 @@ void AAberrationScheduler::Trigger()
 
 void AAberrationScheduler::Activate()
 {
-	LOG_SUCCESS("Activated Scheduler");
+	//LOG_SUCCESS("Activated Scheduler");
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::Trigger, DelayToTrigger, bLoop);
 }
 
 void AAberrationScheduler::Deactivate()
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	LOG_SUCCESS("Deactivated Scheduler");
+	//LOG_SUCCESS("Deactivated Scheduler");
 	
 	for (int i = 0; i < Aberrations.Num(); i++)
 	{
