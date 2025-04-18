@@ -37,6 +37,7 @@ void AAberrationScheduler::Activate()
 void AAberrationScheduler::Deactivate()
 {
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+
 	//LOG_SUCCESS("Deactivated Scheduler");
 	
 	for (int i = 0; i < Aberrations.Num(); i++)

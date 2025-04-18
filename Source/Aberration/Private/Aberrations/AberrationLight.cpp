@@ -3,6 +3,7 @@
 
 #include "Aberrations/AberrationLight.h"
 
+#include "DebugMacros.h"
 #include "Components/LightComponent.h"
 #include "Engine/Light.h"
 
@@ -24,19 +25,17 @@ void AAberrationLight::BeginPlay()
 
 void AAberrationLight::Activate()
 {
-	//LOG("%s: Activate", *GetActorLabel())
 	if (Light)
 	{
-		//LOG("Hello!? %f", AbnormalIntensity);
 		Light->GetLightComponent()->SetIntensity(AbnormalIntensity);
 	}
 }
 
 void AAberrationLight::Deactivate()
 {
-	//LOG("%s: Deactivate", *GetActorLabel())
 	if (Light)
 	{
 		Light->GetLightComponent()->SetIntensity(DefaultIntensity);
+		LOG("Deactivated Light");
 	}
 }

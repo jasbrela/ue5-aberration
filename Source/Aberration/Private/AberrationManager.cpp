@@ -49,6 +49,8 @@ void AAberrationManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	LOG("Chance to generate aberration: %i", GenerateAberrationsChance);
+	
 	GenerateSeed();
 	
 	ConvertTable();
@@ -160,11 +162,11 @@ void AAberrationManager::GenerateNextCoachAberrations()
 	{
 		CoachAberrations.Add(FActiveAberrations());
 
-		const int GenerateAberrations = RandomStream.RandRange(0, 2); // 0 false, 1 true
+		const int GenerateAberrations = RandomStream.RandRange(0, 100); // 0 false, 1 true
 
 		//LOG("Seed: %i", RandomStream.GetCurrentSeed());
 		
-		if (GenerateAberrations > 0 || GetPreviousActiveAberrations().Array.Num() == 0)
+		if (GenerateAberrations > 100-GenerateAberrationsChance)
 		{
 			if (AvailableAberrations.IsEmpty())
 			{

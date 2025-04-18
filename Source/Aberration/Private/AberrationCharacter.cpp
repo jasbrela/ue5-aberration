@@ -12,7 +12,6 @@
 #include "UI/InteractionWidget.h"
 #include "Interactive.h"
 #include "AberrationGameState.h"
-#include "DebugMacros.h"
 #include "Terminal.h"
 #include "UI/MenuWidget.h"
 #include "Blueprint/UserWidget.h"
@@ -113,9 +112,12 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 		CurrentInteractiveActor->OnEnterRange();
 	}
 
-	const bool IsInteractiveValid = CurrentInteractiveActor != nullptr;
-	const FString Tooltip = IsInteractiveValid ? CurrentInteractiveActor->Tooltip : TEXT("");
-	InteractionWidget->ToggleTooltip(IsInteractiveValid, Tooltip);
+	if (InteractionWidget)
+	{
+		const bool IsInteractiveValid = CurrentInteractiveActor != nullptr;
+		const FString Tooltip = IsInteractiveValid ? CurrentInteractiveActor->Tooltip : TEXT("");
+		InteractionWidget->ToggleTooltip(IsInteractiveValid, Tooltip);
+	}
 
 	//FString TooltipText = CurrentInteractiveActor != nullptr ? TEXT("[E] " + Interactive->Tooltip) : TEXT("");
 	//InteractionWidget->ToggleTooltip(CurrentInteractiveActor != nullptr, TooltipText);
@@ -174,7 +176,7 @@ void AAberrationCharacter::ToggleMoveAndLookInput(bool bEnable)
 
 void AAberrationCharacter::ToggleInteractiveWidget(bool bVisible) const
 {
-	InteractionWidget->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	if (InteractionWidget) InteractionWidget->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
 void AAberrationCharacter::ToggleMenuWidget(bool bVisible) const
@@ -198,7 +200,7 @@ void AAberrationCharacter::BeginPlay()
 
 	if (const UWorld* World = GetWorld())
 	{
-		if (!InteractionClass.IsPending())
+		if (!InteractionClass.IsValid())
 		{
 			// LOAD CLASS
 			UAssetManager& Manager = UAssetManager::Get();

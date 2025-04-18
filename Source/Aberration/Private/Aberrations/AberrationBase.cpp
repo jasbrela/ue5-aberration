@@ -4,6 +4,7 @@
 #include "Aberrations/AberrationBase.h"
 
 #include "AberrationManager.h"
+#include "DebugMacros.h"
 #include "Kismet/GameplayStatics.h"
 
 AAberrationBase::AAberrationBase()
@@ -66,6 +67,7 @@ void AAberrationBase::NotifyMidpointReached(FActiveAberrations Aberrations)
 	
 	if (bWaitUntilMidpointIsReached)
 	{
+		bIsActive = true;
 		Activate();
 	}
 }

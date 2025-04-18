@@ -23,7 +23,7 @@ void AAberrationVisibility::BeginPlay()
 		if (MeshComponent != nullptr)
 		{
 			Mesh = MeshComponent;
-			LOG_SUCCESS("AberrationVisibility: Successfully overrode Mesh");
+			//LOG_SUCCESS("AberrationVisibility: Successfully overrode Mesh");
 		}
 	}
 }
