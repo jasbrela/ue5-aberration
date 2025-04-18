@@ -65,9 +65,12 @@ private:
 	TSubclassOf<UUserWidget> MenuClass;
 
 	UPROPERTY(EditDefaultsOnly, Category="Interaction")
-	TSubclassOf<UUserWidget> InteractionClass;
+	TSoftClassPtr<UUserWidget> InteractionClass;
+
+	UFUNCTION()
+	void OnInteractionClassLoaded();
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess=true))
 	UInteractionWidget* InteractionWidget;
 
 	UPROPERTY()

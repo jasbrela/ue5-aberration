@@ -12,9 +12,11 @@
 #include "UI/InteractionWidget.h"
 #include "Interactive.h"
 #include "AberrationGameState.h"
+#include "DebugMacros.h"
 #include "Terminal.h"
 #include "UI/MenuWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "Engine/AssetManager.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -27,7 +29,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 AAberrationCharacter::AAberrationCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
 	// Create a CameraComponent	
@@ -49,34 +51,35 @@ AAberrationCharacter::AAberrationCharacter()
 void AAberrationCharacter::InteractionLineTrace()
 {
 	const UWorld* World = GetWorld();
-	
+
 	if (World == nullptr) return;
-	
+
 	FVector TraceStart = GetFirstPersonCameraComponent()->GetComponentLocation();
 	FVector TraceEnd = TraceStart + GetFirstPersonCameraComponent()->GetForwardVector() * InteractionRange;
-	
+
 	FHitResult Hit;
-	
+
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
-	
+
 	World->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, QueryParams);
-	
+
 	//DrawDebugLine(World, TraceStart, TraceEnd, FColor::Orange, false);
 
 	AActor* ActorHit = Hit.GetActor();
-	
+
 	if (Hit.bBlockingHit && IsValid(ActorHit))
 	{
 		if (IInteractive* Interactive = Cast<IInteractive>(ActorHit))
 		{
-			if (CurrentInteractiveActor != Interactive) {
-				
+			if (CurrentInteractiveActor != Interactive)
+			{
 				if (Interactive->bIsInteractive)
 				{
 					SetInteractiveObject(Interactive);
 					CurrentInteractiveActor->OnEnterRange();
-				} else
+				}
+				else
 				{
 					SetInteractiveObject(nullptr);
 				}
@@ -86,7 +89,8 @@ void AAberrationCharacter::InteractionLineTrace()
 				SetInteractiveObject(nullptr);
 			}
 		}
-	} else
+	}
+	else
 	{
 		SetInteractiveObject(nullptr);
 	}
@@ -112,7 +116,7 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 	const bool IsInteractiveValid = CurrentInteractiveActor != nullptr;
 	const FString Tooltip = IsInteractiveValid ? CurrentInteractiveActor->Tooltip : TEXT("");
 	InteractionWidget->ToggleTooltip(IsInteractiveValid, Tooltip);
-		
+
 	//FString TooltipText = CurrentInteractiveActor != nullptr ? TEXT("[E] " + Interactive->Tooltip) : TEXT("");
 	//InteractionWidget->ToggleTooltip(CurrentInteractiveActor != nullptr, TooltipText);
 }
@@ -120,7 +124,7 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 void AAberrationCharacter::Interact(const FInputActionValue& Value)
 {
 	//if (!Value.Get<bool>()) return;
-	
+
 	if (CurrentInteractiveActor)
 	{
 		CurrentInteractiveActor->Interact();
@@ -137,14 +141,13 @@ void AAberrationCharacter::Unfocus(const FInputActionValue& Value)
 			ATerminal* Interactive = Cast<ATerminal>(CurrentInteractiveActor);
 			Terminal = Interactive;
 		}
-		
+
 		if (Terminal && Terminal == CurrentInteractiveActor) Terminal->Unfocus();
 	}
 }
 
 void AAberrationCharacter::Sprint(const FInputActionValue& Value)
 {
-
 	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
 }
 
@@ -158,11 +161,12 @@ void AAberrationCharacter::ToggleMoveAndLookInput(bool bEnable)
 	bCanMoveAndLook = bEnable;
 
 	if (!PlayerController) return;
-	
+
 	if (bCanMoveAndLook)
 	{
 		PlayerController->SetInputMode(FInputModeGameOnly());
-	} else
+	}
+	else
 	{
 		PlayerController->SetInputMode(FInputModeGameAndUI());
 	}
@@ -194,23 +198,25 @@ void AAberrationCharacter::BeginPlay()
 
 	if (const UWorld* World = GetWorld())
 	{
-		if (InteractionClass)
+		if (!InteractionClass.IsPending())
 		{
-			InteractionWidget = CreateWidget<UInteractionWidget>(UGameplayStatics::GetPlayerController(World, 0),
-																 InteractionClass, TEXT("InteractionUI"));
-			InteractionWidget->AddToViewport(0);
+			// LOAD CLASS
+			UAssetManager& Manager = UAssetManager::Get();
+			FSoftObjectPath Path = InteractionClass.ToSoftObjectPath();
+			Manager.GetStreamableManager().RequestAsyncLoad(Path, FStreamableDelegate::CreateUObject(this, &ThisClass::OnInteractionClassLoaded));
 		}
+		else OnInteractionClassLoaded();
 
 		if (MenuClass)
 		{
 			MenuWidget = CreateWidget<UMenuWidget>(UGameplayStatics::GetPlayerController(World, 0),
-																 MenuClass, TEXT("MenuUI"));
+			                                       MenuClass, TEXT("MenuUI"));
 
 			ToggleMenuWidget(false);
 			MenuWidget->SetCharacter(this);
-			
+
 			MenuWidget->AddToViewport(0);
-			
+
 			if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
 			{
 				State->SetCharacter(this);
@@ -218,11 +224,12 @@ void AAberrationCharacter::BeginPlay()
 			}
 		}
 	}
-	
+
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
 		PlayerController = PC;
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
@@ -234,6 +241,18 @@ void AAberrationCharacter::BeginPlay()
 	}
 
 	ToggleMoveAndLookInput(true);
+}
+
+void AAberrationCharacter::OnInteractionClassLoaded()
+{
+	if (InteractionWidget != nullptr) return;
+	
+	if (UClass* WidgetClass = InteractionClass.Get())
+	{
+		UInteractionWidget* Widget = CreateWidget<UInteractionWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), WidgetClass);
+		Widget->AddToViewport(0);
+		InteractionWidget = Widget;
+	}
 }
 
 void AAberrationCharacter::Tick(float DeltaTime)
@@ -261,7 +280,10 @@ void AAberrationCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(LogTemplateCharacter, Error,
+		       TEXT(
+			       "'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
+		       ), *GetNameSafe(this));
 	}
 }
 
@@ -274,14 +296,14 @@ void AAberrationCharacter::Pause(const FInputActionValue& Value)
 		return;
 	}
 	//if (!Value.Get<bool>()) return;
-	
+
 	bIsMenuOpen = !bIsMenuOpen;
 
 	if (PlayerController)
 	{
 		PlayerController->bShowMouseCursor = bIsMenuOpen;
 	}
-	
+
 	ToggleMoveAndLookInput(!bIsMenuOpen);
 	ToggleMenuWidget(bIsMenuOpen);
 }
@@ -298,7 +320,7 @@ void AAberrationCharacter::Move(const FInputActionValue& Value)
 		Unfocus(true);
 		return;
 	}
-	
+
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller)
