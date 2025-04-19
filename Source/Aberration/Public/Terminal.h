@@ -51,6 +51,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	bool bReportHandled = false;
 	void ShowResults();
 	void GenerateQuestion();
 	void GenerateBinaryQuestion();

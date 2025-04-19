@@ -20,6 +20,7 @@ ATrainDoor::ATrainDoor()
 	CloseSFX = CreateDefaultSubobject<UAudioComponent>(TEXT("CloseSFX"));
 	OpenSFX = CreateDefaultSubobject<UAudioComponent>(TEXT("OpenSFX"));
 
+	bIsInteractive = false;
 	Tooltip = TEXT("Open");
 
 	SetRootComponent(CloseSFX);
@@ -152,8 +153,8 @@ void ATrainDoor::BlockNextForceClose()
 
 void ATrainDoor::Interact()
 {
-	OpenDoor();
 	bIsInteractive = false;
+	OpenDoor();
 }
 
 void ATrainDoor::OnExitRange() { }

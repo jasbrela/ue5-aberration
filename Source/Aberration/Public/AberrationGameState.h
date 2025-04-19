@@ -38,9 +38,7 @@ public:
 	bool GetPassed();
 	float GetFinalScore();
 	int GetFinalScorePercentage();
-
-	int GetIncorrectAnswers();
-	int GetMaxPoints() const;
+	
 	void SetCharacter(AAberrationCharacter* AberrationCharacter);
 
 private:

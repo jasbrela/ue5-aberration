@@ -55,6 +55,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	int Seed = 0;
 
+	UPROPERTY(EditAnywhere)
+	int AccumulatedChanceBuff = 10;
+	
 	UPROPERTY(EditAnywhere, meta=(ClampMin="0", ClampMax="100", UIMin="0", UIMax="100"))
 	int GenerateAberrationsChance = 0;
 
@@ -86,6 +89,9 @@ private:
 	
 	UPROPERTY(VisibleInstanceOnly)
 	int CurrentCoach = 0;
+
+	UPROPERTY(VisibleInstanceOnly)
+	int AccumulatedWithoutAberrations = 0;
 	
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* AberrationsDataTable;

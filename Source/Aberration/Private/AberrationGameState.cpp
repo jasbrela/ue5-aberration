@@ -31,7 +31,6 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 
 	SettingsVM = NewObject<USettingsViewModel>(USettingsViewModel::StaticClass());
 	
-	
 	/*LOG_SUCCESS("Loaded game. %i", LoadedGame->ExcludedAberrations.Num());
 
 	ExcludedAberrations.Empty();

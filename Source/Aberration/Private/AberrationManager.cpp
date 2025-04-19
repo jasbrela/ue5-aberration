@@ -165,8 +165,13 @@ void AAberrationManager::GenerateNextCoachAberrations()
 		const int GenerateAberrations = RandomStream.RandRange(0, 100); // 0 false, 1 true
 
 		//LOG("Seed: %i", RandomStream.GetCurrentSeed());
+
+		if (GetPreviousActiveAberrations().Array.Num() == 0)
+		{
+			AccumulatedWithoutAberrations++;
+		} else AccumulatedWithoutAberrations = 0;
 		
-		if (GenerateAberrations > 100-GenerateAberrationsChance)
+		if (GenerateAberrations > 100 - GenerateAberrationsChance + AccumulatedWithoutAberrations * AccumulatedChanceBuff)
 		{
 			if (AvailableAberrations.IsEmpty())
 			{

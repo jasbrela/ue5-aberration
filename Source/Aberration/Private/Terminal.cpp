@@ -99,7 +99,11 @@ void ATerminal::OnConfirmReport(int SelectedAnswerIndex)
 	}
 	
 	//AberrationManager->OnConfirmReport();
-	OnReportHandled.Broadcast();
+	if (!bReportHandled)
+	{
+		OnReportHandled.Broadcast();
+		bReportHandled = true;
+	}
 }
 
 void ATerminal::ShowResults()
@@ -192,8 +196,9 @@ void ATerminal::Interact()
 
 	int CoachIndex = AberrationManager->GetCurrentCoach();
 
-	if (CoachIndex <= 1)
+	if (CoachIndex <= 1 && !bReportHandled)
 	{
+		bReportHandled = true;
 		OnReportHandled.Broadcast();
 	}
 	
@@ -212,6 +217,7 @@ void ATerminal::Interact()
 
 void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 {
+	bReportHandled = false;
 	int CoachIndex = AberrationManager->GetCurrentCoach();
 	LOG("Current Coach: %d", CoachIndex);
 	
@@ -268,6 +274,7 @@ void ATerminal::GenerateQuestion()
 
 	for (int i = 0; i < CurrentAberrations.Num(); i++)
 	{
+		LOG("CurrentAberrations = %i, %s", i, *CurrentAberrations[i]);
 		Answers.Add(FAnswerData(CurrentAberrations[i], true));
 	}
 			
