@@ -126,6 +126,15 @@ void ATerminal::BeginPlay()
 	Context.ContextName = TEXT("TerminalVM");
 
 	const UMVVMGameSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>();
+	auto PreviousInstance = Subsystem->GetViewModelCollection()->FindFirstViewModelInstanceOfType(UTerminalViewModel::StaticClass());
+	
+	//LOG("found previous mvvm - %hs", val == nullptr ? "false" : "true");
+	
+	if (PreviousInstance != nullptr)
+	{
+		Subsystem->GetViewModelCollection()->RemoveAllViewModelInstance(PreviousInstance);
+	}
+	
 	Subsystem->GetViewModelCollection()->AddViewModelInstance(Context, TerminalVM);
 	
 	if (bDisable)
