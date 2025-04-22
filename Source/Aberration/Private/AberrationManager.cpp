@@ -196,7 +196,7 @@ void AAberrationManager::GenerateNextCoachAberrations()
 				OtherThanActiveAberrations.RemoveAll([RandomAberration](const FAberrationData* Aberration) {
 					if (Aberration->ID == RandomAberration)
 					{
-						LOG_WARNING("Aberration generated: %s", *Aberration->AberrationName);
+						LOG_WARNING("Aberration generated: %s", *Aberration->DisplayName.ToString());
 					}
 					
 					return Aberration->ID == RandomAberration;

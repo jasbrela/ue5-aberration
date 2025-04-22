@@ -26,8 +26,6 @@ ATerminal::ATerminal()
 	TerminalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TerminalMesh"));
 	ScreenWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ScreenWidget"));
 	
-	Tooltip = TEXT("Fill Report");
-	
 	SetRootComponent(TerminalMesh);
 	ScreenWidgetComponent->SetupAttachment(RootComponent);
 }
@@ -117,6 +115,8 @@ void ATerminal::ShowResults()
 void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Tooltip = TooltipText.ToString();
 
 	TerminalVM = NewObject<UTerminalViewModel>(UTerminalViewModel::StaticClass());
 
@@ -245,7 +245,7 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 		{
 			if (Previous.Array.Contains(AberrationManager->AberrationsData[i]->ID))
 			{
-				PreviousAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->AberrationName);
+				PreviousAberrationsNames.AddUnique(AberrationManager->AberrationsData[i]->DisplayName.ToString());
 			}
 		}
 	}
@@ -269,7 +269,7 @@ void ATerminal::GenerateQuestion()
 	TArray<FString> OtherAberrations = GetPreviousOtherThanActiveAberrationsNames();
 	TArray<FString> CurrentAberrations = GetPreviousActiveAberrationsNames();
 
-	TerminalVM->SetQuestionText(FText::FromString(TEXT("Which of these aberrations was present in the coach?")));
+	TerminalVM->SetQuestionText(TextAberrationQuestion);
 	ScreenWidget->bHasMultipleChoices = false;
 
 	for (int i = 0; i < CurrentAberrations.Num(); i++)
@@ -297,11 +297,11 @@ void ATerminal::GenerateBinaryQuestion()
 
 	const bool WasAnyAberrationGenerated = AberrationManager->WasAnyAberrationGenerated();
 	
-	Answers.AddUnique(FAnswerData(TEXT("Yes"), WasAnyAberrationGenerated));
-	Answers.AddUnique(FAnswerData(TEXT("No"), !WasAnyAberrationGenerated));
+	Answers.AddUnique(FAnswerData(TextYes.ToString(), WasAnyAberrationGenerated));
+	Answers.AddUnique(FAnswerData(TextNo.ToString(), !WasAnyAberrationGenerated));
 	Answers.AddUnique(FAnswerData(TEXT(""), false));
 	
-	TerminalVM->SetQuestionText(FText::FromString(TEXT("Have you found any aberrations in this train coach?")));
+	TerminalVM->SetQuestionText(TextBinaryQuestion);
 
 	SetAnswersText();
 
@@ -327,8 +327,8 @@ TArray<FString> ATerminal::GetPreviousOtherThanActiveAberrationsNames() const
 	
 	for (int i = 0; i < AberrationManager->GetPreviousOtherThanActiveAberrations().Num(); i++)
 	{
-		//LOG("Other: %s", *AberrationManager->GetPreviousOtherThanActiveAberrations()[i]->AberrationName);
-		Names.AddUnique(AberrationManager->GetPreviousOtherThanActiveAberrations()[i]->AberrationName);
+		//LOG("Other: %s", *AberrationManager->GetPreviousOtherThanActiveAberrations()[i]->DisplayName.ToString());
+		Names.AddUnique(AberrationManager->GetPreviousOtherThanActiveAberrations()[i]->DisplayName.ToString());
 	}
 	
 	return Names;

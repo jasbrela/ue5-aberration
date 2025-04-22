@@ -9,7 +9,7 @@
 
 UInteractionWidget::UInteractionWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UInteractionWidget::ToggleTooltip(bool bInteractiveActorFound, FString Instruction)
+void UInteractionWidget::ToggleTooltip(const bool bInteractiveActorFound, const FString Instruction)
 {
 	//LOG("Toggle Tooltip: %s", bInteractiveActorFound ? TEXT("true") : TEXT("false"));
 	

@@ -20,7 +20,7 @@ public:
 	UInteractionWidget(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable)
-	void ToggleTooltip(bool bInteractiveActorFound, FString Instruction = TEXT("Interact"));
+	void ToggleTooltip(bool bInteractiveActorFound, FString Instruction);
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Tooltip;

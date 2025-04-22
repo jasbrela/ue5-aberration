@@ -14,7 +14,7 @@ public:
 	
 	// To be displayed in the Terminal
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString AberrationName = TEXT("N/A");
+	FText DisplayName;
 	
 	// Use 0 for unlocked from start.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

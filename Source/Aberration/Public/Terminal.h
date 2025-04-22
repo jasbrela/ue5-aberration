@@ -58,6 +58,17 @@ private:
 	void SetAnswersText();
 
 	bool bIsBinaryQuestionActive = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	FText TextYes;
+	UPROPERTY(EditDefaultsOnly)
+	FText TextNo;
+	UPROPERTY(EditDefaultsOnly)
+	FText TextBinaryQuestion;
+	UPROPERTY(EditDefaultsOnly)
+	FText TextAberrationQuestion;
+	UPROPERTY(EditDefaultsOnly)
+	FText TooltipText;
 	
 	FRandomStream Stream;
 	bool bIsFocused = false;

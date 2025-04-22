@@ -21,7 +21,6 @@ ATrainDoor::ATrainDoor()
 	OpenSFX = CreateDefaultSubobject<UAudioComponent>(TEXT("OpenSFX"));
 
 	bIsInteractive = false;
-	Tooltip = TEXT("Open");
 
 	SetRootComponent(CloseSFX);
 	
@@ -35,6 +34,8 @@ ATrainDoor::ATrainDoor()
 void ATrainDoor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Tooltip = TooltipText.ToString();
 
 	ForceCloseTrigger->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
 
