@@ -46,7 +46,7 @@ int AAberrationManager::GetCurrentCoach() const
 }
 
 void AAberrationManager::BeginPlay()
-{
+{ 
 	Super::BeginPlay();
 
 	LOG("Chance to generate aberration: %i", GenerateAberrationsChance);
