@@ -39,6 +39,8 @@ public:
 	void Pause(const FInputActionValue& Value);
 	void TogglePauseInput(bool bEnable);
 
+	bool GetIsGamePaused();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

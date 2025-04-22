@@ -187,6 +187,8 @@ void ATerminal::Interact()
 {
 	//LOG("[%s] Interact", *GetActorLabel());
 
+	if (Character->GetIsGamePaused()) return;
+	
 	bIsFocused = !bIsFocused;
 
 	Character->ToggleMoveAndLookInput(!bIsFocused);

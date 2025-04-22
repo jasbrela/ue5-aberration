@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonUserWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "InteractionWidget.generated.h"
 
@@ -13,7 +14,7 @@ class UImage;
  * 
  */
 UCLASS()
-class ABERRATION_API UInteractionWidget : public UUserWidget
+class ABERRATION_API UInteractionWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()
 public:

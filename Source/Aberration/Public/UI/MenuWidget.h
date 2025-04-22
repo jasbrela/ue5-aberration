@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonUserWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "MenuWidget.generated.h"
 
@@ -16,7 +17,7 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class ABERRATION_API UMenuWidget : public UUserWidget
+class ABERRATION_API UMenuWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()
 

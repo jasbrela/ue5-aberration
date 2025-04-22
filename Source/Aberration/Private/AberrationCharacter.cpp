@@ -217,7 +217,7 @@ void AAberrationCharacter::BeginPlay()
 			ToggleMenuWidget(false);
 			MenuWidget->SetCharacter(this);
 
-			MenuWidget->AddToViewport(0);
+			MenuWidget->AddToViewport(1);
 
 			if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
 			{
@@ -308,11 +308,17 @@ void AAberrationCharacter::Pause(const FInputActionValue& Value)
 
 	ToggleMoveAndLookInput(!bIsMenuOpen);
 	ToggleMenuWidget(bIsMenuOpen);
+	ToggleInteractiveWidget(!bIsMenuOpen);
 }
 
 void AAberrationCharacter::TogglePauseInput(bool bEnable)
 {
 	bCanPause = bEnable;
+}
+
+bool AAberrationCharacter::GetIsGamePaused()
+{
+	return bIsMenuOpen;
 }
 
 void AAberrationCharacter::Move(const FInputActionValue& Value)
