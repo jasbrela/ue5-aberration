@@ -27,6 +27,7 @@ public:
 	void SetCharacter(AAberrationCharacter* Character);
 	void SetGameState(AAberrationGameState* State);
 
+	void SaveSettings() const;
 private:
 	bool bCanSave = false;
 	

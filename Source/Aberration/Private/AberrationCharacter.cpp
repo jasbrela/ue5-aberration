@@ -12,6 +12,7 @@
 #include "UI/InteractionWidget.h"
 #include "Interactive.h"
 #include "AberrationGameState.h"
+#include "DebugMacros.h"
 #include "Terminal.h"
 #include "UI/MenuWidget.h"
 #include "Blueprint/UserWidget.h"
@@ -187,11 +188,13 @@ void AAberrationCharacter::ToggleMenuWidget(bool bVisible) const
 void AAberrationCharacter::SetSensX(float Value)
 {
 	SensX = Value;
+	LOG("SensX is now : %f",SensX);
 }
 
 void AAberrationCharacter::SetSensY(float Value)
 {
 	SensY = Value;
+	LOG("SensY is now : %f",SensY);
 }
 
 void AAberrationCharacter::BeginPlay()
@@ -301,6 +304,11 @@ void AAberrationCharacter::Pause(const FInputActionValue& Value)
 
 	bIsMenuOpen = !bIsMenuOpen;
 
+	if (!bIsMenuOpen)
+	{
+		MenuWidget->SaveSettings();
+	}
+	
 	if (PlayerController)
 	{
 		PlayerController->bShowMouseCursor = bIsMenuOpen;

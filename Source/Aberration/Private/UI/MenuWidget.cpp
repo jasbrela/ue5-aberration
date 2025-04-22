@@ -28,15 +28,11 @@ void UMenuWidget::OnClickQuitButton()
 
 void UMenuWidget::OnClickResumeButton()
 {
-	if (AberrationCharacter)
-	{
-		if (bCanSave && AberrationState)
-		{
-			AberrationState->SaveSettings();
-		}
-		// SAVE SETTINGS
-		AberrationCharacter->Pause(FInputActionValue(true));
-	}
+	if (AberrationCharacter == nullptr) return;
+
+	SaveSettings();
+	
+	AberrationCharacter->Pause(FInputActionValue(true));
 }
 
 void UMenuWidget::SetCharacter(AAberrationCharacter* Character)
@@ -49,4 +45,13 @@ void UMenuWidget::SetGameState(AAberrationGameState* State)
 	AberrationState = State;
 	AberrationState->LoadGame();	
 	bCanSave = true;
+}
+
+void UMenuWidget::SaveSettings() const
+{
+	if (bCanSave && AberrationState)
+	{
+		AberrationState->SaveSettings();
+	}
+
 }
