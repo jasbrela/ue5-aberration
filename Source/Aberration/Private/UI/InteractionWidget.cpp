@@ -9,15 +9,14 @@
 
 UInteractionWidget::UInteractionWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) { }
 
-void UInteractionWidget::ToggleTooltip(const bool bInteractiveActorFound, const FString Instruction)
+void UInteractionWidget::ToggleTooltip(const bool bInteractiveActorFound, const FText& Instruction)
 {
 	//LOG("Toggle Tooltip: %s", bInteractiveActorFound ? TEXT("true") : TEXT("false"));
 	
 	if (bInteractiveActorFound)
 	{
 		Crosshair->SetOpacity(1);
-		const FString TooltipText = FString::Printf(TEXT("[E] %s"), *Instruction);	
-		Tooltip->SetText(FText::FromString(TooltipText));
+		Tooltip->SetText(FText::Format(FText::FromString(TEXT("[E] {0}")), Instruction));
 		Tooltip->SetVisibility(ESlateVisibility::Visible);
 	} else
 	{

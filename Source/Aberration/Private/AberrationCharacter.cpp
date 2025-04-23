@@ -115,7 +115,7 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 	if (InteractionWidget)
 	{
 		const bool IsInteractiveValid = CurrentInteractiveActor != nullptr;
-		const FString Tooltip = IsInteractiveValid ? CurrentInteractiveActor->Tooltip : TEXT("");
+		const FText Tooltip = IsInteractiveValid ? CurrentInteractiveActor->Tooltip : FText::GetEmpty();
 		InteractionWidget->ToggleTooltip(IsInteractiveValid, Tooltip);
 	}
 
@@ -132,6 +132,14 @@ void AAberrationCharacter::UpdateCameraShake()
 		{
 			ShakeInstance = UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake, State->SettingsVM->GetShakeIntensity());
 		}
+	}
+}
+
+void AAberrationCharacter::LocaliseTooltip()
+{
+	if (State->SettingsVM)
+	{
+		
 	}
 }
 
@@ -360,9 +368,10 @@ void AAberrationCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void AAberrationCharacter::ListenToShakeIntensityChanged()
+void AAberrationCharacter::ListenToSettingsEvents()
 {
 	State->SettingsVM->OnChangeShakeIntensity.AddDynamic(this, &ThisClass::UpdateCameraShake);
+	State->SettingsVM->OnChangePreferredCulture.AddDynamic(this, &ThisClass::LocaliseTooltip);
 }
 
 void AAberrationCharacter::Look(const FInputActionValue& Value)

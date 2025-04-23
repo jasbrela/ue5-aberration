@@ -15,16 +15,16 @@ void AAberrationShake::BeginPlay()
 
 	if (UWorld* World = GetWorld())
 	{
-		if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
+		if (AAberrationGameState* GameState = World->GetGameState<AAberrationGameState>())
 		{
-			SettingsVM = State->SettingsVM;
+			State = GameState;
 		}
 	}
 }
 
 void AAberrationShake::Activate()
 {
-	ShakeInstance = UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake, SettingsVM->GetShakeIntensity());
+	ShakeInstance = UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake, State->SettingsVM->GetShakeIntensity());
 }
 
 void AAberrationShake::Deactivate()

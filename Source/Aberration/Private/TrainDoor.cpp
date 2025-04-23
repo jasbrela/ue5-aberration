@@ -35,7 +35,7 @@ void ATrainDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Tooltip = TooltipText.ToString();
+	Tooltip = TooltipText;
 
 	ForceCloseTrigger->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlap);
 

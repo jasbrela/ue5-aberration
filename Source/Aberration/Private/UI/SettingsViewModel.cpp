@@ -34,6 +34,7 @@ void USettingsViewModel::SetPreferredCulture(FString Value)
 	if (UE_MVVM_SET_PROPERTY_VALUE(PreferredCulture, Value))
 	{
 		FInternationalization::Get().SetCurrentCulture(Value);
+		if (OnChangePreferredCulture.IsBound()) OnChangePreferredCulture.Broadcast();
 	}
 }
 

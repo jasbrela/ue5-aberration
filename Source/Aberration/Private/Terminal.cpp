@@ -116,7 +116,7 @@ void ATerminal::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Tooltip = TooltipText.ToString();
+	Tooltip = TooltipText;
 
 	TerminalVM = NewObject<UTerminalViewModel>(UTerminalViewModel::StaticClass());
 
@@ -276,17 +276,19 @@ void ATerminal::GenerateQuestion()
 
 	for (int i = 0; i < CurrentAberrations.Num(); i++)
 	{
-		LOG("CurrentAberrations = %i, %s", i, *CurrentAberrations[i]);
+		LOG("Correct Answer = %i, %s", i, *CurrentAberrations[i]);
 		Answers.Add(FAnswerData(CurrentAberrations[i], true));
 	}
 			
-	for (int i = Answers.Num(); i <= 3; i++)
+	for (int i = Answers.Num(); i < 3; i++)
 	{
 		const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
 		OtherAberrations.Remove(RandomAberration);
+		LOG("Wrong Answer = %i, %s", i, *RandomAberration);
 
 		Answers.AddUnique(FAnswerData(RandomAberration, false));
 	}
+	LOG("Total Answers = %i", Answers.Num());
 		
 	Answers = ShuffleArray(Answers, Stream);
 

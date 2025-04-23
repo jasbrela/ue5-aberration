@@ -22,7 +22,7 @@ class ABERRATION_API IInteractive
 public:
 	bool bIsInteractive = true;
 	
-	FString Tooltip = "<PLACEHOLDER>";
+	FText Tooltip;
 	
 	virtual void OnEnterRange() = 0;
 	virtual void Interact() = 0;

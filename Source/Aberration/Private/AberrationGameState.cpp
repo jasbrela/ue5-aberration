@@ -71,7 +71,7 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 		return nullptr;
 	}
 
-	Character->ListenToShakeIntensityChanged();
+	Character->ListenToSettingsEvents();
 
 	return LoadedGame;
 }

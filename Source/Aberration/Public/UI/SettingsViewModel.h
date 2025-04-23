@@ -11,6 +11,7 @@
  */
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangeShakeIntensityDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangePreferredCultureDelegate);
 
 UCLASS()
 class ABERRATION_API USettingsViewModel : public UMVVMViewModelBase
@@ -36,6 +37,7 @@ public:
 	void SetPreferredCulture(FString Value);
 	
 	FOnChangeShakeIntensityDelegate OnChangeShakeIntensity;
+	FOnChangePreferredCultureDelegate OnChangePreferredCulture;
 	
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)

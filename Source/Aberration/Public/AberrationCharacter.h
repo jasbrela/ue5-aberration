@@ -39,7 +39,7 @@ public:
 	void SetSensY(float Value);
 	void Pause(const FInputActionValue& Value);
 	void TogglePauseInput(bool bEnable);
-	void ListenToShakeIntensityChanged();
+	void ListenToSettingsEvents();
 	bool GetIsGamePaused();
 
 protected:
@@ -130,6 +130,9 @@ private:
 	
 	UFUNCTION()
 	void UpdateCameraShake();
+
+	UFUNCTION()
+	void LocaliseTooltip();
 
 	UPROPERTY(EditDefaultsOnly, Category=Input)
 	float SensX;

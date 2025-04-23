@@ -21,7 +21,7 @@ public:
 	virtual void Deactivate() override;
 private:
 	UPROPERTY()
-	USettingsViewModel* SettingsVM;
+	AAberrationGameState* State;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Aberration")
 	TSubclassOf<UCameraShakeBase> CameraShake;
