@@ -5,14 +5,18 @@
 #include "CoreMinimal.h"
 #include "AberrationCharacter.h"
 #include "GameFramework/GameStateBase.h"
+#include "UI/SettingsViewModel.h"
 #include "AberrationGameState.generated.h"
 
+class FOnChangeShakeIntensityDelegate;
+class FOnChangeShakeIntensity;
 class UTerminalViewModel;
 class USettingsViewModel;
 class UAberrationSaveGame;
 /**
  * 
  */
+
 UCLASS()
 class ABERRATION_API AAberrationGameState : public AGameStateBase
 {
@@ -20,6 +24,9 @@ class ABERRATION_API AAberrationGameState : public AGameStateBase
 public:
 	AAberrationGameState();
 
+	UPROPERTY()
+	USettingsViewModel* SettingsVM;
+	
 	void IncreaseCompletedRuns();
 	UAberrationSaveGame* LoadGame();
 	void SaveSettings();
@@ -43,9 +50,6 @@ public:
 
 private:
 	UPROPERTY()
-	USettingsViewModel* SettingsVM;
-
-	UPROPERTY()
 	UTerminalViewModel* TerminalVM;
 	
 	bool bLoadedGame;
@@ -68,5 +72,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	USoundMix* SoundClassMix;
 
+	UPROPERTY()
 	AAberrationCharacter* Character;
 };

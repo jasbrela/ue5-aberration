@@ -9,6 +9,9 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangeShakeIntensityDelegate);
+
 UCLASS()
 class ABERRATION_API USettingsViewModel : public UMVVMViewModelBase
 {
@@ -18,6 +21,8 @@ public:
 	float GetSensX() const;
 	float GetSensY() const;
 	float GetVolume() const;
+	float GetShakeIntensity() const;
+	FString GetPreferredCulture() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetSensX(float Value);
@@ -25,8 +30,13 @@ public:
 	void SetSensY(float Value);
 	UFUNCTION(BlueprintCallable)
 	void SetVolume(float Value);
-
-
+	UFUNCTION(BlueprintCallable)
+	void SetShakeIntensity(float Value);
+	UFUNCTION(BlueprintCallable)
+	void SetPreferredCulture(FString Value);
+	
+	FOnChangeShakeIntensityDelegate OnChangeShakeIntensity;
+	
 private:
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)
 	float SensX = 1.f;
@@ -34,4 +44,9 @@ private:
 	float SensY = 1.f;
 	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)
 	float Volume = 1.f;
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)
+	float ShakeIntensity = 1.f;
+
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta = (AllowPrivateAccess), Setter, Getter)
+	FString PreferredCulture = "en";
 };

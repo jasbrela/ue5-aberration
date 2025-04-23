@@ -49,7 +49,9 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 		SettingsVM->SetVolume(LoadedGame->Volume);
 		SettingsVM->SetSensY(LoadedGame->SensY);
 		SettingsVM->SetSensX(LoadedGame->SensX);
-
+		SettingsVM->SetShakeIntensity(LoadedGame->ShakeIntensity);
+		SettingsVM->SetPreferredCulture(LoadedGame->PreferredCulture);
+		
 		Character->SetSensX(LoadedGame->SensX);
 		Character->SetSensY(LoadedGame->SensY);
 
@@ -59,7 +61,7 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 	FMVVMViewModelContext Context;
 	Context.ContextClass = USettingsViewModel::StaticClass();
 	Context.ContextName = TEXT("SettingsVM");
-				
+	
 	const UMVVMGameSubsystem* Subsystem = GetGameInstance()->GetSubsystem<UMVVMGameSubsystem>();
 	Subsystem->GetViewModelCollection()->AddViewModelInstance(Context, SettingsVM);
 	
@@ -68,6 +70,8 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 		LOG_ERROR("Failed to load game");
 		return nullptr;
 	}
+
+	Character->ListenToShakeIntensityChanged();
 
 	return LoadedGame;
 }
@@ -98,8 +102,12 @@ void AAberrationGameState::SaveSettings()
 		Save->Volume = SettingsVM->GetVolume();
 		Save->SensX = SettingsVM->GetSensX();
 		Save->SensY = SettingsVM->GetSensY();
+		Save->ShakeIntensity = SettingsVM->GetShakeIntensity();
+		Save->PreferredCulture = SettingsVM->GetPreferredCulture();
+		
 		Character->SetSensX(Save->SensX);
 		Character->SetSensY(Save->SensY);
+		
 		UGameplayStatics::SetSoundMixClassOverride(this, SoundClassMix, SoundClass, FMath::Clamp(Save->Volume, 0, 1));
 	}
 

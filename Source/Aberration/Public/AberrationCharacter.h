@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "AberrationCharacter.generated.h"
 
+class AAberrationGameState;
 class ATerminal;
 class UMenuWidget;
 class UInteractionWidget;
@@ -38,7 +39,7 @@ public:
 	void SetSensY(float Value);
 	void Pause(const FInputActionValue& Value);
 	void TogglePauseInput(bool bEnable);
-
+	void ListenToShakeIntensityChanged();
 	bool GetIsGamePaused();
 
 protected:
@@ -57,6 +58,9 @@ private:
 	bool bIsMenuOpen = false;
 	bool bCanPause = true;
 
+	UPROPERTY()
+	AAberrationGameState* State;
+	
 	UPROPERTY()
 	ATerminal* Terminal;
 
@@ -120,6 +124,12 @@ private:
 	IInteractive* CurrentInteractiveActor;
 	void InteractionLineTrace();
 	void SetInteractiveObject(IInteractive* Interactive);
+
+	UPROPERTY()
+	UCameraShakeBase* ShakeInstance;
+	
+	UFUNCTION()
+	void UpdateCameraShake();
 
 	UPROPERTY(EditDefaultsOnly, Category=Input)
 	float SensX;

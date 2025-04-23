@@ -12,7 +12,6 @@
 #include "UI/InteractionWidget.h"
 #include "Interactive.h"
 #include "AberrationGameState.h"
-#include "DebugMacros.h"
 #include "Terminal.h"
 #include "UI/MenuWidget.h"
 #include "Blueprint/UserWidget.h"
@@ -124,6 +123,18 @@ void AAberrationCharacter::SetInteractiveObject(IInteractive* Interactive)
 	//InteractionWidget->ToggleTooltip(CurrentInteractiveActor != nullptr, TooltipText);
 }
 
+void AAberrationCharacter::UpdateCameraShake()
+{
+	if (State->SettingsVM)
+	{
+		UGameplayStatics::GetPlayerCameraManager(this, 0)->StopCameraShake(ShakeInstance);
+		if (State->SettingsVM->GetShakeIntensity() > 0)
+		{
+			ShakeInstance = UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake, State->SettingsVM->GetShakeIntensity());
+		}
+	}
+}
+
 void AAberrationCharacter::Interact(const FInputActionValue& Value)
 {
 	//if (!Value.Get<bool>()) return;
@@ -167,11 +178,15 @@ void AAberrationCharacter::ToggleMoveAndLookInput(bool bEnable)
 
 	if (bCanMoveAndLook)
 	{
+		FInputModeGameOnly Mode = FInputModeGameOnly();
+		Mode.SetConsumeCaptureMouseDown(false);
 		PlayerController->SetInputMode(FInputModeGameOnly());
 	}
 	else
 	{
-		PlayerController->SetInputMode(FInputModeGameAndUI());
+		FInputModeGameAndUI Mode = FInputModeGameAndUI();
+		Mode.SetHideCursorDuringCapture(false);
+		PlayerController->SetInputMode(FInputModeGameAndUI(Mode));
 	}
 }
 
@@ -188,13 +203,11 @@ void AAberrationCharacter::ToggleMenuWidget(bool bVisible) const
 void AAberrationCharacter::SetSensX(float Value)
 {
 	SensX = Value;
-	LOG("SensX is now : %f",SensX);
 }
 
 void AAberrationCharacter::SetSensY(float Value)
 {
 	SensY = Value;
-	LOG("SensY is now : %f",SensY);
 }
 
 void AAberrationCharacter::BeginPlay()
@@ -222,8 +235,9 @@ void AAberrationCharacter::BeginPlay()
 
 			MenuWidget->AddToViewport(1);
 
-			if (AAberrationGameState* State = World->GetGameState<AAberrationGameState>())
+			if (AAberrationGameState* GameState = World->GetGameState<AAberrationGameState>())
 			{
+				State = GameState;
 				State->SetCharacter(this);
 				MenuWidget->SetGameState(State);
 			}
@@ -242,7 +256,7 @@ void AAberrationCharacter::BeginPlay()
 
 	if (CameraShake)
 	{
-		UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake);
+		ShakeInstance = UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake);
 	}
 
 	ToggleMoveAndLookInput(true);
@@ -306,7 +320,7 @@ void AAberrationCharacter::Pause(const FInputActionValue& Value)
 
 	if (!bIsMenuOpen)
 	{
-		MenuWidget->SaveSettings();
+		State->SaveSettings();
 	}
 	
 	if (PlayerController)
@@ -344,6 +358,11 @@ void AAberrationCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
 	}
+}
+
+void AAberrationCharacter::ListenToShakeIntensityChanged()
+{
+	State->SettingsVM->OnChangeShakeIntensity.AddDynamic(this, &ThisClass::UpdateCameraShake);
 }
 
 void AAberrationCharacter::Look(const FInputActionValue& Value)

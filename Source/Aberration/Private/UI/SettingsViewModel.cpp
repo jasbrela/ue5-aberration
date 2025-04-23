@@ -3,7 +3,14 @@
 
 #include "UI/SettingsViewModel.h"
 
+#include "DebugMacros.h"
+
 float USettingsViewModel::GetVolume() const { return Volume; }
+
+float USettingsViewModel::GetShakeIntensity() const { return ShakeIntensity; }
+
+FString USettingsViewModel::GetPreferredCulture() const { return PreferredCulture; }
+
 float USettingsViewModel::GetSensX() const { return SensX; }
 float USettingsViewModel::GetSensY() const { return SensY; }
 
@@ -12,6 +19,21 @@ void USettingsViewModel::SetVolume(float Value)
 {
 	if (UE_MVVM_SET_PROPERTY_VALUE(Volume, Value)) {
 		//UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetVolumePercent);
+	}
+}
+
+void USettingsViewModel::SetShakeIntensity(float Value)
+{
+	if (UE_MVVM_SET_PROPERTY_VALUE(ShakeIntensity, Value)) {
+		if (OnChangeShakeIntensity.IsBound()) OnChangeShakeIntensity.Broadcast();
+	}
+}
+
+void USettingsViewModel::SetPreferredCulture(FString Value)
+{
+	if (UE_MVVM_SET_PROPERTY_VALUE(PreferredCulture, Value))
+	{
+		FInternationalization::Get().SetCurrentCulture(Value);
 	}
 }
 

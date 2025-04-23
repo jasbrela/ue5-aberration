@@ -28,4 +28,8 @@ public:
 	float SensX = 1.f;
 	UPROPERTY(EditAnywhere)
 	float SensY = 1.f;
+	UPROPERTY(EditAnywhere)
+	float ShakeIntensity = 1.f;
+	UPROPERTY(EditAnywhere)
+	FString PreferredCulture = "en";
 };
