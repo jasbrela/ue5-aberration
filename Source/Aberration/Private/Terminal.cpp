@@ -267,28 +267,29 @@ void ATerminal::UpdateReport(FActiveAberrations Aberrations)
 void ATerminal::GenerateQuestion()
 {
 	Answers.Empty();
-		
-	TArray<FString> OtherAberrations = GetPreviousOtherThanActiveAberrationsNames();
+
+	LOG("GenerateQuestion");
 	TArray<FString> CurrentAberrations = GetPreviousActiveAberrationsNames();
+	TArray<FString> OtherAberrations = GetPreviousOtherThanActiveAberrationsNames();
 
 	TerminalVM->SetQuestionText(TextAberrationQuestion);
 	ScreenWidget->bHasMultipleChoices = false;
 
 	for (int i = 0; i < CurrentAberrations.Num(); i++)
 	{
-		LOG("Correct Answer = %i, %s", i, *CurrentAberrations[i]);
+		//LOG("Correct Answer = %i, %s", i, *CurrentAberrations[i]);
 		Answers.Add(FAnswerData(CurrentAberrations[i], true));
 	}
-			
-	for (int i = Answers.Num(); i < 3; i++)
+
+	while (Answers.Num() < 3)
 	{
 		const FString RandomAberration = OtherAberrations[Stream.RandRange(0, OtherAberrations.Num() - 1)];
 		OtherAberrations.Remove(RandomAberration);
-		LOG("Wrong Answer = %i, %s", i, *RandomAberration);
+		//LOG("Wrong Answer = %i, %s", i, *RandomAberration);
 
 		Answers.AddUnique(FAnswerData(RandomAberration, false));
 	}
-	LOG("Total Answers = %i", Answers.Num());
+	//LOG("Total Answers = %i", Answers.Num());
 		
 	Answers = ShuffleArray(Answers, Stream);
 
@@ -314,7 +315,7 @@ void ATerminal::GenerateBinaryQuestion()
 
 void ATerminal::SetAnswersText()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < Answers.Num(); i++)
 	{
 		TerminalVM->SetAnswerText(i, FText::FromString(Answers[i].Text));
 	}
