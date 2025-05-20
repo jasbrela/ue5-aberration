@@ -72,6 +72,7 @@ UAberrationSaveGame* AAberrationGameState::LoadGame()
 	}
 
 	Character->ListenToSettingsEvents();
+	Character->UpdateCameraShake();
 
 	return LoadedGame;
 }

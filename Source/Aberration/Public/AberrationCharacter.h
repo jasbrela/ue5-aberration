@@ -42,6 +42,9 @@ public:
 	void ListenToSettingsEvents();
 	bool GetIsGamePaused();
 
+	UFUNCTION()
+	void UpdateCameraShake();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -127,9 +130,6 @@ private:
 
 	UPROPERTY()
 	UCameraShakeBase* ShakeInstance;
-	
-	UFUNCTION()
-	void UpdateCameraShake();
 
 	UFUNCTION()
 	void LocaliseTooltip();

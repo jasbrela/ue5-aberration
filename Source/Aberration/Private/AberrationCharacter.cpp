@@ -127,7 +127,11 @@ void AAberrationCharacter::UpdateCameraShake()
 {
 	if (State->SettingsVM)
 	{
-		UGameplayStatics::GetPlayerCameraManager(this, 0)->StopCameraShake(ShakeInstance);
+		if (ShakeInstance != nullptr)
+		{
+			UGameplayStatics::GetPlayerCameraManager(this, 0)->StopCameraShake(ShakeInstance);
+		}
+		
 		if (State->SettingsVM->GetShakeIntensity() > 0)
 		{
 			ShakeInstance = UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake, State->SettingsVM->GetShakeIntensity());
@@ -260,11 +264,6 @@ void AAberrationCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-	}
-
-	if (CameraShake)
-	{
-		ShakeInstance = UGameplayStatics::GetPlayerCameraManager(this, 0)->StartCameraShake(CameraShake);
 	}
 
 	ToggleMoveAndLookInput(true);
