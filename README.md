@@ -30,8 +30,8 @@ This led to the current version of Aberration Express. I didn't just upgrade the
 
 <p align=center>
   <img width="100%" src="https://github.com/jasbrela/ue5-aberration/blob/main/imgs/before_after_1.png" />
+  <em>Before and after the UI refactor.</em>
 </p>
-<!-- ![](./imgs/before_after_1.png) -->
 
 # Highlights
 Switching to Common UI was life changing. If I had known this plugin existed back then when I started developing the game, my life would have been much easier. In the first version, I had to implement selectable button functionality and styles from scratch. While it worked, the workflow felt like a hacky workaround.
