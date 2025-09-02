@@ -1,7 +1,8 @@
+<p align=center>
+  <img width="100%" src="https://github.com/jasbrela/ue5-aberration/blob/main/imgs/aberration_express.gif" />
+</p>
+
 # Aberration Express
-
-<!-- ![](./imgs/aberration_express.gif) -->
-
 You’ve already signed the papers, so let’s skip the formalities. Your job is simple: monitor the train. Move through each coach, observe everything carefully, and take notes. If something doesn't match, it's an aberration. Once you leave a coach, there's no going back. At the end of each coach, you’ll be filling out a report on what you saw.
 
 ***
@@ -27,6 +28,9 @@ This led to the current version of Aberration Express. I didn't just upgrade the
 - Added more interesting aberrations
 - Fixed a lot of bugs 🐞
 
+<p align=center>
+  <img width="100%" src="https://github.com/jasbrela/ue5-aberration/blob/main/imgs/before_after_1.png" />
+</p>
 <!-- ![](./imgs/before_after_1.png) -->
 
 # Highlights
