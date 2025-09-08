@@ -20,6 +20,7 @@ Aberration Express was initially created for the Acerola Jam 0, which lasted 15 
 
 ## One Year Later...
 A year after the release, when I was exploring UI possibilities in Unreal Engine, I realised Aberration Express was the perfect project for me to learn Common UI, MVVM and UI performance and best practices in general. All the feedback I received during the jam pointed out to a UI refactor. Since I had to redesign the terminal's UI anyway, I decided to use this opportunity to experiment with both plugins.
+
 This led to the current version of Aberration Express. I didn't just upgrade the UI, but the game as a whole:
 - Improved performance by reviewing the UI widgets and disabling some default Unreal Engine settings
 - Learned some basic VFX (something very new to me at the time)
